@@ -68,7 +68,7 @@ export default function Page() {
   }));
 
   return (
-    <div className="p-10 pt-6 gap-8 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
+    <div className="md:p-10 p-3 pt-6 gap-8 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
       <div className="pt-30/ py-9/ z-1 backdrop-blur-2xl w-full justify-center flex gap-10 items-center">
         <div
           onClick={() => setTab("transactions")}

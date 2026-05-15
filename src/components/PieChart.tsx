@@ -23,8 +23,8 @@ const COLORS = [
 
 export default function TransactionPieChart({ data }: { data: PieData[] }) {
   return (
-    <div className="w-full h-full min-w-300 min-h-300">
-      <ResponsiveContainer width={"100%"} height={800}>
+    <div className="w-full h-[50%] max-md:text-xs">
+      <ResponsiveContainer width={"100%"} height={400}>
         <PieChart>
           <Pie
             data={data}
@@ -32,8 +32,8 @@ export default function TransactionPieChart({ data }: { data: PieData[] }) {
             nameKey="name"
             cx="50%"
             cy="50%"
-            outerRadius={190}
-            innerRadius={20}
+            outerRadius={90}
+            //{/* innerRadius={20} */}
             paddingAngle={0}
             label={({ name, percent }) =>
               `${name} (${((percent || 0) * 100).toFixed(0)}%)`

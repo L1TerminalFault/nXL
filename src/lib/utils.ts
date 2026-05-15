@@ -142,7 +142,6 @@ export function buildCategorySummary(
     });
   }
 
-  console.log(map);
   return Array.from(map.entries()).map(([name, v]) => ({
     name,
     total: v.total,

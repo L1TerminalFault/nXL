@@ -1,19 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 
 import { useTransactionStore } from "@/lib/store";
 import Link from "next/link";
 import { ACC_OWNER, categories } from "@/lib/utils";
 
 export default function TransactionPage() {
-  const { data } = useTransactionStore();
+  const { data, setData } = useTransactionStore();
   const { id } = useParams();
   const [reason, setReason] = useState("");
   const [category, setCategory] = useState("");
   const [allowedUsers, setAllowedUsers] = useState<string[]>([]);
   const [error, setError] = useState("");
+  const [updateBtn, setUpdateBtn] = useState("Update");
 
   const trans = data.find((t) => t._id === id?.toString());
 
@@ -24,19 +25,9 @@ export default function TransactionPage() {
     })();
   }, [trans]);
 
-  if (!id)
-    return (
-      <div className="p-10 pt-20 flex h-full w-full text-5xl">
-        No transaction found
-      </div>
-    );
+  if (!id) return redirect("/transactions");
 
-  if (!trans)
-    return (
-      <div className="p-10 pt-20 flex h-full w-full text-5xl">
-        No transaction found
-      </div>
-    );
+  if (!trans) return redirect("/transactions");
 
   const accCredited =
     trans.transaction.recieverAcc === ACC_OWNER ||
@@ -53,35 +44,48 @@ export default function TransactionPage() {
       };
 
   const update = async () => {
-    const res = await fetch("/api/updateTransaction", {
-      method: "POST",
-      body: JSON.stringify({
-        transaction: {
-          _id: trans._id,
+    setUpdateBtn("Updating...");
+    try {
+      await fetch("/api/updateTransaction", {
+        method: "POST",
+        body: JSON.stringify({
           transaction: {
-            ...trans.transaction,
-            reason,
-            category,
+            _id: trans._id,
+            transaction: {
+              ...trans.transaction,
+              reason,
+              category,
+            },
+            users: allowedUsers,
           },
-          users: allowedUsers,
-        },
-      }),
-    });
+        }),
+      });
+
+      setData([]);
+    } catch (err) {
+      console.log("Error updating transaction" + err);
+    } finally {
+      setUpdateBtn("Updated");
+      const tId = setTimeout(() => {
+        setUpdateBtn("Update");
+        clearTimeout(tId);
+      }, 2000);
+    }
   };
 
   return (
-    <div className="p-10 pt-20 flex h-full w-full text-5xl">
-      <div className="bg-white/5 w-full p-20 h-full flex rounded-4xl ">
-        <div className="w-full h-full justify-between gap-40 flex flex-col">
+    <div className="md:p-10 p-5 md:pt-20 flex h-full w-full text-5xl">
+      <div className="bg-white/5 w-full md:p-20 p-5 h-full flex rounded-4xl ">
+        <div className="w-full h-full justify-between md:gap-40 gap-10 flex flex-col">
           <div className="w-full flex justify-between">
             <div className="flex flex-col gap-5">
-              <div className="text-gray-500 text-xl uppercase">
+              <div className="text-gray-500 text-sm md:text-xl uppercase">
                 {(accCredited ? "From " : "To ") +
                   otherAccount.holder +
                   "  **" +
                   otherAccount.number.split("*").slice(-1)[0]}
               </div>
-              <div className="font-bold flex gap-2 text-3xl">
+              <div className="font-bold flex gap-2 md:text-3xl text-2xl">
                 {accCredited ? (
                   <div className="text-green-500">+ </div>
                 ) : (
@@ -89,7 +93,7 @@ export default function TransactionPage() {
                 )}
                 {trans.transaction.amount}
               </div>
-              <div className="text-gray-400 text-xl">
+              <div className="text-gray-400 md:text-xl text-sm">
                 {new Date(trans.transaction.date).toLocaleDateString("en-US", {
                   weekday: "short",
                   month: "short",
@@ -101,7 +105,7 @@ export default function TransactionPage() {
             <div className="flex flex-col gap-2">
               <Link
                 href={trans.transaction.url || ""}
-                className="rounded-full p-3 px-5 text-xl bg-white/5 hover:bg-white/10 transition-colors"
+                className="rounded-full p-3 px-5 md:text-xl text-nowrap text-sm bg-white/5 hover:bg-white/10 transition-colors"
                 target="_blank"
               >
                 View Receipt
@@ -127,12 +131,12 @@ export default function TransactionPage() {
               <div className="text-gray-500 uppercase/ text-sm">
                 Choose a category
               </div>
-              <div className="flex gap-3">
+              <div className="flex md:gap-3 gap-2">
                 {categories.map((each) => (
                   <div
                     onClick={() => setCategory(each)}
                     key={each}
-                    className={`px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-white/10 transition-colors ${each === category ? "bg-white/10" : ""}`}
+                    className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors ${each === category ? "bg-white/10" : ""}`}
                   >
                     {each}
                   </div>
@@ -149,7 +153,7 @@ export default function TransactionPage() {
                   <div
                     onClick={() => setCategory(each)}
                     key={each}
-                    className={`px-4 py-2 rounded-full text-lg cursor-pointer hover:bg-white/10 transition-colors ${each === category ? "bg-white/10" : ""}`}
+                    className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors ${each === category ? "bg-white/10" : ""}`}
                   >
                     {each}
                   </div>
@@ -159,10 +163,10 @@ export default function TransactionPage() {
 
             <div className="flex gap-3 justify-end">
               <div
-                className="flex-col rounded-full text-2xl px-6 py-3 bg-white/30 hover:bg-white/20 transition-colors"
+                className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-white/30 hover:bg-white/20 transition-colors"
                 onClick={update}
               >
-                Update
+                {updateBtn}
               </div>
             </div>
           </div>

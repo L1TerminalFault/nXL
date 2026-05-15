@@ -13,10 +13,10 @@ export async function POST(req: Request) {
       users: transaction.users,
     });
 
-    console.log(transaction);
+    // console.log(transaction);
     return Response.json({ status: "success" });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return Response.json(
       { status: "error", message: "An error occurred" },
       { status: 500 },
