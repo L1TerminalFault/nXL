@@ -63,6 +63,7 @@ export default function TransactionPalette({
           </div>
 
           <Link
+            onClick={(e) => e.stopPropagation()}
             href={transaction.url || ""}
             target="_blank"
             className={`${!transaction.url ? "hidden" : ""} px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-full transition-colors`}

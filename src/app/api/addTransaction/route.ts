@@ -40,6 +40,7 @@ export async function POST(req: Request) {
         );
       tid = id;
     }
+    console.log("Transaction ID:", tid);
 
     const data = await (
       await fetch(
@@ -55,6 +56,7 @@ export async function POST(req: Request) {
         },
       )
     ).json();
+    console.log("Fetched data:", data);
 
     if (data?.status === 400)
       return Response.json(

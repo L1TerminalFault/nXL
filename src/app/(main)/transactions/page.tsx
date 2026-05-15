@@ -69,21 +69,27 @@ export default function Page() {
 
       {/* <div onClick={add}>Add</div> */}
       {tab === "transactions" ? (
-        <div className="flex w-full flex-1 gap-6 h-full justify-center items-center flex-col">
+        <div className="flex w-full flex-1 gap-6 h-full /justify-center items-center flex-col">
           {loading ? (
-            <Loader />
+            <div className="flex flex-col w-full h-full items-center justify-center gap-4">
+              <Loader />
+            </div>
           ) : error.length ? (
             <div className="text-red-500 text-lg">{error}</div>
           ) : !data.length ? (
-            <div className="text-gray-500 text-lg">No transactions found.</div>
+            <div className="text-gray-500 w-full h-full flex items-center justify-center text-lg">
+              No transactions found.
+            </div>
           ) : (
-            data.map((transaction) => (
-              <TransactionPalette key={transaction._id} data={transaction} />
-            ))
+            <div className="flex flex-col w-full h-full items-center gap-4">
+              {data.map((transaction) => (
+                <TransactionPalette key={transaction._id} data={transaction} />
+              ))}
+            </div>
           )}
         </div>
       ) : (
-        <div className="text-gray-500 text-lg">
+        <div className="text-gray-500 text-lg flex items-center justify-center h-full w-full">
           <TransactionPieChart data={pieData} />
         </div>
       )}
