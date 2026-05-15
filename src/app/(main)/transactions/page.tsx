@@ -1,33 +1,29 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useUser } from "@clerk/nextjs";
 
 import Loader from "@/components/Loader";
 import { TransactionType } from "@/db/methods";
 import TransactionPalette from "@/components/TransactionPalette";
 import { useTransactionStore } from "@/lib/store";
-
 import TransactionPieChart from "@/components/PieChart";
-import { buildCategorySummary } from "@/lib/utils";
+import {
+  ACC_OWNER,
+  buildCategorySummary,
+  buildReasonSummary,
+} from "@/lib/utils";
+import SummaryTable from "@/components/SummaryTable";
+import ReasonTable from "@/components/ReasonTable";
 
 export default function Page() {
   const { data, setData } = useTransactionStore();
+  const [graphData, setGraphData] = useState("All");
+  const [dataIn, setDataIn] = useState(data);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
   const [tab, setTab] = useState<"transactions" | "summary">("transactions");
-
-  // useEffect(() => {
-  //   (async () =>
-  //     await (
-  //       await fetch("/api/addTransaction", {
-  //         method: "POST",
-  //         body: JSON.stringify({
-  //           transaction:
-  //             "Dear Mr your Account 1*********5744 has been Credited with ETB 110.00 from Dagmawi Mesfin, on 07/05/2026 at 19:32:13 with Ref No FT26127RQZ9W Your Current Balance is ETB 730.68. Thank you for Banking with CBE! https://apps.cbe.com.et:100/?id=FT26127RQZ9W21195744",
-  //         }),
-  //       })
-  //     ).json())();
-  // }, []);
 
   const fetchData = useCallback(async () => {
     setError("");
@@ -35,7 +31,7 @@ export default function Page() {
 
     try {
       const fetched = (await (
-        await fetch("/api/fetchTransactions")
+        await fetch("/api/fetchTransactions?user=" + user?.id)
       ).json()) as {
         status: string;
         data: TransactionType[];
@@ -54,17 +50,30 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }, [setData]);
+  }, [setData, user]);
 
   useEffect(() => {
     if (data.length) return (() => setLoading(false))();
     (() => fetchData())();
-  }, [fetchData, data.length]);
+  }, [fetchData, data.length, user]);
 
-  // const pieData = buildCategoryTotals(data);
-  const pieData = buildCategorySummary(data).map((c) => ({
+  // NOTE: Use this instead of data to have only the expenses - data.filter((d) => !d.transaction.recieverAcc.includes(ACC_OWNER)),
+  // NOTE: Use this instead of data to have only the incomes - data.filter((d) => !d.transaction.payerAcc.includes(ACC_OWNER)),
+  // NOTE: Use this for all transactions - data
+  const pieData = buildCategorySummary(dataIn).map((c) => ({
     name: c.name,
     value: c.total,
+    total: c.total,
+    count: c.count,
+    average: c.average,
+  }));
+
+  const reasonData = buildReasonSummary(dataIn).map((c) => ({
+    name: c.name,
+    value: c.total,
+    total: c.total,
+    count: c.count,
+    average: c.average,
   }));
 
   return (
@@ -77,7 +86,10 @@ export default function Page() {
           Transactions
         </div>
         <div
-          onClick={() => setTab("summary")}
+          onClick={() => {
+            setTab("summary");
+            setTimeout(() => document.getElementById("init")?.click(), 500);
+          }}
           className={`px-4 py-2 rounded-2xl hover:bg-white/5 text-lg transition-colors ${tab === "summary" ? "bg-white/5" : ""}`}
         >
           Summary
@@ -106,66 +118,51 @@ export default function Page() {
           )}
         </div>
       ) : (
-        <div className="text-gray-500 text-lg flex items-center justify-center h-full w-full">
+        <div className="text-gray-500 text-lg flex flex-col gap-10 items-center justify-center h-full w-full">
+          <div className="w-full flex gap-4 text-xs">
+            <div
+              id="init"
+              onClick={() => {
+                setDataIn(data);
+                setGraphData("All");
+              }}
+              className={`${graphData === "All" ? "bg-white/5 text-white" : ""} rounded-2xl hover:bg-white/5 transition-colors px-4 py-2`}
+            >
+              All
+            </div>
+            <div
+              onClick={() => {
+                setDataIn(
+                  data.filter(
+                    (d) => !d.transaction.recieverAcc.includes(ACC_OWNER),
+                  ),
+                );
+                setGraphData("Expenses");
+              }}
+              className={`${graphData === "Expenses" ? "bg-white/5 text-white" : ""} rounded-2xl hover:bg-white/5 transition-colors px-4 py-2`}
+            >
+              Expenses
+            </div>
+            <div
+              onClick={() => {
+                setDataIn(
+                  data.filter(
+                    (d) => !d.transaction.payerAcc.includes(ACC_OWNER),
+                  ),
+                );
+                setGraphData("Incomes");
+              }}
+              className={`${graphData === "Incomes" ? "bg-white/5 text-white" : ""} rounded-2xl hover:bg-white/5 transition-colors px-4 py-2`}
+            >
+              Incomes
+            </div>
+          </div>
+
           <TransactionPieChart data={pieData} />
+          <SummaryTable data={pieData} />
+          <ReasonTable data={reasonData} />
         </div>
       )}
     </div>
   );
 }
-
-// const [text, setText] = useState(Object);
-//
-// const handleFile = async (e: any) => {
-//   const file = e.target.files[0];
-//
-//   const pdfjsLib = await import("pdfjs-dist");
-//
-//   // ✅ IMPORTANT: set worker locally (fixes your error)
-//   pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-//     "pdfjs-dist/build/pdf.worker.min.mjs",
-//     import.meta.url,
-//   ).toString();
-//
-//   const pdf = await pdfjsLib.getDocument({
-//     data: await file.arrayBuffer(),
-//   }).promise;
-//
-//   const page = await pdf.getPage(1);
-//   const content = await page.getTextContent();
-//
-//   const text = content.items.map((i: any) => i.str).join(" ");
-//
-//   setText(text);
-//   const res = await (await fetch("/api/getTransactionData")).json();
-//   setText(res);
-// };
-// useEffect(() => {
-//   (async () =>
-//     await (
-//       await fetch("/api/addTransaction", {
-//         method: "POST",
-//         body: JSON.stringify({
-//           transaction:
-//             "Dear Mr Kaleab your Account 1********5744 has been credited with ETB 3000.00. Your Current Balance is ETB 3620.07. Thank you for Banking with CBE! for Reciept https://apps.cbe.com.et:100/BranchReceipt/FT26129VVJGD&21195744",
-//         }),
-//       })
-//     ).json())();
-// }, []);
-//
-// const add = async () => {
-//   await fetch("/api/addTransaction", {
-//     method: "POST",
-//     body: JSON.stringify({
-//       text: " jslfjsdfjsdklfj sljfdslkjf https://mbreciept.cbe.com.et/FT26131F781G-21195744",
-//     }),
-//   });
-// };
-//
-// const add = async () => {
-//   const text = await extract(
-//     "https://apps.cbe.com.et:100/BranchReceipt/FT26129VVJGD&21195744",
-//   );
-//   console.log(text);
-// };
-//

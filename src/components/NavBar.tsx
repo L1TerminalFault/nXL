@@ -6,6 +6,9 @@ import { FaUsers as Cog, FaAlignLeft as List } from "react-icons/fa";
 import { GoHomeFill as Home } from "react-icons/go";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+
+import { isAdmin } from "@/lib/utils";
 
 const routes = [
   {
@@ -18,16 +21,18 @@ const routes = [
     href: "/transactions",
     icon: (props: SVGProps<SVGSVGElement>) => <List {...props} />,
   },
-  {
-    name: "Users",
-    href: "/users",
-    icon: (props: SVGProps<SVGSVGElement>) => <Cog {...props} />,
-  },
+  // {
+  //   name: "Users",
+  //   href: "/users",
+  //   icon: (props: SVGProps<SVGSVGElement>) => <Cog {...props} />,
+  //   isAdmin: true,
+  // },
   // { name: "Settings", href: "/settings" },
 ];
 
 export default function NavBar() {
   const pathname = usePathname();
+  const { user } = useUser();
 
   useEffect(() => {
     const followee = document.getElementById("followee");

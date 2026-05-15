@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { redirect, useParams } from "next/navigation";
+import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
 
 import { useTransactionStore } from "@/lib/store";
 import Link from "next/link";
-import { ACC_OWNER, categories } from "@/lib/utils";
+import { ACC_OWNER, categories, isAdmin } from "@/lib/utils";
 
 export default function TransactionPage() {
   const { data, setData } = useTransactionStore();
@@ -14,16 +16,41 @@ export default function TransactionPage() {
   const [category, setCategory] = useState("");
   const [allowedUsers, setAllowedUsers] = useState<string[]>([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const [updateBtn, setUpdateBtn] = useState("Update");
+  const { user } = useUser();
+  const [isAdminUser, setIsAdminUser] = useState(false);
+  const [allUsers, setAllUsers] = useState<
+    { username: string; id: string; image: string }[]
+  >([]);
 
   const trans = data.find((t) => t._id === id?.toString());
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await (await fetch("/api/getAllUsers")).json();
+      setAllUsers(res);
+      console.log("the response " + res);
+    } catch (err) {
+      console.log("Error fetching users: " + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) (() => setIsAdminUser(isAdmin(user.id) || false))();
+  }, [user]);
 
   useEffect(() => {
     (() => {
       setReason(trans?.transaction.reason || "");
       setCategory(trans?.transaction.category || "");
+      setAllowedUsers(trans?.users || []);
+      fetchUsers();
     })();
-  }, [trans]);
+  }, [trans, user]);
 
   if (!id) return redirect("/transactions");
 
@@ -123,6 +150,7 @@ export default function TransactionPage() {
                 placeholder="Change reason"
                 onChange={(e) => setReason(e.target.value)}
                 value={reason}
+                disabled={!isAdminUser}
                 className="text-base outline-none bg-transparent border-b border-gray-500/50 focus:border-gray-500/80 transition-colors w-full py-2"
               />
             </div>
@@ -144,31 +172,68 @@ export default function TransactionPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <div className="text-gray-500 uppercase/ text-sm">
-                Allowed Users
-              </div>
-              <div className="flex gap-3">
-                {["chala", "dula"].map((each) => (
-                  <div
-                    onClick={() => setCategory(each)}
-                    key={each}
-                    className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors ${each === category ? "bg-white/10" : ""}`}
-                  >
-                    {each}
+            {loading ? null : (
+              <>
+                <div
+                  className={`flex flex-col gap-2 ${isAdminUser ? "" : "hidden"}`}
+                >
+                  <div className="text-gray-500 uppercase/ text-sm">
+                    Allow Users{" "}
+                    <i className="text-xs text-gray-600">
+                      Highlighted users are allowed
+                    </i>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div className="flex flex-col gap-3 itecems-start">
+                    {allUsers.length
+                      ? allUsers
+                          // {/* .filter((u) => u.id !== user?.id) */}
+                          .map((each) => (
+                            <div
+                              onClick={() =>
+                                setAllowedUsers((prev) =>
+                                  prev.includes(each.id)
+                                    ? prev.filter((id) => id !== each.id)
+                                    : [...prev, each.id],
+                                )
+                              }
+                              key={each.id}
+                              className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-start gap-3 w-max text-center cursor-pointer hover:bg-white/10 transition-colors ${allowedUsers.includes(each.id) ? "bg-white/10" : ""}`}
+                            >
+                              <Image
+                                alt=""
+                                src={each.image}
+                                width={20}
+                                height={20}
+                                className="rounded-full"
+                              />
+                              <div className="">{each.username}</div>
+                              {allowedUsers.includes(each.id) ? (
+                                <i className="text-gray-400 text-[8px]">
+                                  Allowed
+                                </i>
+                              ) : (
+                                <i className="text-gray-500 text-[8px]">
+                                  Not allowed
+                                </i>
+                              )}
+                            </div>
+                          ))
+                      : null}
+                  </div>
+                </div>
 
-            <div className="flex gap-3 justify-end">
-              <div
-                className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-white/30 hover:bg-white/20 transition-colors"
-                onClick={update}
-              >
-                {updateBtn}
-              </div>
-            </div>
+                <div
+                  className={`flex gap-3 justify-end ${isAdminUser ? "" : "hidden"}`}
+                >
+                  <div
+                    className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-white/30 hover:bg-white/20 transition-colors"
+                    onClick={update}
+                  >
+                    {updateBtn}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
