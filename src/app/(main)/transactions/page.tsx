@@ -8,13 +8,26 @@ import TransactionPalette from "@/components/TransactionPalette";
 import { useTransactionStore } from "@/lib/store";
 
 import TransactionPieChart from "@/components/PieChart";
-import { buildCategoryTotals } from "@/lib/utils";
+import { buildCategorySummary } from "@/lib/utils";
 
 export default function Page() {
   const { data, setData } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"transactions" | "summary">("transactions");
+
+  // useEffect(() => {
+  //   (async () =>
+  //     await (
+  //       await fetch("/api/addTransaction", {
+  //         method: "POST",
+  //         body: JSON.stringify({
+  //           transaction:
+  //             "Dear Mr your Account 1*********5744 has been Credited with ETB 110.00 from Dagmawi Mesfin, on 07/05/2026 at 19:32:13 with Ref No FT26127RQZ9W Your Current Balance is ETB 730.68. Thank you for Banking with CBE! https://apps.cbe.com.et:100/?id=FT26127RQZ9W21195744",
+  //         }),
+  //       })
+  //     ).json())();
+  // }, []);
 
   const fetchData = useCallback(async () => {
     setError("");
@@ -48,7 +61,11 @@ export default function Page() {
     (() => fetchData())();
   }, [fetchData, data.length]);
 
-  const pieData = buildCategoryTotals(data);
+  // const pieData = buildCategoryTotals(data);
+  const pieData = buildCategorySummary(data).map((c) => ({
+    name: c.name,
+    value: c.total,
+  }));
 
   return (
     <div className="p-10 pt-6 gap-8 h-full min-h-screen items-center justify-center/ w-full flex flex-col">

@@ -30,7 +30,7 @@ export const updateTransaction = async ({
   transaction,
   users,
 }: TransactionType) => {
-  Transaction.findOneAndUpdate({ _id }, { transaction, users });
+  return Transaction.findByIdAndUpdate(_id, { transaction, users });
 };
 
 export const getTransactions = async (user?: string) => {

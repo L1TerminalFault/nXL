@@ -9,10 +9,11 @@ export async function POST(req: Request) {
 
     await updateTransaction({
       _id: transaction._id,
-      transaction: JSON.stringify(transaction),
+      transaction: JSON.stringify(transaction.transaction),
       users: transaction.users,
     });
 
+    console.log(transaction);
     return Response.json({ status: "success" });
   } catch (error) {
     console.error(error);

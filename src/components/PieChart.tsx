@@ -23,8 +23,8 @@ const COLORS = [
 
 export default function TransactionPieChart({ data }: { data: PieData[] }) {
   return (
-    <div className="w-full h-80">
-      <ResponsiveContainer>
+    <div className="w-fu min-w-300 min-h-300">
+      <ResponsiveContainer width={"100%"} height={800}>
         <PieChart>
           <Pie
             data={data}

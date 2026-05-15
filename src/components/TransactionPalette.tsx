@@ -9,6 +9,7 @@ export default function TransactionPalette({
 }: {
   data: TransactionParsedType;
 }) {
+  const _id = data._id;
   const transaction = data.transaction;
   const router = useRouter();
 
@@ -29,7 +30,7 @@ export default function TransactionPalette({
   return (
     <div
       onClick={() => {
-        router.push("/transactions/" + transaction.url.split("/").at(-1));
+        router.push("/transactions/" + _id);
       }}
       className="flex w-full bg-white/5 p-5 rounded-3xl hover:bg-white/10 transition-colors cursor-pointer"
     >
@@ -37,12 +38,10 @@ export default function TransactionPalette({
         <div className="flex flex-col gap-3 justify-between w-full md:flex-row items-center">
           <div className="flex flex-col w-full/ gap-3">
             <div className="text-gray-400/90 uppercase">
-              {accCredited
-                ? "From "
-                : "To " +
-                  otherAccount.holder +
-                  " - **" +
-                  otherAccount.number.split("*").slice(-1)[0]}
+              {(accCredited ? "From " : "To ") +
+                otherAccount.holder +
+                "  **" +
+                otherAccount.number.split("*").slice(-1)[0]}
             </div>
 
             <div className="font-bold flex gap-2 text-2xl">
@@ -53,13 +52,6 @@ export default function TransactionPalette({
               )}
               {transaction.amount}
             </div>
-
-            {/* <div className="text-gray-500 text-sm"> */}
-            {/*   {"" + */}
-            {/*     transaction.debitAccountHolder + */}
-            {/*     " - **" + */}
-            {/*     transaction.debitAccountNo.split("*").slice(-1)[0]} */}
-            {/* </div> */}
           </div>
 
           <Link

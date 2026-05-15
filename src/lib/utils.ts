@@ -83,20 +83,71 @@ export async function fetchPDFData(url: string) {
   };
 }
 
-export function buildCategoryTotals(transactions: TransactionParsedType[]) {
-  const map: Record<string, number> = {};
+// export function buildCategoryTotals(
+//   data: TransactionParsedType[],
+// ): { name: string; value: number }[] {
+//   const map = new Map<string, number>();
+//
+//   for (const item of data) {
+//     const tx = item.transaction;
+//
+//     const category = tx.category?.trim() || "Uncategorized";
+//
+//     // IMPORTANT: amount is string
+//     const amount = Number(tx.amount.replace(/[^0-9.-]+/g, ""));
+//
+//     if (Number.isNaN(amount))
+//       console.warn(`Invalid amount for transaction: ${tx.amount}`);
+//
+//     map.set(category, (map.get(category) || 0) + amount);
+//   }
+//
+//   return Array.from(map.entries()).map(([name, value]) => ({
+//     name,
+//     value,
+//   }));
+// }
+//
 
-  for (const tx of transactions) {
-    const category = tx.transaction.category || "Unknown";
+type CategorySummary = {
+  name: string;
+  total: number;
+  count: number;
+  average: number;
+};
 
-    const amount = Number(tx.transaction.amount) || 0;
+export function buildCategorySummary(
+  data: TransactionParsedType[],
+): CategorySummary[] {
+  const map = new Map<string, { total: number; count: number }>();
 
-    map[category] = (map[category] || 0) + amount;
+  for (const item of data) {
+    const tx = item.transaction;
+
+    const category = tx.category?.trim() || "Uncategorized";
+
+    const amount = Number(tx.amount.replace(/[^0-9.-]+/g, ""));
+
+    if (Number.isNaN(amount))
+      console.warn(`Invalid amount for transaction: ${tx.amount}`);
+
+    const existing = map.get(category) || {
+      total: 0,
+      count: 0,
+    };
+
+    map.set(category, {
+      total: existing.total + amount,
+      count: existing.count + 1,
+    });
   }
 
-  return Object.entries(map).map(([name, value]) => ({
+  console.log(map);
+  return Array.from(map.entries()).map(([name, v]) => ({
     name,
-    value,
+    total: v.total,
+    count: v.count,
+    average: v.total / v.count,
   }));
 }
 

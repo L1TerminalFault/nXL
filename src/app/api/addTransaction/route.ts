@@ -18,9 +18,9 @@ export async function POST(req: Request) {
         { status: 400 },
       );
 
-    if (link.includes("app.cbe.com.et")) {
+    if (link.includes("apps.cbe.com.et")) {
       const id = new URL(link).searchParams.get("id");
-      if (!id) {
+      if (!id || !id.length) {
         const id = link.split("/").pop()?.replace("&", "-");
         if (!id)
           return Response.json(
@@ -40,13 +40,10 @@ export async function POST(req: Request) {
         );
       tid = id;
     }
-    console.log("Transaction ID:", tid);
 
     const data = await (
       await fetch(
         `https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/${tid}`,
-        // "https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/FT26131F781G-21195744",
-        // "https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/FT26133Y5Q7P-21195744",
         {
           headers: {
             "User-Agent": "Mozilla/5.0",
@@ -56,7 +53,6 @@ export async function POST(req: Request) {
         },
       )
     ).json();
-    console.log("Fetched data:", data);
 
     if (data?.status === 400)
       return Response.json(
