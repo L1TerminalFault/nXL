@@ -47,6 +47,7 @@ export default function Page() {
     if (data.length) return (() => setLoading(false))();
     (() => fetchData())();
   }, [fetchData, data.length]);
+
   const pieData = buildCategoryTotals(data);
 
   return (

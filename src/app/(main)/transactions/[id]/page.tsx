@@ -5,13 +5,24 @@ import { useParams } from "next/navigation";
 
 import { useTransactionStore } from "@/lib/store";
 import Link from "next/link";
-import { ACC_OWNER } from "@/lib/utils";
+import { ACC_OWNER, categories } from "@/lib/utils";
 
 export default function TransactionPage() {
   const { data } = useTransactionStore();
   const { id } = useParams();
+  const [reason, setReason] = useState("");
+  const [category, setCategory] = useState("");
 
-  useEffect(() => {}, []);
+  const trans = data.find((t) =>
+    t.transaction.url.includes(id?.toString() || ""),
+  );
+
+  useEffect(() => {
+    (() => {
+      setReason(trans?.transaction.reason || "");
+      setCategory(trans?.transaction.category || "");
+    })();
+  }, [trans]);
 
   if (!id)
     return (
@@ -19,10 +30,6 @@ export default function TransactionPage() {
         No transaction found
       </div>
     );
-
-  const trans = data.find((t) =>
-    t.transaction.url.includes(id.toString() || ""),
-  );
 
   if (!trans)
     return (
@@ -93,7 +100,30 @@ export default function TransactionPage() {
             </div>
           </div>
 
-          <div className=""></div>
+          <div className="flex w-full flex-col gap-5">
+            <div>
+              <input
+                type="text"
+                placeholder="Change reason"
+                value={reason}
+                className=""
+              />
+            </div>
+
+            <div className="flex gap-3">
+              {categories.map((each) => (
+                <div
+                  onClick={() => setCategory(each)}
+                  key={each}
+                  className={`px-4 py-2 rounded-full text-sm cursor-pointer hover:bg-white/10 transition-colors ${each === category ? "bg-white/10" : ""}`}
+                >
+                  {each}
+                </div>
+              ))}
+            </div>
+
+            <div></div>
+          </div>
         </div>
       </div>
     </div>

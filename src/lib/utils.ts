@@ -99,3 +99,5 @@ export function buildCategoryTotals(transactions: TransactionParsedType[]) {
     value,
   }));
 }
+
+export const categories = ["Home", "Self", "Transport", "Others"];

@@ -21,11 +21,7 @@ const COLORS = [
   "#A855F7",
 ];
 
-export default function TransactionPieChart({
-  data,
-}: {
-  data: PieData[];
-}) {
+export default function TransactionPieChart({ data }: { data: PieData[] }) {
   return (
     <div className="w-full h-80">
       <ResponsiveContainer>
@@ -40,22 +36,20 @@ export default function TransactionPieChart({
             innerRadius={60}
             paddingAngle={3}
             label={({ name, percent }) =>
-              `${name} (${(percent * 100).toFixed(0)}%)`
+              `${name} (${((percent || 0) * 100).toFixed(0)}%)`
             }
           >
             {data.map((_, i) => (
-              <Cell
-                key={i}
-                fill={COLORS[i % COLORS.length]}
-              />
+              <Cell key={i} fill={COLORS[i % COLORS.length]} />
             ))}
           </Pie>
 
           <Tooltip
-            formatter={(value: number) => [
-              `ETB ${value.toFixed(2)}`,
-              "Amount",
-            ]}
+            formatter={(value) => {
+              const num = Number(value ?? 0);
+
+              return [`ETB ${num.toFixed(2)}`, "Amount"];
+            }}
           />
 
           <Legend />
