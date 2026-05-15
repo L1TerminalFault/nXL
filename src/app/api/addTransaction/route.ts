@@ -10,7 +10,12 @@ export async function POST(req: Request) {
     const match = transaction.match(/https?:\/\/[^\s]+/);
 
     const link: string = match?.[0];
-    if (!link) return;
+
+    if (!link)
+      return Response.json(
+        { status: "error", message: "No link found in the transaction" },
+        { status: 400 },
+      );
     // const tid = link.split("/").slice(-1)[0];
     const tid = link.split("/").pop();
 

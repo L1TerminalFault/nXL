@@ -2,15 +2,23 @@ import { updateTransaction } from "@/db/methods";
 import { dbConnect } from "@/db/model";
 
 export async function POST(req: Request) {
-  await dbConnect();
+  try {
+    await dbConnect();
 
-  const { transaction } = await req.json();
+    const { transaction } = await req.json();
 
-  await updateTransaction({
-    _id: transaction._id,
-    transaction: JSON.stringify(transaction),
-    users: transaction.users,
-  });
+    await updateTransaction({
+      _id: transaction._id,
+      transaction: JSON.stringify(transaction),
+      users: transaction.users,
+    });
 
-  return Response.json({ status: "success" });
+    return Response.json({ status: "success" });
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { status: "error", message: "An error occurred" },
+      { status: 500 },
+    );
+  }
 }
