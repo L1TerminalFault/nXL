@@ -47,7 +47,7 @@ export default function Page() {
         transaction: JSON.parse(transaction),
       }));
 
-      console.log(parsedData);
+      // console.log(parsedData);
       setData(parsedData);
     } catch {
       setError("Connect to internet, if issue persists let us know");
