@@ -20,7 +20,7 @@ export default function MainLayout({
     >
       <TitleBar />
       <div className="min-h-screen -z-90 flex w-full bg-gray-900/10">
-        <div className="py-18 pb-24 flex-1 flex w-full">{children}</div>
+        <div className="py-18 h-full pb-24 flex-1 flex w-full">{children}</div>
       </div>
       <NavBar />
     </ClerkProvider>

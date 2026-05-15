@@ -1,4 +1,4 @@
-import { addTransaction, TransactionType } from "@/db/methods";
+import { addTransaction } from "@/db/methods";
 import { dbConnect } from "@/db/model";
 
 export async function POST(req: Request) {
@@ -9,17 +9,39 @@ export async function POST(req: Request) {
 
     const match = transaction.match(/https?:\/\/[^\s]+/);
 
-    const link: string = match?.[0];
+    let link: string = match?.[0];
+    let tid: string;
 
     if (!link)
       return Response.json(
         { status: "error", message: "No link found in the transaction" },
         { status: 400 },
       );
-    // const tid = link.split("/").slice(-1)[0];
-    const tid = link.split("/").pop();
 
-    const data = (await (
+    if (link.includes("app.cbe.com.et")) {
+      const id = new URL(link).searchParams.get("id");
+      if (!id) {
+        const id = link.split("/").pop()?.replace("&", "-");
+        if (!id)
+          return Response.json(
+            { status: "error", message: "No id found in the link" },
+            { status: 400 },
+          );
+        tid = id;
+      } else tid = id.slice(0, 12) + "-" + id.slice(12);
+
+      link = `https://mbreciept.cbe.com.et/${tid}`;
+    } else {
+      const id = link.split("/").pop();
+      if (!id)
+        return Response.json(
+          { status: "error", message: "No id found in the link" },
+          { status: 400 },
+        );
+      tid = id;
+    }
+
+    const data = await (
       await fetch(
         `https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/${tid}`,
         // "https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/FT26131F781G-21195744",
@@ -32,9 +54,27 @@ export async function POST(req: Request) {
           },
         },
       )
-    ).json()) as TransactionType;
+    ).json();
 
-    await addTransaction(JSON.stringify({ ...data, url: link }));
+    if (data?.status === 400)
+      return Response.json(
+        { status: "error", message: "Invalid transaction link" },
+        { status: 400 },
+      );
+
+    const dataRefactored = {
+      payerAcc: data?.debitAccountHolder,
+      payerAccNo: data?.debitAccountNo,
+      recieverAccNo: data?.creditAccountNo,
+      recieverAcc: data?.creditAccountHolder,
+      reason: data?.paymentDetails?.[0] || "",
+      amount: data?.debitCurrency + " " + data?.debitAmount,
+      date: data?.dateTimes?.[0] || "",
+    };
+
+    await addTransaction(
+      JSON.stringify({ ...dataRefactored, url: link, category: "" }),
+    );
 
     return Response.json({ status: "success" });
   } catch (error) {
