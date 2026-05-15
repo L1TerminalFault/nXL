@@ -64,6 +64,6 @@ export const updateTransaction = async ({
 };
 
 export const getTransactions = async (user?: string) => {
-  if (!user) return Transaction.find({});
-  else return Transaction.find({ users: user });
+  if (!user) return Transaction.find({}).sort({ _id: -1 });
+  else return Transaction.find({ users: user }).sort({ _id: -1 });
 };
