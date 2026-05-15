@@ -30,5 +30,5 @@ export async function POST(req: Request) {
 
   await addTransaction(JSON.stringify({ ...data, url: link }));
 
-  return Response.json({ status: "success", data });
+  return Response.json({ status: "success" });
 }
