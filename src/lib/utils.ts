@@ -84,7 +84,7 @@ export async function fetchPDFData(url: string) {
 }
 
 // TODO: Add jemal here
-export const ADMINS = ["user_3Dm9SXSar1mSiY6gVd1FJUHJ88j", "jemal"];
+export const ADMINS = ["user_3Dm9SXSar1mSiY6gVd1FJUHJ88j", "user_3DssVLLs3QK9nXyheVIQqQ9kKKr"];
 
 export const isAdmin = (userid?: string) => {
   if (!userid) return false;
