@@ -8,6 +8,7 @@ export async function GET(req: Request) {
   try {
     await dbConnect();
     const { userId } = await auth();
+    if (!userId) return Response.json({ status: "error" }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
 
