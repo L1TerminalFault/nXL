@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 
 import { getTransactions } from "@/db/methods";
 import { dbConnect } from "@/db/model";
+import { ADMINS } from "@/lib/utils";
 
 export async function GET(req: Request) {
   try {
@@ -13,8 +14,7 @@ export async function GET(req: Request) {
     const user = searchParams.get("user");
     if (!user || !user.length) return Response.json({ status: "error" });
 
-    if (userId === "user_3Dm9SXSar1mSiY6gVd1FJUHJ88j")
-      // TODO: Add jemal here
+    if (ADMINS.includes(userId))
       return Response.json({
         status: "success",
         data: await getTransactions(),
