@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 
 import Loader from "@/components/Loader";
-import type { TransactionParsedType, TransactionType } from "@/db/methods";
+import type { TransactionType } from "@/db/methods";
 import TransactionPalette from "@/components/TransactionPalette";
 import { useTransactionStore } from "@/lib/store";
 import { ACC_OWNER } from "@/lib/utils";
@@ -13,8 +13,7 @@ import FilterPopup from "@/components/FilterPopup";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
-  const { data, setData, dataIn, setDataIn, filterState } =
-    useTransactionStore();
+  const { data, setData, dataIn, setDataIn } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useUser();

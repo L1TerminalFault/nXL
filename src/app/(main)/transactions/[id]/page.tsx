@@ -16,7 +16,7 @@ export default function TransactionPage() {
   const [reason, setReason] = useState("");
   const [category, setCategory] = useState("");
   const [allowedUsers, setAllowedUsers] = useState<string[]>([]);
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [updateBtn, setUpdateBtn] = useState("Update");
   const [deleteBtn, setDeleteBtn] = useState("Delete");
