@@ -1,7 +1,8 @@
 import { extractText, getDocumentProxy } from "unpdf";
 import { TransactionParsedType } from "@/db/methods";
 
-export const VERSION_STRING = "1.0.0";
+export const VERSION_STRING = "1.3.0";
+// TODO: Replace the acc_owner with the full name of the admin of this app
 export const ACC_OWNER = "Mengesha Amere";
 
 export async function extract(url: string) {

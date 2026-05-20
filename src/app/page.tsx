@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { useTransactionStore } from "@/lib/store";
-import { useEffect, useState } from "react";
+import { SubmitEventHandler, useEffect, useState } from "react";
 
 export default function Home() {
   const { locked, setLocked } = useTransactionStore();
@@ -27,12 +27,12 @@ export default function Home() {
     }
   });
 
-  const handleSumbmit = (e) => {
+  const handleSumbmit = () => {
     if (input === pass) setLocked(false);
     else setError("Incorrect password");
   };
 
-  const handleSetup = (e) => {
+  const handleSetup = () => {
     if (input === input_) {
       localStorage.setItem("__n-xl_password__", input);
       setLocked(false);
