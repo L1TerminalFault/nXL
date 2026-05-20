@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { redirect, useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 
@@ -10,7 +10,8 @@ import Link from "next/link";
 import { ACC_OWNER, categories, isAdmin } from "@/lib/utils";
 
 export default function TransactionPage() {
-  const { data, setData } = useTransactionStore();
+  const router = useRouter();
+  const { dataIn, setData } = useTransactionStore();
   const { id } = useParams();
   const [reason, setReason] = useState("");
   const [category, setCategory] = useState("");
@@ -18,13 +19,14 @@ export default function TransactionPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [updateBtn, setUpdateBtn] = useState("Update");
+  const [deleteBtn, setDeleteBtn] = useState("Delete");
   const { user } = useUser();
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [allUsers, setAllUsers] = useState<
     { username: string; id: string; image: string }[]
   >([]);
 
-  const trans = data.find((t) => t._id === id?.toString());
+  const trans = dataIn.find((t) => t._id === id?.toString());
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -52,13 +54,13 @@ export default function TransactionPage() {
     })();
   }, [trans, user]);
 
-  if (!id) return redirect("/transactions");
+  if (!id) return router.replace("/transactions");
 
-  if (!trans) return redirect("/transactions");
+  if (!trans) return router.replace("/transactions");
 
-  const accCredited =
-    trans.transaction.recieverAcc === ACC_OWNER ||
-    trans.transaction.recieverAcc.includes(ACC_OWNER);
+  const accCredited = ACC_OWNER.toLowerCase().includes(
+    trans.transaction.recieverAcc.trim().toLowerCase(),
+  );
 
   const otherAccount = accCredited
     ? {
@@ -87,8 +89,6 @@ export default function TransactionPage() {
           },
         }),
       });
-
-      setData([]);
     } catch (err) {
       console.log("Error updating transaction" + err);
     } finally {
@@ -97,6 +97,25 @@ export default function TransactionPage() {
         setUpdateBtn("Update");
         clearTimeout(tId);
       }, 2000);
+      setData(null);
+      router.push("/transactions?id=");
+    }
+  };
+
+  const delete_ = async () => {
+    setDeleteBtn("Deleting...");
+    try {
+      await fetch(`/api/deleteTransaction?id=${id}`);
+    } catch (err) {
+      console.log("Error deleting transaction" + err);
+    } finally {
+      setDeleteBtn("Deleted");
+      const tId = setTimeout(() => {
+        setDeleteBtn("Delete");
+        clearTimeout(tId);
+      }, 2000);
+      setData(null);
+      router.replace("/transactions?id=");
     }
   };
 
@@ -121,11 +140,12 @@ export default function TransactionPage() {
                 {trans.transaction.amount}
               </div>
               <div className="text-gray-400 md:text-xl text-sm">
-                {new Date(trans.transaction.date).toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                })}
+                {trans.transaction.date}
+                {/* {new Date(trans.transaction.date).toLocaleDateString("en-US", { */}
+                {/*   weekday: "short", */}
+                {/*   month: "short", */}
+                {/*   day: "numeric", */}
+                {/* })} */}
               </div>
             </div>
 
@@ -143,7 +163,7 @@ export default function TransactionPage() {
           <div className="flex w-full flex-col gap-7">
             <div className="flex flex-col gap-2">
               <div className="text-gray-500 uppercase/ text-sm">
-                Enter reason
+                {isAdminUser ? "Enter reason" : "Reason"}
               </div>
               <input
                 type="text"
@@ -157,7 +177,7 @@ export default function TransactionPage() {
 
             <div className="flex flex-col gap-2">
               <div className="text-gray-500 uppercase/ text-sm">
-                Choose a category
+                {isAdminUser ? "Choose a category" : "Category"}
               </div>
               <div className="flex md:gap-3 gap-2">
                 {categories.map((each) => (
@@ -230,6 +250,12 @@ export default function TransactionPage() {
                     onClick={update}
                   >
                     {updateBtn}
+                  </div>
+                  <div
+                    className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-red-500/60 hover:bg-red-500/90 transition-colors"
+                    onClick={delete_}
+                  >
+                    {deleteBtn}
                   </div>
                 </div>
               </>

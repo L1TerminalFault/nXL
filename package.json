@@ -11,7 +11,10 @@
   "dependencies": {
     "@clerk/nextjs": "^7.3.3",
     "@clerk/themes": "^2.4.57",
+    "ethiopian-calendar-new": "^1.1.0",
     "isomorphic-dompurify": "^3.12.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "mongoose": "^9.6.2",
     "next": "16.2.6",
     "pdfjs-dist": "^5.7.284",

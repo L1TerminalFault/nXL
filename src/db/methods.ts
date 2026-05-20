@@ -15,6 +15,8 @@ export type TransactionParsedType = Omit<TransactionType, "transaction"> & {
     reason: string;
     amount: string;
     date: string;
+    bank: string;
+    remaining: string;
     url: string;
     category: string;
   };
@@ -31,6 +33,10 @@ export const updateTransaction = async ({
   users,
 }: TransactionType) => {
   return Transaction.findByIdAndUpdate(_id, { transaction, users });
+};
+
+export const deleteTransaction = async (_id: string) => {
+  return Transaction.findByIdAndDelete(_id);
 };
 
 export const getTransactions = async (user?: string) => {

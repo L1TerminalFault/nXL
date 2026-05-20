@@ -1,8 +1,20 @@
+"use client";
+
 import { BsListNested } from "react-icons/bs";
 import { FaCogs } from "react-icons/fa";
 import { LuInfo } from "react-icons/lu";
 
+import { useTransactionStore } from "@/lib/store";
+import { useEffect } from "react";
+import { redirect } from "next/navigation";
+
 export default function Home() {
+  const { locked } = useTransactionStore();
+
+  useEffect(() => {
+    if (locked) redirect("/");
+  });
+
   return (
     <div className="p-4 flex flex-col w-full h-full gap-6">
       <div className="px-10 py-20 gap-9 text-lg bg-white/5 rounded-4xl flex items-center">

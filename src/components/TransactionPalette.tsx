@@ -13,9 +13,9 @@ export default function TransactionPalette({
   const transaction = data.transaction;
   const router = useRouter();
 
-  const accCredited =
-    transaction.recieverAcc === ACC_OWNER ||
-    transaction.recieverAcc.includes(ACC_OWNER);
+  const accCredited = ACC_OWNER.toLowerCase().includes(
+    transaction.recieverAcc.trim().toLowerCase(),
+  );
 
   const otherAccount = accCredited
     ? {
@@ -75,12 +75,7 @@ export default function TransactionPalette({
             </div>
           </div>
           <div className="text-gray-400 text-xs md:text-sm">
-            {/* {transaction.dateTimes[0]} */}
-            {new Date(transaction.date).toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            })}
+            {transaction.date}
           </div>
         </div>
       </div>

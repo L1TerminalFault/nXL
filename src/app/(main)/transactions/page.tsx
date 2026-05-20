@@ -4,28 +4,28 @@ import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 
 import Loader from "@/components/Loader";
-import { TransactionType } from "@/db/methods";
+import type { TransactionParsedType, TransactionType } from "@/db/methods";
 import TransactionPalette from "@/components/TransactionPalette";
 import { useTransactionStore } from "@/lib/store";
-import TransactionPieChart from "@/components/PieChart";
-import {
-  ACC_OWNER,
-  buildCategorySummary,
-  buildReasonSummary,
-} from "@/lib/utils";
-import SummaryTable from "@/components/SummaryTable";
-import ReasonTable from "@/components/ReasonTable";
+import { ACC_OWNER } from "@/lib/utils";
+import Link from "next/link";
+import FilterPopup from "@/components/FilterPopup";
+// import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
-  const { data, setData } = useTransactionStore();
-  const [graphData, setGraphData] = useState("All");
-  const [dataIn, setDataIn] = useState(data);
+  const { data, setData, dataIn, setDataIn, filterState } =
+    useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
-  const [tab, setTab] = useState<"transactions" | "summary">("transactions");
+  const [filterPopUp, setFilterPopUp] = useState(false);
+  const [listType, setListType] = useState<string>("ui");
 
   const fetchData = useCallback(async () => {
+    // setLoading(false);
+    // setDataIn(getMockTransactions());
+    // return setData(getMockTransactions());
+    //
     setError("");
     setLoading(true);
 
@@ -45,124 +45,141 @@ export default function Page() {
 
       // console.log(parsedData);
       setData(parsedData);
+      setDataIn(parsedData);
     } catch {
       setError("Connect to internet, if issue persists let us know");
     } finally {
       setLoading(false);
     }
-  }, [setData, user]);
+  }, [setData, user, setDataIn]);
 
   useEffect(() => {
-    if (data.length) return (() => setLoading(false))();
-    (() => fetchData())();
-  }, [fetchData, data.length, user]);
-
-  // NOTE: Use this instead of data to have only the expenses - data.filter((d) => !d.transaction.recieverAcc.includes(ACC_OWNER)),
-  // NOTE: Use this instead of data to have only the incomes - data.filter((d) => !d.transaction.payerAcc.includes(ACC_OWNER)),
-  // NOTE: Use this for all transactions - data
-  const pieData = buildCategorySummary(dataIn).map((c) => ({
-    name: c.name,
-    value: c.total,
-    total: c.total,
-    count: c.count,
-    average: c.average,
-  }));
-
-  const reasonData = buildReasonSummary(dataIn).map((c) => ({
-    name: c.name,
-    value: c.total,
-    total: c.total,
-    count: c.count,
-    average: c.average,
-  }));
+    if (!data) (() => fetchData())();
+    else if (data.length) return (() => setLoading(false))();
+  }, [fetchData, data, user]);
 
   return (
     <div className="md:p-10 p-3 pt-6 gap-8 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
-      <div className="pt-30/ py-9/ z-1 backdrop-blur-2xl w-full justify-center flex gap-10 items-center">
-        <div
-          onClick={() => setTab("transactions")}
-          className={`px-4 py-2 rounded-2xl hover:bg-white/5 text-lg transition-colors ${tab === "transactions" ? "bg-white/5" : ""}`}
-        >
-          Transactions
+      {filterPopUp && <FilterPopup onClose={() => setFilterPopUp(false)} />}
+      <div className="z-1 px-3 backdrop-blur-2xl w-full justify-between flex gap-10 items-center">
+        <div className="flex gap-4">
+          <div
+            onClick={() => setListType("ui")}
+            className={`${listType === "ui" ? "bg-white/15" : ""} px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors`}
+          >
+            UI
+          </div>
+          <div
+            onClick={() => setListType("table")}
+            className={`${listType === "ui" ? "" : "bg-white/15"} px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors`}
+          >
+            Table
+          </div>
         </div>
+
         <div
-          onClick={() => {
-            setTab("summary");
-            setTimeout(() => document.getElementById("init")?.click(), 500);
-          }}
-          className={`px-4 py-2 rounded-2xl hover:bg-white/5 text-lg transition-colors ${tab === "summary" ? "bg-white/5" : ""}`}
+          onClick={() => setFilterPopUp(true)}
+          className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors`}
         >
-          Summary
+          Filter
         </div>
       </div>
 
-      {/* <div onClick={add}>Add</div> */}
-      {tab === "transactions" ? (
-        <div className="flex w-full flex-1 gap-6 h-full /justify-center items-center flex-col">
-          {loading ? (
-            <div className="flex flex-col w-full h-full items-center justify-center gap-4">
-              <Loader />
-            </div>
-          ) : error.length ? (
-            <div className="text-red-500 text-lg">{error}</div>
-          ) : !data.length ? (
-            <div className="text-gray-500 w-full h-full flex items-center justify-center text-lg">
-              No transactions found.
-            </div>
-          ) : (
-            <div className="flex flex-col w-full h-full items-center gap-4">
-              {data.map((transaction) => (
-                <TransactionPalette key={transaction._id} data={transaction} />
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="text-gray-500 text-lg flex flex-col gap-10 items-center justify-center h-full w-full">
-          <div className="w-full flex gap-4 text-xs">
-            <div
-              id="init"
-              onClick={() => {
-                setDataIn(data);
-                setGraphData("All");
-              }}
-              className={`${graphData === "All" ? "bg-white/5 text-white" : ""} rounded-2xl hover:bg-white/5 transition-colors px-4 py-2`}
-            >
-              All
-            </div>
-            <div
-              onClick={() => {
-                setDataIn(
-                  data.filter(
-                    (d) => !d.transaction.recieverAcc.includes(ACC_OWNER),
-                  ),
-                );
-                setGraphData("Expenses");
-              }}
-              className={`${graphData === "Expenses" ? "bg-white/5 text-white" : ""} rounded-2xl hover:bg-white/5 transition-colors px-4 py-2`}
-            >
-              Expenses
-            </div>
-            <div
-              onClick={() => {
-                setDataIn(
-                  data.filter(
-                    (d) => !d.transaction.payerAcc.includes(ACC_OWNER),
-                  ),
-                );
-                setGraphData("Incomes");
-              }}
-              className={`${graphData === "Incomes" ? "bg-white/5 text-white" : ""} rounded-2xl hover:bg-white/5 transition-colors px-4 py-2`}
-            >
-              Incomes
-            </div>
+      <div className="flex flex-col w-full gap-3">
+        <div className="flex w-full justify-between px-4  items-center">
+          <div className="text-gray-500">CBE Balance</div>
+          <div className="">
+            {dataIn.find((dat) => dat.transaction.bank === "CBE")?.transaction
+              ?.remaining || ""}
           </div>
-
-          <TransactionPieChart data={pieData} />
-          <SummaryTable data={pieData} />
-          <ReasonTable data={reasonData} />
         </div>
-      )}
+
+        <div className="flex w-full justify-between px-4  items-center">
+          <div className="text-gray-500">TeleBirr Balance</div>
+          <div className="">
+            {dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
+              ?.transaction?.remaining || ""}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex w-full flex-1 gap-6 h-full items-center flex-col">
+        {loading ? (
+          <div className="flex flex-col w-full h-full items-center justify-center gap-4">
+            <Loader />
+          </div>
+        ) : error.length ? (
+          <div className="text-red-500 text-lg">{error}</div>
+        ) : !dataIn ? null : !dataIn.length ? (
+          <div className="text-gray-500 w-full h-full flex items-center justify-center text-lg">
+            No transactions found.
+          </div>
+        ) : listType === "ui" ? (
+          <div className="flex flex-col w-full h-full items-center gap-4">
+            {dataIn.map((transaction) => (
+              <TransactionPalette key={transaction._id} data={transaction} />
+            ))}
+          </div>
+        ) : (
+          <div className="w-full overflow-x-auto">
+            <table className="w-max min-w-full text-left border-collapse">
+              <thead>
+                <tr className="text-gray-400 border-b border-white/10">
+                  <th className="p-3">Date</th>
+                  <th className="p-3">Transaction</th>
+                  <th className="p-3">Reason</th>
+                  <th className="p-3">Amount</th>
+                  <th className="p-3">Category</th>
+                  <th className="p-3">Bank</th>
+                  <th className="p-3">Reciept</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {dataIn.map((rowData) => {
+                  const row = rowData.transaction;
+                  const toOrFrom = row.recieverAcc.includes(ACC_OWNER) ? (
+                    <div className="flex text-center items-center">
+                      <span className="text-xs text-center text-gray-500">
+                        FROM{" "}
+                      </span>
+                      <span className="capitalize">{row.payerAcc}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-xs text-gray-500">TO </span>
+                      <span className="capitalize">{row.recieverAcc}</span>
+                    </>
+                  );
+
+                  return (
+                    <tr
+                      key={row.url}
+                      className="border-b border-white/5 hover:bg-white/5"
+                    >
+                      <td className="p-3">{row.date}</td>
+                      <td className="p-3">{toOrFrom}</td>
+                      <td className="p-3">{row.reason}</td>
+                      <td className="p-3">{row.amount}</td>
+                      <td className="p-3">{row.category}</td>
+                      <td className="p-3">{row.bank}</td>
+                      <td className="w-35">
+                        <Link
+                          target="_blank"
+                          href={row.url}
+                          className="px-5 py-2 bg-white/5 rounded-full"
+                        >
+                          View Reciept
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
