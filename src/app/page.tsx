@@ -39,18 +39,18 @@ export default function Home() {
     } else setError("Passwords don't match");
   };
 
-  const submit = (f) => {
+  const submit = (f: React.FormEvent<HTMLFormElement>) => {
     f.preventDefault();
     if (input === pass) setLocked(false);
     else setError("Incorrect password");
   };
 
-  const submitSetup1 = (f) => {
+  const submitSetup1 = (f: React.FormEvent<HTMLFormElement>) => {
     f.preventDefault();
     document.getElementById("in")?.focus();
   };
 
-  const submitSetup2 = (f) => {
+  const submitSetup2 = (f: React.FormEvent<HTMLFormElement>) => {
     f.preventDefault();
     if (input === input_) {
       localStorage.setItem("__n-xl_password__", input);
