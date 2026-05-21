@@ -3,7 +3,7 @@ import { TransactionParsedType } from "@/db/methods";
 
 export const VERSION_STRING = "1.3.0";
 // TODO: Replace the acc_owner with the full name of the admin of this app
-export const ACC_OWNER = "Jemal Muhammed Zekaria";
+export const ACC_OWNER = "Jemal Muhamed Zekaria";
 
 export async function extract(url: string) {
   const buffer = await fetch(url).then((res) => res.arrayBuffer());

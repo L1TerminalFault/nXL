@@ -31,34 +31,34 @@ export const useTransactionStore = create(
     setDataIn: (value: TransactionParsedType[]) =>
       set(() => ({
         dataIn: value
-	//  .map((val) => ({
-        //  ...val,
-        //  transaction: {
-        //    ...val.transaction,
-        //    date: `${
-        //      toEthiopian(
-        //        Number(val.transaction.date.split("-")[0]),
-        //        Number(val.transaction.date.split("-")[1]),
-        //        Number(val.transaction.date.split("-")[2].split("T")[0]),
-        //      ).year
-        //    }-${
-        //      toEthiopian(
-        //        Number(val.transaction.date.split("-")[0]),
-        //        Number(val.transaction.date.split("-")[1]),
-        //        Number(val.transaction.date.split("-")[2].split("T")[0]),
-        //      ).month
-        //    }-${
-        //      toEthiopian(
-        //        Number(val.transaction.date.split("-")[0]),
-        //        Number(val.transaction.date.split("-")[1]),
-        //        Number(val.transaction.date.split("-")[2].split("T")[0]),
-        //      ).day
-        //    }`
-        //      .split("-")
-        //      .reverse()
-        //      .join("-"),
-        //  },
-        //})),
+	  .map((val) => ({
+          ...val,
+          transaction: {
+            ...val.transaction,
+            date: `${
+              toEthiopian(
+                Number(val.transaction.date.split("-")[0]),
+                Number(val.transaction.date.split("-")[1]),
+                Number(val.transaction.date.split("-")[2].split("T")[0]),
+              ).year
+            }-${
+              toEthiopian(
+                Number(val.transaction.date.split("-")[0]),
+                Number(val.transaction.date.split("-")[1]),
+                Number(val.transaction.date.split("-")[2].split("T")[0]),
+              ).month
+            }-${
+              toEthiopian(
+                Number(val.transaction.date.split("-")[0]),
+                Number(val.transaction.date.split("-")[1]),
+                Number(val.transaction.date.split("-")[2].split("T")[0]),
+              ).day
+            }`
+              .split("-")
+              .reverse()
+              .join("-"),
+          },
+        })),
       })),
 
     filterOthers: { trans: "All", bank: "All" },
