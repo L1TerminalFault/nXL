@@ -22,6 +22,22 @@ export default function Page() {
   const [filterPopUp, setFilterPopUp] = useState(false);
   const [listType, setListType] = useState<string>("ui");
 
+  useEffect(() => {
+      let total_ = total;
+
+      const data_ = dataIn.forEach(({ transaction }) => {
+        const accCredited = ACC_OWNER.toLowerCase().includes(
+          parsedTrans.recieverAcc.trim().toLowerCase(),
+        );
+
+        if (accCredited) total_ += parseFloat(transaction.amount.split(" ")[1])
+        else total_ -= parseFloat(transaction.amount.split(" ")[1])
+      });
+
+      setTotal(total_);
+
+  }, [dataIn])
+
   const fetchData = useCallback(async () => {
     // setLoading(false);
     // setDataIn(getMockTransactions());
@@ -37,32 +53,13 @@ export default function Page() {
         status: string;
         data: TransactionType[];
       };
-      let total_ = total;
 
-      const parsedData = fetched.data.map(({ _id, transaction, users }) => {
-        const parsedTrans = JSON.parse(transaction);
-
-        const accCredited = ACC_OWNER.toLowerCase().includes(
-          parsedTrans.recieverAcc.trim().toLowerCase(),
-        );
-
-        if (accCredited) total_ += parseFloat(parsedTrans.amount.split(" ")[1])
-        //  setTotal(
-        //    (prev) => (prev += parseFloat(parsedTrans.amount.split(" ")[1])),
-        //  );
-        else total_ -= parseFloat(parsedTrans.amount.split(" ")[1])
-        //  setTotal(
-        //    (prev) => (prev -= parseFloat(parsedTrans.amount.split(" ")[1])),
-        //  );
-
-        return {
+      const parsedData = fetched.data.map(({ _id, transaction, users }) => ({
           _id,
           users,
-          transaction: parsedTrans,
-        };
-      });
+          transaction: JSON.parse(transaction),
+        });
 
-      setTotal(total_);
       setData(parsedData);
       setDataIn(parsedData);
     } catch {
@@ -223,7 +220,7 @@ export default function Page() {
                   <td className="p-3">Total</td>
                   <td className="p-3"></td>
                   <td className="p-3"></td>
-                  <td className="p-3">{total}</td>
+                  <td className="p-3">ETB {total}</td>
                   <td className="p-3"></td>
                   <td className="p-3"></td>
                   <td className="w-35"></td>

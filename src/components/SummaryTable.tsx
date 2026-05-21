@@ -45,7 +45,7 @@ export default function SummaryTable({ data }: Props) {
           Export
         </div>
       </div>
-      <table className="w-full text-left border-collapse">
+      <table id="exportable" className="w-full text-left border-collapse">
         <thead>
           <tr className="text-gray-400 border-b border-white/10">
             <th className="p-3">Category</th>
