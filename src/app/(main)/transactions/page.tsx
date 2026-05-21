@@ -15,13 +15,12 @@ import FilterPopup from "@/components/FilterPopup";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
-  const { data, setData, dataIn, setDataIn } = useTransactionStore();
+  const { data, setData, dataIn, setDataIn, total, setTotal } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const [filterPopUp, setFilterPopUp] = useState(false);
   const [listType, setListType] = useState<string>("ui");
-  const [total, setTotal] = useState(0);
 
   const fetchData = useCallback(async () => {
     // setLoading(false);

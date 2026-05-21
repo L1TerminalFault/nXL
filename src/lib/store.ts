@@ -20,6 +20,8 @@ export const useTransactionStore = create(
     setFilterOthers: (value: FilterOthersType) => void;
     filterState: string[];
     setFilterState: (value: string[]) => void;
+    total: number;
+    setTotal: (value: number) => void;
     locked: boolean;
     setLocked: (value: boolean) => void;
   } => ({
@@ -66,6 +68,8 @@ export const useTransactionStore = create(
       set(() => ({ filterOthers: value })),
     filterState: ["All"],
     setFilterState: (value: string[]) => set(() => ({ filterState: value })),
+    total: 0,
+    setTotal: (value: number) => set(() => ({ total: value })),
     locked: true,
     setLocked: () => set((prev) => ({ locked: !prev })),
   }),

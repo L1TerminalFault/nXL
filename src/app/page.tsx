@@ -27,6 +27,16 @@ export default function Home() {
       })();
       document.getElementById("inputPass")?.focus();
     }
+
+    window.addEventListener("focus", () => {
+	    if (document.hidden || !document.hasFocus()) redirect("/");
+    })
+    window.addEventListener("blur", () => {
+	    if (document.hidden || !document.hasFocus()) redirect("/");
+    })
+    window.addEventListener("visibilitychange", () => {
+	    if (document.hidden || !document.hasFocus()) redirect("/");
+    })
   });
 
   const handleSumbmit = () => {

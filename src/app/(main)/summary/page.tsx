@@ -14,7 +14,7 @@ export default function Filter() {
   const [dataUsed, setDataUsed] = useState<TransactionParsedType[]>([]);
 
   useEffect(() => {
-    if (locked) redirect("/");
+    // if (locked) redirect("/");
     (() =>
       setDataUsed(
         dataIn.filter((d) => !d.transaction.recieverAcc.includes(ACC_OWNER)),
