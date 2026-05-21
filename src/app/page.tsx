@@ -29,13 +29,13 @@ export default function Home() {
     }
 
     window.addEventListener("focus", () => {
-	    if (document.hidden || !document.hasFocus()) redirect("/");
+	    if (document.hidden || !document.hasFocus()) {setLocked(true)};
     })
     window.addEventListener("blur", () => {
-	    if (document.hidden || !document.hasFocus()) redirect("/");
+	    if (document.hidden || !document.hasFocus()) {setLocked(true)};
     })
     window.addEventListener("visibilitychange", () => {
-	    if (document.hidden || !document.hasFocus()) redirect("/");
+	    if (document.hidden || !document.hasFocus()) {setLocked(true)};
     })
   });
 
