@@ -29,7 +29,7 @@ export default function SummaryTable({ data }: Props) {
     const pdf = new jsPDF();
 
     autoTable(pdf, {
-      html: "#exportable",
+      html: "#export-summary-table",
     });
 
     pdf.save(`table-${Intl.DateTimeFormat("en-GB").format(Date.now())}`);
@@ -45,7 +45,7 @@ export default function SummaryTable({ data }: Props) {
           Export
         </div>
       </div>
-      <table id="exportable" className="w-full text-left border-collapse">
+      <table id="export-summary-table" className="w-full text-left border-collapse">
         <thead>
           <tr className="text-gray-400 border-b border-white/10">
             <th className="p-3">Category</th>
