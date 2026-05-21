@@ -11,7 +11,7 @@ import { ACC_OWNER, categories, isAdmin } from "@/lib/utils";
 
 export default function TransactionPage() {
   const router = useRouter();
-  const { dataIn, setData } = useTransactionStore();
+  const { data, dataIn, setData } = useTransactionStore();
   const { id } = useParams();
   const [reason, setReason] = useState("");
   const [category, setCategory] = useState("");
@@ -74,6 +74,7 @@ export default function TransactionPage() {
 
   const update = async () => {
     setUpdateBtn("Updating...");
+    const date = data?.find((d) => d._id === trans._id)?.transaction.date;
     try {
       await fetch("/api/updateTransaction", {
         method: "POST",
@@ -82,6 +83,7 @@ export default function TransactionPage() {
             _id: trans._id,
             transaction: {
               ...trans.transaction,
+              date,
               reason,
               category,
             },

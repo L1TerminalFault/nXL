@@ -1,5 +1,7 @@
 "use client";
 
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 
@@ -19,6 +21,7 @@ export default function Page() {
   const { user } = useUser();
   const [filterPopUp, setFilterPopUp] = useState(false);
   const [listType, setListType] = useState<string>("ui");
+  const [total, setTotal] = useState(0);
 
   const fetchData = useCallback(async () => {
     // setLoading(false);
@@ -36,11 +39,28 @@ export default function Page() {
         data: TransactionType[];
       };
 
-      const parsedData = fetched.data.map(({ _id, transaction, users }) => ({
-        _id,
-        users,
-        transaction: JSON.parse(transaction),
-      }));
+      const parsedData = fetched.data.map(({ _id, transaction, users }) => {
+        const parsedTrans = JSON.parse(transaction);
+
+        const accCredited = ACC_OWNER.toLowerCase().includes(
+          parsedTrans.transaction.recieverAcc.trim().toLowerCase(),
+        );
+
+        if (accCredited)
+          setTotal(
+            (prev) => (prev += parseFloat(parsedTrans.transaction.amount)),
+          );
+        else
+          setTotal(
+            (prev) => (prev -= parseFloat(parsedTrans.transaction.amount)),
+          );
+
+        return {
+          _id,
+          users,
+          transaction: parsedTrans,
+        };
+      });
 
       // console.log(parsedData);
       setData(parsedData);
@@ -51,6 +71,16 @@ export default function Page() {
       setLoading(false);
     }
   }, [setData, user, setDataIn]);
+
+  const handleExport = () => {
+    const pdf = new jsPDF();
+
+    autoTable(pdf, {
+      html: "#exportable-table",
+    });
+
+    pdf.save(`table-${Intl.DateTimeFormat("en-GB").format(Date.now())}`);
+  };
 
   useEffect(() => {
     if (!data) (() => fetchData())();
@@ -121,7 +151,18 @@ export default function Page() {
           </div>
         ) : (
           <div className="w-full overflow-x-auto">
-            <table className="w-max min-w-full text-left border-collapse">
+            <div className="w-full flex justify-end pr-4">
+              <div
+                onClick={handleExport}
+                className="rounded-full bg-white/5 hover:bg-white/10 text-sm text-white px-5 py-3 transition-colors"
+              >
+                Export
+              </div>
+            </div>
+            <table
+              id="exportable-table"
+              className="w-max min-w-full text-left border-collapse"
+            >
               <thead>
                 <tr className="text-gray-400 border-b border-white/10">
                   <th className="p-3">Date</th>
@@ -137,7 +178,16 @@ export default function Page() {
               <tbody>
                 {dataIn.map((rowData) => {
                   const row = rowData.transaction;
-                  const toOrFrom = row.recieverAcc.includes(ACC_OWNER) ? (
+                  //console.log(ACC_OWNER, row.receiverAcc)
+                  console.log(
+                    "check this ",
+                    ACC_OWNER.toLowerCase().includes(
+                      row.recieverAcc.toLowerCase(),
+                    ),
+                  );
+                  const toOrFrom = ACC_OWNER.toLowerCase().includes(
+                    row.recieverAcc.toLowerCase(),
+                  ) ? (
                     <div className="flex text-center items-center">
                       <span className="text-xs text-center text-gray-500">
                         FROM{" "}
@@ -163,17 +213,28 @@ export default function Page() {
                       <td className="p-3">{row.category}</td>
                       <td className="p-3">{row.bank}</td>
                       <td className="w-35">
-                        <Link
-                          target="_blank"
-                          href={row.url}
-                          className="px-5 py-2 bg-white/5 rounded-full"
-                        >
-                          View Reciept
-                        </Link>
+                        {row.url ? (
+                          <Link
+                            target="_blank"
+                            href={row.url}
+                            className="px-5 py-2 bg-white/5 rounded-full"
+                          >
+                            View Reciept
+                          </Link>
+                        ) : null}
                       </td>
                     </tr>
                   );
                 })}
+                <tr className="border-b border-white/5 hover:bg-white/5 font-bold">
+                  <td className="p-3">Total</td>
+                  <td className="p-3"></td>
+                  <td className="p-3"></td>
+                  <td className="p-3">{total}</td>
+                  <td className="p-3"></td>
+                  <td className="p-3"></td>
+                  <td className="w-35"></td>
+                </tr>
               </tbody>
             </table>
           </div>

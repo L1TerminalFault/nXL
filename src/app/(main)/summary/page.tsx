@@ -43,7 +43,9 @@ export default function Filter() {
 
   return (
     <div className="md:p-10 p-3 pt-6 gap-20 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
-      <div className="text-gray-500">Expenses Summary</div>
+      <div id="exportable" className="text-gray-500">
+        Expenses Summary
+      </div>
 
       <div className="text-gray-500 text-lg flex flex-col gap-30 items-center justify-center h-full w-full">
         {!dataUsed.length ? (

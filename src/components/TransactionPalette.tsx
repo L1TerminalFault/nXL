@@ -16,6 +16,7 @@ export default function TransactionPalette({
   const accCredited = ACC_OWNER.toLowerCase().includes(
     transaction.recieverAcc.trim().toLowerCase(),
   );
+  console.log(transaction.recieverAcc)
 
   const otherAccount = accCredited
     ? {
@@ -54,14 +55,14 @@ export default function TransactionPalette({
             </div>
           </div>
 
-          <Link
+	  {transaction.url ? <Link
             onClick={(e) => e.stopPropagation()}
             href={transaction.url || ""}
             target="_blank"
             className={`${!transaction.url ? "hidden" : ""} px-4 py-2 bg-white/5 hover:bg-white/10 text-white md:text-base text-xs text-nowrap rounded-full transition-colors`}
           >
             View Receipt
-          </Link>
+          </Link> : null}
         </div>
 
         <div className="flex justify-between w-full">

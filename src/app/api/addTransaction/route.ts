@@ -5,11 +5,9 @@ export async function POST(req: Request) {
   try {
     await dbConnect();
 
-    console.log("parsing.................")
     const raw = await req.text();
-    const cleanText = raw.replace(/[^\x20-\x7E]/g, ' ');
+    const cleanText = raw.replace(/[^\x20-\x7E]/g, " ");
     const { transaction } = JSON.parse(cleanText);
-    console.log(transaction)
 
     const match = transaction.match(/https?:\/\/[^\s]+/);
 
@@ -100,15 +98,18 @@ export async function POST(req: Request) {
       const user = (clean.match(/Dear\s+([A-Za-z]+)/i) || [])[1] || "";
 
       let type = null;
-      
+
       if (/you have received/i.test(clean)) {
         type = "received";
-      } else if (/you have transferred/i.test(clean) || /you have paid/i.test(clean)) {
+      } else if (
+        /you have transferred/i.test(clean) ||
+        /you have paid/i.test(clean)
+      ) {
         type = "paid";
       } else {
         type = "unknown";
       }
-      
+
       if (type === "paid") {
         payerAcc = user;
         recieverAcc = "";
@@ -184,6 +185,7 @@ export async function POST(req: Request) {
       category,
       remaining,
     };
+    console.log(dataRefactored);
 
     await addTransaction(JSON.stringify(dataRefactored));
 
