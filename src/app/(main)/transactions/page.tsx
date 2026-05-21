@@ -27,7 +27,7 @@ export default function Page() {
 
       const data_ = dataIn.forEach(({ transaction }) => {
         const accCredited = ACC_OWNER.toLowerCase().includes(
-          parsedTrans.recieverAcc.trim().toLowerCase(),
+          transaction.recieverAcc.trim().toLowerCase(),
         );
 
         if (accCredited) total_ += parseFloat(transaction.amount.split(" ")[1])
