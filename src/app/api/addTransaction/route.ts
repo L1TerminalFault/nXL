@@ -112,14 +112,14 @@ export async function POST(req: Request) {
 
       if (type === "paid") {
         payerAcc = user;
-        recieverAcc = "";
+        recieverAcc = "Unknown";
       } else if (type === "received") {
         recieverAcc = user;
-        payerAcc = "";
+        payerAcc = "Unknown";
       }
 
       amount =
-        (clean.match(/ETB\s*([\d,.]+)/i) || [])[1].replace(/,/g, "") || "";
+        "ETB " + (clean.match(/ETB\s*([\d,.]+)/i) || [])[1].replace(/,/g, "") || "";
 
       const dateMatch =
         clean.match(/on\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/) ||
@@ -185,7 +185,7 @@ export async function POST(req: Request) {
       category,
       remaining,
     };
-    console.log(dataRefactored);
+    //console.log(dataRefactored);
 
     await addTransaction(JSON.stringify(dataRefactored));
 
