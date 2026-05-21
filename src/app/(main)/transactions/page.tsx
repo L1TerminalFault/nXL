@@ -23,7 +23,7 @@ export default function Page() {
   const [listType, setListType] = useState<string>("ui");
 
   useEffect(() => {
-      let total_ = total;
+      let total_ = 0;
 
       const data_ = dataIn.forEach(({ transaction }) => {
         const accCredited = ACC_OWNER.toLowerCase().includes(
