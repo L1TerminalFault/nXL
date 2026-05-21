@@ -38,6 +38,7 @@ export default function Page() {
         status: string;
         data: TransactionType[];
       };
+      let total_ = total;
 
       const parsedData = fetched.data.map(({ _id, transaction, users }) => {
         const parsedTrans = JSON.parse(transaction);
@@ -46,14 +47,14 @@ export default function Page() {
           parsedTrans.recieverAcc.trim().toLowerCase(),
         );
 
-        if (accCredited)
-          setTotal(
-            (prev) => (prev += parseFloat(parsedTrans.amount.split(" ")[1])),
-          );
-        else
-          setTotal(
-            (prev) => (prev -= parseFloat(parsedTrans.amount.split(" ")[1])),
-          );
+        if (accCredited) total_ += parseFloat(parsedTrans.amount.split(" ")[1])
+        //  setTotal(
+        //    (prev) => (prev += parseFloat(parsedTrans.amount.split(" ")[1])),
+        //  );
+        else total_ -= parseFloat(parsedTrans.amount.split(" ")[1])
+        //  setTotal(
+        //    (prev) => (prev -= parseFloat(parsedTrans.amount.split(" ")[1])),
+        //  );
 
         return {
           _id,
@@ -62,6 +63,7 @@ export default function Page() {
         };
       });
 
+      setTotal(total_);
       setData(parsedData);
       setDataIn(parsedData);
     } catch {
