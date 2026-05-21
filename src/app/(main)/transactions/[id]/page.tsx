@@ -176,7 +176,7 @@ export default function TransactionPage() {
               <div className="text-gray-500 uppercase/ text-sm">
                 {isAdminUser ? "Choose a category" : "Category"}
               </div>
-              <div className="flex md:gap-3 gap-2">
+              <div className="flex flex-wrap md:gap-3 gap-2">
                 {categories.map((each) => (
                   <div
                     onClick={() => setCategory(each)}

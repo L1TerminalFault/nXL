@@ -16,8 +16,6 @@ export default function TransactionPalette({
   const accCredited = ACC_OWNER.toLowerCase().includes(
     transaction.recieverAcc.trim().toLowerCase(),
   );
-  console.log(accCredited)
-  console.log(transaction)
 
   const otherAccount = accCredited
     ? {
@@ -28,7 +26,6 @@ export default function TransactionPalette({
         holder: transaction.recieverAcc,
         number: transaction.recieverAccNo,
       };
-      console.log("the other acc ", otherAccount)
 
   return (
     <div
