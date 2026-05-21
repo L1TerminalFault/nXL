@@ -11,19 +11,21 @@ export default function Home() {
   const [input_, setInput_] = useState("");
   const [error, setError] = useState("");
   const [pass, setPass] = useState("");
+  const [title, setTitle] = useState("Setup Password");
   const [firstTime, setFirstTime] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!locked) redirect("/home");
     const passwd = localStorage.getItem("__n-xl_password__");
 
-    if (!passwd) {
+    if (!passwd || !passwd.length) {
       (() => setFirstTime(true))();
     } else {
       (() => {
         setPass(passwd);
         setFirstTime(false);
       })();
+      document.getElementById("inputPass")?.focus();
     }
   });
 
@@ -31,6 +33,15 @@ export default function Home() {
     if (input === pass) setLocked(false);
     else setError("Incorrect password");
   };
+
+  const handleUpdate = () => {
+	  if (input === pass) {
+	      localStorage.removeItem("__n-xl_password__");
+	      setTitle("Change Password");
+	      setFirstTime(true);
+	  }
+	  else setError("Incorrect password");
+  }
 
   const handleSetup = () => {
     if (input === input_) {
@@ -66,6 +77,7 @@ export default function Home() {
             <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
             <form onSubmit={submit} className="flex text-xl gap-5 items-center">
               <input
+	        id="inputPass"
                 type="text"
                 placeholder="Enter Password"
                 value={input}
@@ -81,11 +93,20 @@ export default function Home() {
               </div>
             </form>
             <div className="text-red-500 text-xs w-full px-3.5">{error}</div>
+            <div className="flex w-full justify-end">
+              <div
+                role="button"
+                onClick={handleUpdate}
+                className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+              >
+                Change
+              </div>
+            </div>
           </>
         ) : firstTime === true ? (
           <>
             <div className="text-gray-500 w-full px-3.5 text-xs">
-              Setup password
+              {title}
             </div>
             <form
               onSubmit={submitSetup1}

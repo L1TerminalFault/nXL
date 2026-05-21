@@ -33,7 +33,7 @@ export default function TransactionPage() {
     try {
       const res = await (await fetch("/api/getAllUsers")).json();
       setAllUsers(res);
-      console.log("the response " + res);
+      //console.log("the response " + res);
     } catch (err) {
       console.log("Error fetching users: " + err);
     } finally {
@@ -143,11 +143,6 @@ export default function TransactionPage() {
               </div>
               <div className="text-gray-400 md:text-xl text-sm">
                 {trans.transaction.date}
-                {/* {new Date(trans.transaction.date).toLocaleDateString("en-US", { */}
-                {/*   weekday: "short", */}
-                {/*   month: "short", */}
-                {/*   day: "numeric", */}
-                {/* })} */}
               </div>
             </div>
 

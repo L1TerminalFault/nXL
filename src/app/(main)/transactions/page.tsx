@@ -43,16 +43,16 @@ export default function Page() {
         const parsedTrans = JSON.parse(transaction);
 
         const accCredited = ACC_OWNER.toLowerCase().includes(
-          parsedTrans.transaction.recieverAcc.trim().toLowerCase(),
+          parsedTrans.recieverAcc.trim().toLowerCase(),
         );
 
         if (accCredited)
           setTotal(
-            (prev) => (prev += parseFloat(parsedTrans.transaction.amount)),
+            (prev) => (prev += parseFloat(parsedTrans.amount.split(" ")[1])),
           );
         else
           setTotal(
-            (prev) => (prev -= parseFloat(parsedTrans.transaction.amount)),
+            (prev) => (prev -= parseFloat(parsedTrans.amount.split(" ")[1])),
           );
 
         return {
@@ -62,7 +62,6 @@ export default function Page() {
         };
       });
 
-      // console.log(parsedData);
       setData(parsedData);
       setDataIn(parsedData);
     } catch {
@@ -178,13 +177,6 @@ export default function Page() {
               <tbody>
                 {dataIn.map((rowData) => {
                   const row = rowData.transaction;
-                  //console.log(ACC_OWNER, row.receiverAcc)
-                  console.log(
-                    "check this ",
-                    ACC_OWNER.toLowerCase().includes(
-                      row.recieverAcc.toLowerCase(),
-                    ),
-                  );
                   const toOrFrom = ACC_OWNER.toLowerCase().includes(
                     row.recieverAcc.toLowerCase(),
                   ) ? (

@@ -169,4 +169,4 @@ export function buildCategorySummary(
   }));
 }
 
-export const categories = ["Home", "Self", "Transport", "Others"];
+export const categories = ["Food & Dining", "Transportation", "Shopping", "House Rental", "Healthcare", "Education", "Entertainment", "Utilities", "Salary", "Business", "Investment"];
