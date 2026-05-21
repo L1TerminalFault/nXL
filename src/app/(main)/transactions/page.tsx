@@ -58,7 +58,7 @@ export default function Page() {
           _id,
           users,
           transaction: JSON.parse(transaction),
-        });
+        }))
 
       setData(parsedData);
       setDataIn(parsedData);
