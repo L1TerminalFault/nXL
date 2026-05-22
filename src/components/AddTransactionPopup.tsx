@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TransactionParsedType } from "@/db/methods";
 import { categories } from "@/lib/utils";
-import { toGregorian } from "ethiopian-calendar-new";
+import { toGregorian, toEthiopian } from "ethiopian-calendar-new";
 
 interface AddTransactionPopupProps {
   onClose: () => void;
+  inline?: boolean;
+  onSuccess?: () => void;
 }
 
-export default function AddTransactionPopup({ onClose }: AddTransactionPopupProps) {
+export default function AddTransactionPopup({ onClose, inline, onSuccess }: AddTransactionPopupProps) {
   const [loading, setLoading] = useState(false);
   const [direction, setDirection] = useState<"TO" | "FROM">("TO");
   const [accountInput, setAccountInput] = useState("");
@@ -23,6 +25,15 @@ export default function AddTransactionPopup({ onClose }: AddTransactionPopupProp
     url: "",
     category: "",
   });
+
+  useEffect(() => {
+    const now = new Date();
+    const ethNow = toEthiopian(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    setFormData((prev) => ({
+      ...prev,
+      date: `${ethNow.year}-${String(ethNow.month).padStart(2, "0")}-${String(ethNow.day).padStart(2, "0")}`,
+    }));
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -81,6 +92,7 @@ export default function AddTransactionPopup({ onClose }: AddTransactionPopupProp
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      if (onSuccess) onSuccess();
       onClose();
     } catch (e) {
       console.error(e);
@@ -89,14 +101,12 @@ export default function AddTransactionPopup({ onClose }: AddTransactionPopupProp
     }
   };
 
-  return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-    >
+  const content = (
       <div
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-white/10 rounded-4xl p-6 flex flex-col gap-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"
+        onClick={(e) => {
+          if (!inline) e.stopPropagation();
+        }}
+        className={`w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-white/10 ${inline ? "rounded-2xl p-4 md:p-6" : "rounded-4xl p-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"} flex flex-col gap-6`}
       >
         <div className="flex justify-between items-center">
           <h2 className="text-lg text-gray-500 pl-3">Add Transaction</h2>
@@ -191,6 +201,18 @@ export default function AddTransactionPopup({ onClose }: AddTransactionPopupProp
           </button>
         </div>
       </div>
+  );
+
+  if (inline) {
+    return content;
+  }
+
+  return (
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+    >
+      {content}
     </div>
   );
 }

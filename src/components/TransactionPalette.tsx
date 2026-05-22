@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { TransactionParsedType } from "@/db/methods";
 import { ACC_OWNER } from "@/lib/utils";
+import AddTransactionPopup from "./AddTransactionPopup";
 
 export default function TransactionPalette({
   data,
@@ -12,6 +14,45 @@ export default function TransactionPalette({
   const _id = data._id;
   const transaction = data.transaction;
   const router = useRouter();
+  const [expanded, setExpanded] = useState(false);
+
+  if (transaction.message && transaction.message.length > 0) {
+    if (expanded) {
+      return (
+        <div className="flex flex-col w-full bg-white/5 p-4 rounded-3xl gap-4">
+          <div className="text-gray-300 text-sm p-4 bg-white/10 rounded-2xl whitespace-pre-wrap font-mono">
+            {transaction.message}
+          </div>
+          <AddTransactionPopup 
+            inline 
+            onClose={() => setExpanded(false)} 
+            onSuccess={() => {
+              fetch(`/api/deleteTransaction?id=${_id}`).then(() => {
+                setExpanded(false);
+                window.location.reload();
+              });
+            }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div
+        onClick={() => setExpanded(true)}
+        className="flex w-full bg-red-500/10 border border-red-500/20 md:p-5 p-4 rounded-3xl hover:bg-red-500/20 transition-colors cursor-pointer"
+      >
+        <div className="flex flex-col gap-2 w-full">
+          <div className="text-red-400 font-semibold text-sm md:text-base">
+            This message couldn't be parsed. Click to add manually.
+          </div>
+          <div className="text-gray-400 text-xs md:text-sm line-clamp-2">
+             {transaction.message}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const accCredited = ACC_OWNER.toLowerCase().includes(
     transaction.recieverAcc.trim().toLowerCase(),

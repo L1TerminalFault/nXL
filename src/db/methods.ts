@@ -19,6 +19,7 @@ export type TransactionParsedType = Omit<TransactionType, "transaction"> & {
     remaining: string;
     url: string;
     category: string;
+    message?: string;
   };
 };
 
