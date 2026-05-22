@@ -156,13 +156,13 @@ export default function TransactionPage() {
               >
                 View Receipt
               </Link> : 
-	      <input
+		      isAdmin(user?.id) ? <input
 	        type="text"
 		placeholder="Paste Reciept Link"
 		value={url}
 		onChange={(e) => setUrl(e.target.value)}
 		className="outline-none text-xs rounded-full p-3 px-5 border-gray-700/60 focus:border-gray-700 hover:border-gray-700 border"
-	      />
+	      /> : null
 	    }
             </div>
           </div>
