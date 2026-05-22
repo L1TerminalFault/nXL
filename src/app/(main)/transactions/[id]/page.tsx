@@ -22,6 +22,7 @@ export default function TransactionPage() {
   const [deleteBtn, setDeleteBtn] = useState("Delete");
   const { user } = useUser();
   const [isAdminUser, setIsAdminUser] = useState(false);
+  const [url, setUrl] = useState("");
   const [allUsers, setAllUsers] = useState<
     { username: string; id: string; image: string }[]
   >([]);
@@ -86,6 +87,7 @@ export default function TransactionPage() {
               date,
               reason,
               category,
+	      url,
             },
             users: allowedUsers,
           },
@@ -147,13 +149,21 @@ export default function TransactionPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Link
+	    {trans.transaction.url.length ? <Link
                 href={trans.transaction.url || ""}
                 className="rounded-full p-3 px-5 md:text-xl text-nowrap text-sm bg-white/5 hover:bg-white/10 transition-colors"
                 target="_blank"
               >
                 View Receipt
-              </Link>
+              </Link> : 
+	      <input
+	        type="text"
+		placeholder="Paste Reciept Link"
+		value={url}
+		onChange={(e) => setUrl(e.target.value)}
+		className="outline-none hover:border-gray-700 border"
+	      />
+	    }
             </div>
           </div>
 

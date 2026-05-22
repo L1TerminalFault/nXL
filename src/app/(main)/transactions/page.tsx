@@ -64,8 +64,9 @@ export default function Page() {
 
       setData(parsedData);
       setDataIn(parsedData);
-    } catch {
+    } catch (error) {
       setError("Connect to internet, if issue persists let us know");
+      console.log("Error ", error);
     } finally {
       setLoading(false);
     }

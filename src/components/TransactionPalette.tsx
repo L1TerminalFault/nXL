@@ -25,6 +25,7 @@ export default function TransactionPalette({
           </div>
           <AddTransactionPopup 
             inline 
+	    id={_id || ""}
             onClose={() => setExpanded(false)} 
             onSuccess={() => {
               fetch(`/api/deleteTransaction?id=${_id}`).then(() => {

@@ -30,7 +30,7 @@ export default function SummaryTable({ data }: Props) {
     if (!element) return;
 
     try {
-      const canvas = await html2canvas(element, { 
+      const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#000000",
@@ -39,13 +39,15 @@ export default function SummaryTable({ data }: Props) {
       });
       const data = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
-      
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
+
       pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`summary-${Intl.DateTimeFormat("en-GB").format(Date.now())}.pdf`);
-    } catch(err) {
+      pdf.save(
+        `summary-${Intl.DateTimeFormat("en-GB").format(Date.now())}.pdf`,
+      );
+    } catch (err) {
       console.error(err);
     }
   };
@@ -60,7 +62,10 @@ export default function SummaryTable({ data }: Props) {
           Export
         </div>
       </div>
-      <table id="export-summary-table" className="w-full text-left border-collapse">
+      <table
+        id="export-summary-table"
+        className="w-full text-left border-collapse"
+      >
         <thead>
           <tr className="text-gray-400 border-b border-white/10">
             <th className="p-3">Category</th>

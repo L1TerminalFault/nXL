@@ -1,6 +1,5 @@
 "use client";
 
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useTransactionStore } from "@/lib/store";
@@ -42,10 +41,11 @@ export default function Filter() {
   }));
 
   return (
-    <div id="summary-page" className="md:p-10 p-3 pt-6 gap-20 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
-      <div className="text-gray-500">
-        Expenses Summary
-      </div>
+    <div
+      id="summary-page"
+      className="md:p-10 p-3 pt-6 gap-20 h-full min-h-screen items-center justify-center/ w-full flex flex-col"
+    >
+      <div className="text-gray-500">Expenses Summary</div>
 
       <div className="text-gray-500 text-lg flex flex-col gap-30 items-center justify-center h-full w-full">
         {!dataUsed.length ? (

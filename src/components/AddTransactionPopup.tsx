@@ -4,17 +4,21 @@ import { useState, useEffect } from "react";
 import { TransactionParsedType } from "@/db/methods";
 import { categories } from "@/lib/utils";
 import { toGregorian, toEthiopian } from "ethiopian-calendar-new";
+import {useTransactionStore} from "@/lib/store";
 
 interface AddTransactionPopupProps {
   onClose: () => void;
   inline?: boolean;
   onSuccess?: () => void;
+  id?: string;
 }
 
-export default function AddTransactionPopup({ onClose, inline, onSuccess }: AddTransactionPopupProps) {
+export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: AddTransactionPopupProps) {
   const [loading, setLoading] = useState(false);
   const [direction, setDirection] = useState<"TO" | "FROM">("TO");
   const [accountInput, setAccountInput] = useState("");
+  const [deleteBtn, setDeleteBtn] = useState("Delete");
+  const { setData } = useTransactionStore();
   
   const [formData, setFormData] = useState({
     reason: "",
@@ -28,15 +32,30 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess }: AddT
 
   useEffect(() => {
     const now = new Date();
-    const ethNow = toEthiopian(now.getFullYear(), now.getMonth() + 1, now.getDate());
     setFormData((prev) => ({
       ...prev,
-      date: `${ethNow.year}-${String(ethNow.month).padStart(2, "0")}-${String(ethNow.day).padStart(2, "0")}`,
+      date: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`,
     }));
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const delete_ = async () => {
+  setDeleteBtn("Deleting...");
+    try {
+      await fetch(`/api/deleteTransaction?id=${id}`);
+    } catch (err) {
+      console.log("Error deleting transaction" + err);
+    } finally {
+      setDeleteBtn("Deleted");
+      const tId = setTimeout(() => {
+        setDeleteBtn("Delete");
+        clearTimeout(tId);
+      }, 2000);
+      setData(null);
+    }
   };
 
   const setCategory = (cat: string) => {
@@ -60,11 +79,10 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess }: AddT
       
       if (!year || !month || !day) throw new Error("Invalid date parts");
 
-      const gcDate = toGregorian(year, month, day);
-      const dateObj = new Date(gcDate.year, gcDate.month - 1, gcDate.day);
+      const dateObj = new Date(year, month - 1, day);
       dateIso = dateObj.toISOString();
     } catch (err) {
-      alert("Please enter the date in a valid Ethiopian format: YYYY-MM-DD");
+      alert("Please enter the date in a valid format: YYYY-MM-DD");
       setLoading(false);
       return;
     }
@@ -191,7 +209,7 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess }: AddT
           </div>
         </div>
 
-        <div className="mt-4 flex w-full justify-end">
+        <div className="mt-4 gap-3 flex w-full justify-end">
           <button
             onClick={handleAdd}
             disabled={loading}
@@ -199,6 +217,14 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess }: AddT
           >
             {loading ? "Adding..." : "Add"}
           </button>
+
+	  {inline ? <button
+            onClick={delete_}
+            disabled={loading}
+            className="flex py-3 px-7 bg-red-500/60 hover:bg-red-500/90 text-white rounded-full transition-colors disabled:opacity-50"
+          >
+            {deleteBtn}
+          </button> : null}
         </div>
       </div>
   );
