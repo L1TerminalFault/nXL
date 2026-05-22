@@ -12,6 +12,7 @@ import { useTransactionStore } from "@/lib/store";
 import { ACC_OWNER } from "@/lib/utils";
 import Link from "next/link";
 import FilterPopup from "@/components/FilterPopup";
+import AddTransactionPopup from "@/components/AddTransactionPopup";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
@@ -20,6 +21,7 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const [filterPopUp, setFilterPopUp] = useState(false);
+  const [addPopup, setAddPopup] = useState(false);
   const [listType, setListType] = useState<string>("ui");
 
   useEffect(() => {
@@ -87,6 +89,7 @@ export default function Page() {
   return (
     <div className="md:p-10 p-3 pt-6 gap-8 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
       {filterPopUp && <FilterPopup onClose={() => setFilterPopUp(false)} />}
+      {addPopup && <AddTransactionPopup onClose={() => setAddPopup(false)} />}
       <div className="z-1 px-3 backdrop-blur-2xl w-full justify-between flex gap-10 items-center">
         <div className="flex gap-4">
           <div
@@ -103,11 +106,19 @@ export default function Page() {
           </div>
         </div>
 
-        <div
-          onClick={() => setFilterPopUp(true)}
-          className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors`}
-        >
-          Filter
+        <div className="flex gap-4">
+          <div
+            onClick={() => setFilterPopUp(true)}
+            className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+          >
+            Filter
+          </div>
+          <div
+            onClick={() => setAddPopup(true)}
+            className={`flex items-center justify-center w-11 h-11 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+          >
+            +
+          </div>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import html2canvas from "html2canvas";
 
 import { useTransactionStore } from "@/lib/store";
 
@@ -25,14 +25,26 @@ export default function SummaryTable({ data }: Props) {
     allNum += row.count;
   });
 
-  const handleExport = () => {
-    const pdf = new jsPDF();
+  const handleExport = async () => {
+    const element = document.getElementById("summary-page");
+    if (!element) return;
 
-    autoTable(pdf, {
-      html: "#export-summary-table",
-    });
-
-    pdf.save(`table-${Intl.DateTimeFormat("en-GB").format(Date.now())}`);
+    try {
+      const canvas = await html2canvas(element, { 
+        scale: 2,
+        backgroundColor: "#000000"
+      });
+      const data = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`summary-${Intl.DateTimeFormat("en-GB").format(Date.now())}.pdf`);
+    } catch(err) {
+      console.error(err);
+    }
   };
 
   return (

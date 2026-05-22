@@ -42,8 +42,8 @@ export default function Filter() {
   }));
 
   return (
-    <div className="md:p-10 p-3 pt-6 gap-20 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
-      <div id="exportable" className="text-gray-500">
+    <div id="summary-page" className="md:p-10 p-3 pt-6 gap-20 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
+      <div className="text-gray-500">
         Expenses Summary
       </div>
 
