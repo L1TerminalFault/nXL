@@ -116,9 +116,9 @@ export default function Page() {
           </div>
           <div
             onClick={() => setAddPopup(true)}
-            className={`flex items-center justify-center w-11 h-11 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+            className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
           >
-            +
+            Add
           </div>
         </div>
       </div>
