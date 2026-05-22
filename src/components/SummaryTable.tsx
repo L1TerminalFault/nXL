@@ -32,7 +32,10 @@ export default function SummaryTable({ data }: Props) {
     try {
       const canvas = await html2canvas(element, { 
         scale: 2,
-        backgroundColor: "#000000"
+        useCORS: true,
+        backgroundColor: "#000000",
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight,
       });
       const data = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
