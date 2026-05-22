@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
     const match = transaction.match(/https?:\/\/[^\s]+/);
 
-    let url = match?.[0];
+    let url = match?.[0] || "";
     let tid = "";
     let payerAcc = "";
     let payerAccNo = "";
