@@ -2,6 +2,7 @@
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import autoTable from "jspdf-autotable";
 
 import { useTransactionStore } from "@/lib/store";
 
@@ -26,30 +27,32 @@ export default function SummaryTable({ data }: Props) {
   });
 
   const handleExport = async () => {
-    const element = document.getElementById("summary-page");
-    if (!element) return;
+    const pdf = new jsPDF();
+    autoTable(pdf, {
+	    html: "#export-summary-table",
+    });
+    // const element = document.getElementById("summary-page");
+    // if (!element) return;
 
-    try {
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#000000",
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
-      });
-      const data = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+    // try {
+    //   const canvas = await html2canvas(element, {
+    //     scale: 2,
+    //     useCORS: true,
+    //     backgroundColor: "#000000",
+    //     windowWidth: element.scrollWidth,
+    //     windowHeight: element.scrollHeight,
+    //   });
+    //   const data = canvas.toDataURL("image/png");
+    //   const pdf = new jsPDF("p", "mm", "a4");
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    //   const pdfWidth = pdf.internal.pageSize.getWidth();
+    //   const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-      pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(
-        `summary-${Intl.DateTimeFormat("en-GB").format(Date.now())}.pdf`,
-      );
-    } catch (err) {
-      console.error(err);
-    }
+    //   pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
+       pdf.save(`summary-${Intl.DateTimeFormat("en-GB").format(Date.now())}.pdf`,);
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 
   return (
