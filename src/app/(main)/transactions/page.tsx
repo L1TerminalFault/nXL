@@ -27,7 +27,9 @@ export default function Page() {
   useEffect(() => {
       let total_ = 0;
 
-      const data_ = dataIn.forEach(({ transaction }) => {
+      const data_ = dataIn
+			.filter(d => !d.transaction.message?.length)
+      .forEach(({ transaction }) => {
         const accCredited = ACC_OWNER.toLowerCase().includes(
           transaction.recieverAcc.trim().toLowerCase(),
         );
@@ -90,7 +92,7 @@ export default function Page() {
   return (
     <div className="md:p-10 p-3 pt-6 gap-8 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
       {filterPopUp && <FilterPopup onClose={() => setFilterPopUp(false)} />}
-      {addPopup && <AddTransactionPopup onClose={() => setAddPopup(false)} />}
+      {addPopup && <AddTransactionPopup onClose={() => setAddPopup(false)} onSuccess={() => setData(null)} />}
       <div className="z-1 px-3 backdrop-blur-2xl w-full justify-between flex gap-10 items-center">
         <div className="flex gap-4">
           <div
@@ -185,7 +187,9 @@ export default function Page() {
               </thead>
 
               <tbody>
-                {dataIn.map((rowData) => {
+                {dataIn
+			.filter(d => !d.transaction.message?.length)
+			.map((rowData) => {
                   const row = rowData.transaction;
                   const toOrFrom = ACC_OWNER.toLowerCase().includes(
                     row.recieverAcc.toLowerCase(),
@@ -205,7 +209,7 @@ export default function Page() {
 
                   return (
                     <tr
-                      key={row.url}
+                      key={row._id}
                       className="border-b border-white/5 hover:bg-white/5"
                     >
                       <td className="p-3">{row.date}</td>

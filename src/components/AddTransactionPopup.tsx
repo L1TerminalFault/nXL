@@ -30,6 +30,8 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
     category: "",
   });
 
+  const banks = ["CBE", "TeleBirr"];
+
   useEffect(() => {
     const now = new Date();
     setFormData((prev) => ({
@@ -63,8 +65,8 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
   };
 
   const handleAdd = async () => {
-    if (!accountInput || !formData.amount || !formData.date || !formData.category || !direction || !formData.reason) {
-      alert("Please fill all required fields: Account Name, Amount, Reason, Date, and Category.");
+    if (!accountInput || !formData.amount || !formData.date || !direction || !formData.bank) {
+      alert("Please fill all required fields: Account Name, Amount, and Date.");
       return;
     }
 
@@ -96,7 +98,7 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
       recieverAcc,
       recieverAccNo: "",
       reason: formData.reason,
-      amount: formData.amount,
+      amount: "ETB " + formData.amount,
       date: dateIso,
       bank: formData.bank,
       remaining: formData.remaining,
@@ -149,10 +151,10 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
           </button>
         </div>
 
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
              <label className="text-xs text-gray-500 pl-1">Transaction Direction & Account <span className="text-red-500">*</span></label>
-            <div className="flex bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+            <div className="flex bg-white/5 border-0 border-white/10 rounded-full overflow-hidden">
               <button
                 onClick={() => setDirection("FROM")}
                 className={`flex-1 py-2 text-sm transition-colors ${direction === "FROM" ? "bg-white/20 text-white" : "text-gray-400 hover:text-white"}`}
@@ -170,37 +172,52 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
               type="text"
               value={accountInput}
               onChange={(e) => setAccountInput(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-white/30 transition-colors w-full mt-2"
+              className="bg-white/5 border-0 border-white/10 rounded-full px-4 py-2 text-white outline-none focus:border-white/30 transition-colors w-full mt-2"
               placeholder={`Enter ${direction === "TO" ? "Receiver's" : "Payer's"} Account Name`}
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.keys(formData).filter(k => k !== "category").map((key) => (
+            {Object.keys(formData).filter(k => k !== "category" && k !== "bank").map((key) => (
               <div key={key} className="flex flex-col gap-1">
                 <label className="text-xs text-gray-500 pl-1 capitalize">
-                  {key.replace(/([A-Z])/g, " $1")} {['reason', 'amount', 'date'].includes(key) && <span className="text-red-500">*</span>}
+                  {key.replace(/([A-Z])/g, " $1") === "url" ? "Reciept Link" : key.replace(/([A-Z])/g, " $1") === "date" ? "Date In Gregorian" : key.replace(/([A-Z])/g, " $1")} {['amount', 'date'].includes(key) && <span className="text-red-500">*</span>}
                 </label>
                 <input
                   type={key === 'date' ? 'date' : 'text'}
                   name={key}
                   value={formData[key as keyof typeof formData]}
                   onChange={handleChange}
-                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-white/30 transition-colors"
-                  placeholder={key === 'date' ? "YYYY-MM-DD (Ethiopian Calendar)" : key.replace(/([A-Z])/g, " $1").trim()}
+                  className="bg-white/5 border-0 border-white/10 rounded-full px-4 py-2 text-white outline-none focus:border-white/30 transition-colors"
+                  placeholder={key === 'date' ? "MM-DD-YYYY" : key === "url" ? "Reciept Link" : key.replace(/([A-Z])/g, " $1").trim()[0].toUpperCase() + key.replace(/([A-Z])/g, " $1").trim().slice(1)}
                 />
               </div>
             ))}
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-xs text-gray-500 pl-1">Category <span className="text-red-500">*</span></label>
+            <label className="text-xs text-gray-500 pl-1">Bank <span className="text-red-500">*</span></label>
+            <div className="flex flex-wrap gap-2">
+              {banks.map((b) => (
+                <button
+                  key={b}
+                  onClick={() => setFormData({ ...formData, bank: b })}
+                  className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.bank === b ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
+                >
+                  {b}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-gray-500 pl-1">Category </label>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategory(cat)}
-                  className={`px-3 py-1.5 rounded-lg text-xs transition-colors border ${formData.category === cat ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
+                  className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.category === cat ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
                 >
                   {cat}
                 </button>

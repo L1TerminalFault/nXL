@@ -2,13 +2,10 @@ import { addTransaction } from "@/db/methods";
 import { dbConnect } from "@/db/model";
 
 export async function POST(req: Request) {
-	console.log("add request")
-
   try {
     await dbConnect();
 
     const raw = await req.text();
-    console.log(raw);
 
     let parsedObj;
     let isError = false;
@@ -40,7 +37,7 @@ export async function POST(req: Request) {
         payerAcc: "", payerAccNo: "", recieverAccNo: "", recieverAcc: "",
         reason: "", amount: "", date: "", bank: "", url: "", category: "", remaining: "", message: isError ? raw : (transaction || JSON.stringify(parsedObj)),
       };
-      await addTransaction(JSON.stringify(dataRefactored));
+      //await addTransaction(JSON.stringify(dataRefactored));
       return Response.json({ status: "success" });
     }
 
@@ -61,6 +58,7 @@ export async function POST(req: Request) {
 
     if (transaction.includes("CBE")) {
       bank = "CBE";
+      console.log("CBE transaction");
 
       const balanceMatch = transaction.match(
         /Current Balance is\s+(ETB\s*[\d,.]+)/i,
@@ -207,9 +205,9 @@ export async function POST(req: Request) {
       remaining: isUnparsed ? "" : remaining,
       message: isUnparsed ? transaction : "",
     };
-    //console.log(dataRefactored);
+    console.log(dataRefactored);
 
-    await addTransaction(JSON.stringify(dataRefactored));
+    //await addTransaction(JSON.stringify(dataRefactored));
 
     return Response.json({ status: "success" });
   } catch (error) {
