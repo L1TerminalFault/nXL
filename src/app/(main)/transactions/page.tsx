@@ -10,7 +10,7 @@ import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
 import TransactionPalette from "@/components/TransactionPalette";
 import { useTransactionStore } from "@/lib/store";
-import { ACC_OWNER } from "@/lib/utils";
+import { ACC_OWNER, isAdmin } from "@/lib/utils";
 import Link from "next/link";
 import FilterPopup from "@/components/FilterPopup";
 import AddTransactionPopup from "@/components/AddTransactionPopup";
@@ -123,12 +123,12 @@ export default function Page() {
           >
             Filter
           </div>
-          <div
+	  {isAdmin(user?.id) ? <div
             onClick={() => setAddPopup(true)}
             className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
           >
             Add
-          </div>
+          </div> : null}
         </div>
       </div>
 
