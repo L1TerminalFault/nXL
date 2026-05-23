@@ -77,7 +77,7 @@ export async function POST(req: Request) {
         payerAcc = payerMatch ? payerMatch[1].replace(",", "").trim() : "Unknown";
         date = new Date(Date.now()).toISOString();
       } else {
-	      if (transaction.includes("https://shorturl.at")) url = transaction.split(url)[1].match(/https?:\/\/[^\s]+/)[0];
+	      if (transaction.includes("https://shorturl.at")) url = transaction?.split(url)?.[1]?.match(/https?:\/\/[^\s]+/)?.[0] || "";
 
         if (url.includes("apps.cbe.com.et")) {
           const id = new URL(url).searchParams.get("id");
