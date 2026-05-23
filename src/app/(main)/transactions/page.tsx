@@ -113,7 +113,7 @@ export default function Page() {
         <div className="flex gap-4">
           <div
             onClick={fetchData}
-            className={`p-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+            className={`p-2 rounded-full bg-white/5 hover:bg-white/10 text-xl transition-colors cursor-pointer`}
           >
            <Refresh />
           </div>
