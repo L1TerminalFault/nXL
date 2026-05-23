@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         payerAcc: "", payerAccNo: "", recieverAccNo: "", recieverAcc: "",
         reason: "", amount: "", date: "", bank: "", url: "", category: "", remaining: "", message: isError ? raw : (transaction || JSON.stringify(parsedObj)),
       };
-      //await addTransaction(JSON.stringify(dataRefactored));
+      await addTransaction(JSON.stringify(dataRefactored));
       return Response.json({ status: "success" });
     }
 
@@ -207,7 +207,7 @@ export async function POST(req: Request) {
     };
     console.log(dataRefactored);
 
-    //await addTransaction(JSON.stringify(dataRefactored));
+    await addTransaction(JSON.stringify(dataRefactored));
 
     return Response.json({ status: "success" });
   } catch (error) {

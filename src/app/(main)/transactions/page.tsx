@@ -209,7 +209,7 @@ export default function Page() {
 
                   return (
                     <tr
-                      key={row._id}
+                      key={row.url}
                       className="border-b border-white/5 hover:bg-white/5"
                     >
                       <td className="p-3">{row.date}</td>
