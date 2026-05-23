@@ -22,7 +22,7 @@ export default function TransactionPage() {
   const [deleteBtn, setDeleteBtn] = useState("Delete");
   const { user } = useUser();
   const [isAdminUser, setIsAdminUser] = useState(false);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState<
     { username: string; id: string; image: string }[]
   >([]);
@@ -87,7 +87,7 @@ export default function TransactionPage() {
               date,
               reason,
               category,
-	      url,
+	      url: url || trans.transaction.url,
             },
             users: allowedUsers,
           },
@@ -159,7 +159,7 @@ export default function TransactionPage() {
 		      isAdmin(user?.id) ? <input
 	        type="text"
 		placeholder="Paste Reciept Link"
-		value={url}
+		value={url || ""}
 		onChange={(e) => setUrl(e.target.value)}
 		className="outline-none text-xs rounded-full p-3 px-5 border-gray-700/60 focus:border-gray-700 hover:border-gray-700 border"
 	      /> : null
