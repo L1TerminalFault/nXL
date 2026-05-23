@@ -115,7 +115,7 @@ export default function Page() {
             onClick={fetchData}
             className={`p-2 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
           >
-           <Refresh className="size-full" />
+           <Refresh className="size-10" />
           </div>
           <div
             onClick={() => setFilterPopUp(true)}
