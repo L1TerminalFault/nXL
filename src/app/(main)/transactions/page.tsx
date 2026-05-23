@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
+import {VscRefresh as Refresh } from "react-icons/vsc";
 
 import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
@@ -110,6 +111,12 @@ export default function Page() {
         </div>
 
         <div className="flex gap-4">
+          <div
+            onClick={fetchData}
+            className={`p-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+          >
+           <Refresh />
+          </div>
           <div
             onClick={() => setFilterPopUp(true)}
             className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}

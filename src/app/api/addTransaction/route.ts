@@ -58,14 +58,13 @@ export async function POST(req: Request) {
 
     if (transaction.includes("CBE")) {
       bank = "CBE";
-      console.log("CBE transaction");
 
       const balanceMatch = transaction.match(
         /Current Balance is\s+(ETB\s*[\d,.]+)/i,
       );
       remaining = balanceMatch ? balanceMatch[1] : "";
 
-      if (transaction.includes("https://shorturl.at")) {
+      if (transaction.includes("https://shorturl.at") && !transaction.includes("apps.cbe.com")) {
         const debitMatch = transaction.match(
           /debited with\s+(ETB\s*[\d,.]+)/i,
         );
@@ -78,14 +77,7 @@ export async function POST(req: Request) {
         payerAcc = payerMatch ? payerMatch[1].replace(",", "").trim() : "Unknown";
         date = new Date(Date.now()).toISOString();
       } else {
-        const tAmount = transaction.match(/transfer(?:r|)ed\s+(ETB\s*[\d,.]+)/i);
-        if (tAmount) amount = tAmount[1];
-        
-        const tReceiver = transaction.match(/to\s+(.*?)\s+on/i);
-        if (tReceiver) recieverAcc = tReceiver[1].trim();
-        
-        const tPayerMatch = transaction.match(/dear\s+(.*?)\s*,/i);
-        if (tPayerMatch) payerAcc = tPayerMatch[1].trim();
+	      if (transaction.includes("https://shorturl.at")) url = transaction.split(url)[1].match(/https?:\/\/[^\s]+/)[0];
 
         if (url.includes("apps.cbe.com.et")) {
           const id = new URL(url).searchParams.get("id");
@@ -118,18 +110,28 @@ export async function POST(req: Request) {
             if (data?.status === 400) {
               // Ignore failure and let text extracted defaults pass through
             } else if (data) {
+
               payerAcc = data?.debitAccountHolder || payerAcc;
               payerAccNo = data?.debitAccountNo || "";
               recieverAcc = data?.creditAccountHolder || recieverAcc;
               recieverAccNo = data?.creditAccountNo || "";
               reason = data?.paymentDetails?.[0] || "";
-              amount = (data?.debitCurrency && data?.debitAmount) ? data.debitCurrency + " " + data.debitAmount : amount;
+              amount = (data?.debitCurrency && data?.debitAmount) ? data.debitCurrency + " " + data.debitAmount : (data?.debitCurrency && data?.amountDebited) ? data.debitCurrency + " " + data.amountDebited : amount;
               date = data?.dateTimes?.[0] || date || new Date().toISOString();
             }
           } catch (e) {
             console.error("Failed fetching cbe transaction details:", e);
           }
-        }
+        } else {
+          const tAmount = transaction.match(/transfer(?:r|)ed\s+(ETB\s*[\d,.]+)/i);
+          if (tAmount) amount = tAmount[1];
+          
+          const tReceiver = transaction.match(/to\s+(.*?)\s+on/i);
+          if (tReceiver) recieverAcc = tReceiver[1].trim();
+          
+          const tPayerMatch = transaction.match(/dear\s+(.*?)\s*,/i);
+          if (tPayerMatch) payerAcc = tPayerMatch[1].trim();
+	}
       }
     } else if (
       transaction.includes("telebirr") &&
@@ -205,7 +207,7 @@ export async function POST(req: Request) {
       remaining: isUnparsed ? "" : remaining,
       message: isUnparsed ? transaction : "",
     };
-    console.log(dataRefactored);
+    //console.log(dataRefactored);
 
     await addTransaction(JSON.stringify(dataRefactored));
 
