@@ -236,7 +236,7 @@ export default function Page() {
                   <td className="p-3">Total</td>
                   <td className="p-3"></td>
                   <td className="p-3"></td>
-                  <td className="p-3">ETB {total}</td>
+                  <td className="p-3">ETB {total.toFixed()}</td>
                   <td className="p-3"></td>
                   <td className="p-3"></td>
                   <td className="w-35"></td>
