@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 import { TransactionParsedType } from "@/db/methods";
-import { ACC_OWNER } from "@/lib/utils";
+import { ACC_OWNER, isAdmin } from "@/lib/utils";
 import AddTransactionPopup from "./AddTransactionPopup";
 
 export default function TransactionPalette({
@@ -11,6 +12,7 @@ export default function TransactionPalette({
 }: {
   data: TransactionParsedType;
 }) {
+	const {user} = useUser();
   const _id = data._id;
   const transaction = data.transaction;
   const router = useRouter();
@@ -40,7 +42,7 @@ export default function TransactionPalette({
 
     return (
       <div
-        onClick={() => setExpanded(true)}
+        onClick={() => isAdmin(user?.id) ? setExpanded(true) : null}
         className="flex w-full bg-red-500/10 border border-red-500/20 md:p-5 p-4 rounded-3xl hover:bg-red-500/20 transition-colors cursor-pointer"
       >
         <div className="flex flex-col gap-2 w-full">
