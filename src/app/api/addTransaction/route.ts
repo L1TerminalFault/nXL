@@ -56,142 +56,147 @@ export async function POST(req: Request) {
     let remaining = "";
     const category = "";
 
-    if (transaction.includes("CBE")) {
-      bank = "CBE";
+    try {
+      if (transaction.includes("CBE")) {
+        bank = "CBE";
 
-      const balanceMatch = transaction.match(
-        /Current Balance is\s+(ETB\s*[\d,.]+)/i,
-      );
-      remaining = balanceMatch ? balanceMatch[1] : "";
+        const balanceMatch = transaction.match(
+          /Current Balance is\s+(ETB\s*[\d,.]+)/i,
+        );
+        remaining = balanceMatch ? balanceMatch[1] : "";
 
-      if (transaction.includes("https://shorturl.at") && !transaction.includes("apps.cbe.com")) {
-        const debitMatch = transaction.match(
-          /debited with\s+(ETB\s*[\d,.]+)/i,
+        if (transaction.includes("https://shorturl.at") && !transaction.includes("apps.cbe.com")) {
+          const debitMatch = transaction.match(
+            /debited with\s+(ETB\s*[\d,.]+)/i,
+          );
+
+          const payerMatch = transaction.match(/dear\s+(.*?)\s+(?:your|you)/i);
+
+          url = "";
+          amount = debitMatch ? debitMatch[1] : "";
+          recieverAcc = "CASH";
+          payerAcc = payerMatch ? payerMatch[1].replace(",", "").trim() : "Unknown";
+          date = new Date(Date.now()).toISOString();
+        } else {
+                if (transaction.includes("https://shorturl.at")) url = transaction?.split(url)?.[1]?.match(/https?:\/\/[^\s]+/)?.[0] || "";
+
+          if (url.includes("apps.cbe.com.et")) {
+            const id = new URL(url).searchParams.get("id");
+            if (!id || !id.length) {
+              const idVal = url.split("/").pop()?.replace("&", "-");
+              tid = idVal || "";
+            } else tid = id.slice(0, 12) + "-" + id.slice(12);
+
+            url = `https://mbreciept.cbe.com.et/${tid}`;
+          } else {
+            const id = url.split("/").pop();
+            tid = id || "";
+          }
+
+          if (tid) {
+            try {
+              const data = await (
+                await fetch(
+                  `https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/${tid}`,
+                  {
+                    headers: {
+                      "User-Agent": "Mozilla/5.0",
+                      "X-App-ID": "d1292e42-7400-49de-a2d3-9731caa4c819",
+                      "X-App-Version": "0a01980b-9859-1369-8198-59f403820000",
+                    },
+                  },
+                )
+              ).json();
+
+              if (data?.status === 400) {
+                // Ignore failure and let text extracted defaults pass through
+                console.error("Failed fetching cbe status 400:");
+              } else if (data) {
+
+                payerAcc = data?.debitAccountHolder || payerAcc;
+                payerAccNo = data?.debitAccountNo || "";
+                recieverAcc = data?.creditAccountHolder || recieverAcc;
+                recieverAccNo = data?.creditAccountNo || "";
+                reason = data?.paymentDetails?.[0] || "";
+                amount = (data?.debitCurrency && data?.debitAmount) ? data.debitCurrency + " " + data.debitAmount : (data?.debitCurrency && data?.amountDebited) ? data.debitCurrency + " " + data.amountDebited : amount;
+                date = data?.dateTimes?.[0] || date || new Date().toISOString();
+              }
+            } catch (e) {
+              console.error("Failed fetching cbe transaction details:", e);
+            }
+          } else {
+            const tAmount = transaction.match(/transfer(?:r|)ed\s+(ETB\s*[\d,.]+)/i);
+            if (tAmount) amount = tAmount[1];
+            
+            const tReceiver = transaction.match(/to\s+(.*?)\s+on/i);
+            if (tReceiver) recieverAcc = tReceiver[1].trim();
+            
+            const tPayerMatch = transaction.match(/dear\s+(.*?)\s*,/i);
+            if (tPayerMatch) payerAcc = tPayerMatch[1].trim();
+          }
+        }
+      } else if (
+        transaction.includes("telebirr") &&
+        transaction.includes("telecom")
+      ) {
+        bank = "TeleBirr";
+
+        const clean = transaction.replace(/\s+/g, " ").trim();
+        const userMatch = clean.match(/Dear\s+([A-Za-z]+)(?:,|\s|Y|$)/i);
+        const user = userMatch ? userMatch[1].trim() : "Unknown";
+
+        let type = "paid";
+
+        if (/you have received/i.test(clean)) {
+          type = "received";
+        } else if (
+          /you have transferred/i.test(clean) ||
+          /you have paid/i.test(clean)
+        ) {
+          type = "paid";
+        }
+
+        if (type === "paid") {
+          payerAcc = user;
+          recieverAcc = "Unknown";
+        } else if (type === "received") {
+          recieverAcc = user;
+          payerAcc = "Unknown";
+        }
+
+        const amtMatch = clean.match(/ETB\s*([\d,.]+)/i);
+        amount = amtMatch ? "ETB " + amtMatch[1].replace(/,/g, "") : "";
+
+        const dateMatch =
+          clean.match(/on\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})/) ||
+          clean.match(/on\s+(\d{2}\/\d{2}\/\d{4}\s\d{2}:\d{2}:\d{2})/);
+
+        if (dateMatch) {
+          const raw = dateMatch[1];
+          if (raw.includes("/")) {
+            const [d, m, yAndTime] = raw.split("/");
+            const [year, time] = yAndTime.split(" ");
+            date = new Date(`${year}-${m}-${d}T${time}`).toISOString();
+          } else {
+            date = new Date(raw.replace(" ", "T")).toISOString();
+          }
+        }
+
+        const reasonMatch = clean.match(/for\s+(.*?)\s+(?:made for|on|purchase made)/i) ||
+            clean.match(/paid ETB [\d,.]+\s+for\s+(.*?)\s+on/i);
+        reason = reasonMatch ? reasonMatch[1].trim() : "";
+
+        const balanceMatch = clean.match(
+          /current (?:E-Money Account\s*)?balance is\s*ETB\s*([\d,.]+)/i,
         );
 
-        const payerMatch = transaction.match(/dear\s+(.*?)\s+(?:your|you)/i);
-
-        url = "";
-        amount = debitMatch ? debitMatch[1] : "";
-        recieverAcc = "CASH";
-        payerAcc = payerMatch ? payerMatch[1].replace(",", "").trim() : "Unknown";
-        date = new Date(Date.now()).toISOString();
-      } else {
-	      if (transaction.includes("https://shorturl.at")) url = transaction?.split(url)?.[1]?.match(/https?:\/\/[^\s]+/)?.[0] || "";
-
-        if (url.includes("apps.cbe.com.et")) {
-          const id = new URL(url).searchParams.get("id");
-          if (!id || !id.length) {
-            const idVal = url.split("/").pop()?.replace("&", "-");
-            tid = idVal || "";
-          } else tid = id.slice(0, 12) + "-" + id.slice(12);
-
-          url = `https://mbreciept.cbe.com.et/${tid}`;
-        } else {
-          const id = url.split("/").pop();
-          tid = id || "";
-        }
-
-        if (tid) {
-          try {
-            const data = await (
-              await fetch(
-                `https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/${tid}`,
-                {
-                  headers: {
-                    "User-Agent": "Mozilla/5.0",
-                    "X-App-ID": "d1292e42-7400-49de-a2d3-9731caa4c819",
-                    "X-App-Version": "0a01980b-9859-1369-8198-59f403820000",
-                  },
-                },
-              )
-            ).json();
-
-            if (data?.status === 400) {
-              // Ignore failure and let text extracted defaults pass through
-            } else if (data) {
-
-              payerAcc = data?.debitAccountHolder || payerAcc;
-              payerAccNo = data?.debitAccountNo || "";
-              recieverAcc = data?.creditAccountHolder || recieverAcc;
-              recieverAccNo = data?.creditAccountNo || "";
-              reason = data?.paymentDetails?.[0] || "";
-              amount = (data?.debitCurrency && data?.debitAmount) ? data.debitCurrency + " " + data.debitAmount : (data?.debitCurrency && data?.amountDebited) ? data.debitCurrency + " " + data.amountDebited : amount;
-              date = data?.dateTimes?.[0] || date || new Date().toISOString();
-            }
-          } catch (e) {
-            console.error("Failed fetching cbe transaction details:", e);
-          }
-        } else {
-          const tAmount = transaction.match(/transfer(?:r|)ed\s+(ETB\s*[\d,.]+)/i);
-          if (tAmount) amount = tAmount[1];
-          
-          const tReceiver = transaction.match(/to\s+(.*?)\s+on/i);
-          if (tReceiver) recieverAcc = tReceiver[1].trim();
-          
-          const tPayerMatch = transaction.match(/dear\s+(.*?)\s*,/i);
-          if (tPayerMatch) payerAcc = tPayerMatch[1].trim();
-	}
+        remaining = balanceMatch ? balanceMatch[1].replace(/,/g, "") : "";
       }
-    } else if (
-      transaction.includes("telebirr") &&
-      transaction.includes("telecom")
-    ) {
-      bank = "TeleBirr";
-
-      const clean = transaction.replace(/\s+/g, " ").trim();
-      const userMatch = clean.match(/Dear\s+([A-Za-z]+)(?:,|\s|Y|$)/i);
-      const user = userMatch ? userMatch[1].trim() : "Unknown";
-
-      let type = "paid";
-
-      if (/you have received/i.test(clean)) {
-        type = "received";
-      } else if (
-        /you have transferred/i.test(clean) ||
-        /you have paid/i.test(clean)
-      ) {
-        type = "paid";
-      }
-
-      if (type === "paid") {
-        payerAcc = user;
-        recieverAcc = "Unknown";
-      } else if (type === "received") {
-        recieverAcc = user;
-        payerAcc = "Unknown";
-      }
-
-      const amtMatch = clean.match(/ETB\s*([\d,.]+)/i);
-      amount = amtMatch ? "ETB " + amtMatch[1].replace(/,/g, "") : "";
-
-      const dateMatch =
-        clean.match(/on\s+(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})/) ||
-        clean.match(/on\s+(\d{2}\/\d{2}\/\d{4}\s\d{2}:\d{2}:\d{2})/);
-
-      if (dateMatch) {
-        const raw = dateMatch[1];
-        if (raw.includes("/")) {
-          const [d, m, yAndTime] = raw.split("/");
-          const [year, time] = yAndTime.split(" ");
-          date = new Date(`${year}-${m}-${d}T${time}`).toISOString();
-        } else {
-          date = new Date(raw.replace(" ", "T")).toISOString();
-        }
-      }
-
-      const reasonMatch = clean.match(/for\s+(.*?)\s+(?:made for|on|purchase made)/i) ||
-          clean.match(/paid ETB [\d,.]+\s+for\s+(.*?)\s+on/i);
-      reason = reasonMatch ? reasonMatch[1].trim() : "";
-
-      const balanceMatch = clean.match(
-        /current (?:E-Money Account\s*)?balance is\s*ETB\s*([\d,.]+)/i,
-      );
-
-      remaining = balanceMatch ? balanceMatch[1].replace(/,/g, "") : "";
+    } catch (err) {
+      console.log("Parser Error: ", err)
     }
 
-    const isUnparsed = !amount || !date || !bank;
+    const isUnparsed = !amount?.length || !date?.length || !bank?.length;
 
     const dataRefactored = {
       payerAcc: isUnparsed ? "" : payerAcc,
@@ -207,7 +212,7 @@ export async function POST(req: Request) {
       remaining: isUnparsed ? "" : remaining,
       message: isUnparsed ? transaction : "",
     };
-    //console.log(dataRefactored);
+    console.log(dataRefactored);
 
     await addTransaction(JSON.stringify(dataRefactored));
 

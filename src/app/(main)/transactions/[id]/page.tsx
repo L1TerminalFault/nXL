@@ -11,36 +11,34 @@ import { ACC_OWNER, categories, isAdmin } from "@/lib/utils";
 
 export default function TransactionPage() {
   const router = useRouter();
-  const { data, dataIn, setData } = useTransactionStore();
+  const { data, dataIn, setData, allUsers } = useTransactionStore();
   const { id } = useParams();
   const [reason, setReason] = useState("");
   const [category, setCategory] = useState("");
   const [allowedUsers, setAllowedUsers] = useState<string[]>([]);
   // const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
   const [updateBtn, setUpdateBtn] = useState("Update");
   const [deleteBtn, setDeleteBtn] = useState("Delete");
   const { user } = useUser();
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
-  const [allUsers, setAllUsers] = useState<
-    { username: string; id: string; image: string }[]
-  >([]);
+  //const [allUsers, setAllUsers] = useState< { username: string; id: string; image: string }[] >([]);
 
   const trans = dataIn.find((t) => t._id === id?.toString());
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const res = await (await fetch("/api/getAllUsers")).json();
-      setAllUsers(res);
-      //console.log("the response " + res);
-    } catch (err) {
-      console.log("Error fetching users: " + err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //const fetchUsers = async () => {
+  //  setLoading(true);
+  //  try {
+  //    const res = await (await fetch("/api/getAllUsers")).json();
+  //    setAllUsers(res);
+  //    //console.log("the response " + res);
+  //  } catch (err) {
+  //    console.log("Error fetching users: " + err);
+  //  } finally {
+  //    setLoading(false);
+  //  }
+  //};
 
   useEffect(() => {
     if (user) (() => setIsAdminUser(isAdmin(user.id) || false))();
@@ -51,7 +49,7 @@ export default function TransactionPage() {
       setReason(trans?.transaction.reason || "");
       setCategory(trans?.transaction.category || "");
       setAllowedUsers(trans?.users || []);
-      fetchUsers();
+      //fetchUsers();
     })();
   }, [trans, user]);
 
@@ -199,8 +197,6 @@ export default function TransactionPage() {
               </div>
             </div>
 
-            {loading ? null : (
-              <>
                 <div
                   className={`flex flex-col gap-2 ${isAdminUser ? "" : "hidden"}`}
                 >
@@ -210,7 +206,7 @@ export default function TransactionPage() {
                       Highlighted users are allowed
                     </i>
                   </div>
-                  <div className="flex flex-col gap-3 itecems-start">
+                  <div className="flex flex-col gap-3 items-start">
                     {allUsers.length
                       ? allUsers
                           // {/* .filter((u) => u.id !== user?.id) */}
@@ -265,8 +261,6 @@ export default function TransactionPage() {
                     {deleteBtn}
                   </div>
                 </div>
-              </>
-            )}
           </div>
         </div>
       </div>

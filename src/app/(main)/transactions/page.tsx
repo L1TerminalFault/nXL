@@ -5,6 +5,7 @@ import autoTable from "jspdf-autotable";
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import {VscRefresh as Refresh } from "react-icons/vsc";
+import {FaPlus as FaAdd } from "react-icons/fa6";
 
 import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
@@ -17,13 +18,30 @@ import AddTransactionPopup from "@/components/AddTransactionPopup";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
-  const { data, setData, dataIn, setDataIn, total, setTotal } = useTransactionStore();
+  const { data, setData, dataIn, setDataIn, total, setTotal, setAllUsers } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const [filterPopUp, setFilterPopUp] = useState(false);
   const [addPopup, setAddPopup] = useState(false);
   const [listType, setListType] = useState<string>("ui");
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await (await fetch("/api/getAllUsers")).json();
+      setAllUsers(res);
+      //console.log("the response " + res);
+    } catch (err) {
+      console.log("Error fetching users: " + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
       let total_ = 0;
@@ -113,9 +131,9 @@ export default function Page() {
         <div className="flex gap-4">
           <div
             onClick={fetchData}
-            className={`p-2 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
+            className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
           >
-           <Refresh className="size-7" />
+           <Refresh className="size-5" />
           </div>
           <div
             onClick={() => setFilterPopUp(true)}
@@ -125,9 +143,9 @@ export default function Page() {
           </div>
 	  {isAdmin(user?.id) ? <div
             onClick={() => setAddPopup(true)}
-            className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+            className={`px-6/ p-3 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
           >
-            Add
+           <FaAdd className="size-5" />
           </div> : null}
         </div>
       </div>
@@ -216,7 +234,7 @@ export default function Page() {
 
                   return (
                     <tr
-                      key={row.url}
+                      key={Math.random()}
                       className="border-b border-white/5 hover:bg-white/5"
                     >
                       <td className="p-3">{row.date}</td>

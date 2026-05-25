@@ -6,6 +6,13 @@ import { TransactionParsedType } from "@/db/methods";
 export type FilterOthersType = {
   trans: string;
   bank: string;
+  users: string;
+};
+
+type User = {
+    username: string;
+    id: string;
+    image: string;
 };
 
 export const useTransactionStore = create(
@@ -24,6 +31,8 @@ export const useTransactionStore = create(
     setTotal: (value: number) => void;
     locked: boolean;
     setLocked: (value: boolean) => void;
+    allUsers: User[];
+    setAllUsers: (value: User[]) => void; 
   } => ({
     data: null,
     setData: (value: TransactionParsedType[] | null) =>
@@ -64,7 +73,7 @@ export const useTransactionStore = create(
         })),
       })),
 
-    filterOthers: { trans: "All", bank: "All" },
+    filterOthers: { trans: "All", bank: "All", users: "All" },
     setFilterOthers: (value: FilterOthersType) =>
       set(() => ({ filterOthers: value })),
     filterState: ["All"],
@@ -73,5 +82,8 @@ export const useTransactionStore = create(
     setTotal: (value: number) => set(() => ({ total: value })),
     locked: true,
     setLocked: () => set((prev) => ({ locked: !prev })),
+    allUsers: [] as User[],
+    setAllUsers: (value: User[]) =>
+      set(() => ({ allUsers: value })),
   }),
 );
