@@ -36,7 +36,6 @@ export default function Page() {
     } catch (err) {
       console.log("Error fetching users: " + err);
     } finally {
-      setFilterOthers({ trans: "All", bank: "All", users: "All" });
       setLoading(false);
     }
   };
@@ -91,6 +90,7 @@ export default function Page() {
       setError("Connect to internet, if issue persists let us know");
       console.log("Error ", error);
     } finally {
+      setFilterOthers({ trans: "All", bank: "All", users: "All" });
       setLoading(false);
     }
   }, [setData, user, setDataIn]);
