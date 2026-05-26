@@ -18,7 +18,7 @@ import AddTransactionPopup from "@/components/AddTransactionPopup";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
-  const { data, setData, dataIn, setDataIn, total, setTotal, setAllUsers } = useTransactionStore();
+  const { data, setData, dataIn, setDataIn, total, setTotal, setAllUsers, setFilterOthers } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
@@ -35,6 +35,7 @@ export default function Page() {
     } catch (err) {
       console.log("Error fetching users: " + err);
     } finally {
+      setFilterOthers({ trans: "All", bank: "All", users: "All" });
       setLoading(false);
     }
   };
