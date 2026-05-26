@@ -5,7 +5,7 @@ import autoTable from "jspdf-autotable";
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import {VscRefresh as Refresh } from "react-icons/vsc";
-import {FaPlus as FaAdd } from "react-icons/fa6";
+import {IoAdd as FaAdd } from "react-icons/io5";
 import {BsFilter as Filter } from "react-icons/bs";
 
 import Loader from "@/components/Loader";
