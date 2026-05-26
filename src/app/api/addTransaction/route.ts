@@ -196,6 +196,13 @@ export async function POST(req: Request) {
       console.log("Parser Error: ", err)
     }
 
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { status: "error", message: "An error occurred" },
+      { status: 500 },
+    );
+  } finally {
     const isUnparsed = !amount?.length || !date?.length || !bank?.length;
 
     const dataRefactored = {
@@ -214,15 +221,8 @@ export async function POST(req: Request) {
     };
     console.log(dataRefactored);
 
+    await addTransaction(JSON.stringify(dataRefactored));
 
     return Response.json({ status: "success" });
-  } catch (error) {
-    console.error(error);
-    return Response.json(
-      { status: "error", message: "An error occurred" },
-      { status: 500 },
-    );
-  } finally {
-    await addTransaction(JSON.stringify(dataRefactored));
   }
 }
