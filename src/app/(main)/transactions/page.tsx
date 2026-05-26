@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import {VscRefresh as Refresh } from "react-icons/vsc";
 import {FaPlus as FaAdd } from "react-icons/fa6";
+import {BsFilter as Filter } from "react-icons/bs";
 
 import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
@@ -138,9 +139,9 @@ export default function Page() {
           </div>
           <div
             onClick={() => setFilterPopUp(true)}
-            className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+            className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
           >
-            Filter
+           <Filter className="size-5" />
           </div>
 	  {isAdmin(user?.id) ? <div
             onClick={() => setAddPopup(true)}
