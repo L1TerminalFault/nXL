@@ -2,6 +2,7 @@ import { addTransaction } from "@/db/methods";
 import { dbConnect } from "@/db/model";
 
 export async function POST(req: Request) {
+	let dataRefactored: any = {};
   try {
     await dbConnect();
 
@@ -195,17 +196,9 @@ export async function POST(req: Request) {
     } catch (err) {
       console.log("Parser Error: ", err)
     }
-
-  } catch (error) {
-    console.error(error);
-    return Response.json(
-      { status: "error", message: "An error occurred" },
-      { status: 500 },
-    );
-  } finally {
     const isUnparsed = !amount?.length || !date?.length || !bank?.length;
 
-    const dataRefactored = {
+    dataRefactored = {
       payerAcc: isUnparsed ? "" : payerAcc,
       payerAccNo: isUnparsed ? "" : payerAccNo,
       recieverAccNo: isUnparsed ? "" : recieverAccNo,
@@ -219,6 +212,10 @@ export async function POST(req: Request) {
       remaining: isUnparsed ? "" : remaining,
       message: isUnparsed ? transaction : "",
     };
+
+  } catch (error) {
+    console.error(error);
+  } finally {
     console.log(dataRefactored);
 
     await addTransaction(JSON.stringify(dataRefactored));
