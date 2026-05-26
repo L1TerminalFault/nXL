@@ -214,7 +214,6 @@ export async function POST(req: Request) {
     };
     console.log(dataRefactored);
 
-    await addTransaction(JSON.stringify(dataRefactored));
 
     return Response.json({ status: "success" });
   } catch (error) {
@@ -223,5 +222,7 @@ export async function POST(req: Request) {
       { status: "error", message: "An error occurred" },
       { status: 500 },
     );
+  } finally {
+    await addTransaction(JSON.stringify(dataRefactored));
   }
 }
