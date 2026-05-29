@@ -2,7 +2,8 @@ import { addTransaction } from "@/db/methods";
 import { dbConnect } from "@/db/model";
 
 export async function POST(req: Request) {
-	let dataRefactored: any = {};
+  let dataRefactored: any = {};
+  let done = false;
   try {
     await dbConnect();
 
@@ -25,8 +26,13 @@ export async function POST(req: Request) {
 
     if (!isError) {
       // Handle payload from AddTransactionPopup component
-      if (parsedObj && typeof parsedObj === "object" && !parsedObj.transaction) {
+      if (
+        parsedObj &&
+        typeof parsedObj === "object" &&
+        !parsedObj.transaction
+      ) {
         await addTransaction(JSON.stringify(parsedObj));
+        done = true;
         return Response.json({ status: "success" });
       }
 
@@ -35,10 +41,21 @@ export async function POST(req: Request) {
 
     if (!transaction || typeof transaction !== "string" || isError) {
       const dataRefactored = {
-        payerAcc: "", payerAccNo: "", recieverAccNo: "", recieverAcc: "",
-        reason: "", amount: "", date: "", bank: "", url: "", category: "", remaining: "", message: isError ? raw : (transaction || JSON.stringify(parsedObj)),
+        payerAcc: "",
+        payerAccNo: "",
+        recieverAccNo: "",
+        recieverAcc: "",
+        reason: "",
+        amount: "",
+        date: "",
+        bank: "",
+        url: "",
+        category: "",
+        remaining: "",
+        message: isError ? raw : transaction || JSON.stringify(parsedObj),
       };
       await addTransaction(JSON.stringify(dataRefactored));
+      done = true;
       return Response.json({ status: "success" });
     }
 
@@ -66,7 +83,10 @@ export async function POST(req: Request) {
         );
         remaining = balanceMatch ? balanceMatch[1] : "";
 
-        if (transaction.includes("https://shorturl.at") && !transaction.includes("apps.cbe.com")) {
+        if (
+          transaction.includes("https://shorturl.at") &&
+          !transaction.includes("apps.cbe.com")
+        ) {
           const debitMatch = transaction.match(
             /debited with\s+(ETB\s*[\d,.]+)/i,
           );
@@ -76,10 +96,15 @@ export async function POST(req: Request) {
           url = "";
           amount = debitMatch ? debitMatch[1] : "";
           recieverAcc = "CASH";
-          payerAcc = payerMatch ? payerMatch[1].replace(",", "").trim() : "Unknown";
+          payerAcc = payerMatch
+            ? payerMatch[1].replace(",", "").trim()
+            : "Unknown";
           date = new Date(Date.now()).toISOString();
         } else {
-                if (transaction.includes("https://shorturl.at")) url = transaction?.split(url)?.[1]?.match(/https?:\/\/[^\s]+/)?.[0] || "";
+          if (transaction.includes("https://shorturl.at"))
+            url =
+              transaction?.split(url)?.[1]?.match(/https?:\/\/[^\s]+/)?.[0] ||
+              "";
 
           if (url.includes("apps.cbe.com.et")) {
             const id = new URL(url).searchParams.get("id");
@@ -113,25 +138,31 @@ export async function POST(req: Request) {
                 // Ignore failure and let text extracted defaults pass through
                 console.error("Failed fetching cbe status 400:");
               } else if (data) {
-
                 payerAcc = data?.debitAccountHolder || payerAcc;
                 payerAccNo = data?.debitAccountNo || "";
                 recieverAcc = data?.creditAccountHolder || recieverAcc;
                 recieverAccNo = data?.creditAccountNo || "";
                 reason = data?.paymentDetails?.[0] || "";
-                amount = (data?.debitCurrency && data?.debitAmount) ? data.debitCurrency + " " + data.debitAmount : (data?.debitCurrency && data?.amountDebited) ? data.debitCurrency + " " + data.amountDebited : amount;
+                amount =
+                  data?.debitCurrency && data?.debitAmount
+                    ? data.debitCurrency + " " + data.debitAmount
+                    : data?.debitCurrency && data?.amountDebited
+                      ? data.debitCurrency + " " + data.amountDebited
+                      : amount;
                 date = data?.dateTimes?.[0] || date || new Date().toISOString();
               }
             } catch (e) {
               console.error("Failed fetching cbe transaction details:", e);
             }
           } else {
-            const tAmount = transaction.match(/transfer(?:r|)ed\s+(ETB\s*[\d,.]+)/i);
+            const tAmount = transaction.match(
+              /transfer(?:r|)ed\s+(ETB\s*[\d,.]+)/i,
+            );
             if (tAmount) amount = tAmount[1];
-            
+
             const tReceiver = transaction.match(/to\s+(.*?)\s+on/i);
             if (tReceiver) recieverAcc = tReceiver[1].trim();
-            
+
             const tPayerMatch = transaction.match(/dear\s+(.*?)\s*,/i);
             if (tPayerMatch) payerAcc = tPayerMatch[1].trim();
           }
@@ -183,8 +214,9 @@ export async function POST(req: Request) {
           }
         }
 
-        const reasonMatch = clean.match(/for\s+(.*?)\s+(?:made for|on|purchase made)/i) ||
-            clean.match(/paid ETB [\d,.]+\s+for\s+(.*?)\s+on/i);
+        const reasonMatch =
+          clean.match(/for\s+(.*?)\s+(?:made for|on|purchase made)/i) ||
+          clean.match(/paid ETB [\d,.]+\s+for\s+(.*?)\s+on/i);
         reason = reasonMatch ? reasonMatch[1].trim() : "";
 
         const balanceMatch = clean.match(
@@ -194,7 +226,7 @@ export async function POST(req: Request) {
         remaining = balanceMatch ? balanceMatch[1].replace(/,/g, "") : "";
       }
     } catch (err) {
-      console.log("Parser Error: ", err)
+      console.log("Parser Error: ", err);
     }
     const isUnparsed = !amount?.length || !date?.length || !bank?.length;
 
@@ -212,10 +244,10 @@ export async function POST(req: Request) {
       remaining: isUnparsed ? "" : remaining,
       message: isUnparsed ? transaction : "",
     };
-
   } catch (error) {
     console.error(error);
   } finally {
+    if (done) return;
     console.log(dataRefactored);
 
     await addTransaction(JSON.stringify(dataRefactored));
