@@ -28,7 +28,6 @@ export default function Page() {
   const [listType, setListType] = useState<string>("ui");
 
   const fetchUsers = async () => {
-    setLoading(true);
     try {
       const res = await (await fetch("/api/getAllUsers")).json();
       setAllUsers(res);
@@ -36,13 +35,8 @@ export default function Page() {
     } catch (err) {
       console.log("Error fetching users: " + err);
     } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   useEffect(() => {
       let total_ = 0;
@@ -86,6 +80,7 @@ export default function Page() {
 
       setData(parsedData);
       setDataIn(parsedData);
+      fetchUsers();
     } catch (error) {
       setError("Connect to internet, if issue persists let us know");
       console.log("Error ", error);
