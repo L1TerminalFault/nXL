@@ -5,7 +5,8 @@ import autoTable from "jspdf-autotable";
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import {VscRefresh as Refresh } from "react-icons/vsc";
-import {FaPlus as FaAdd } from "react-icons/fa6";
+import {IoAdd as FaAdd } from "react-icons/io5";
+import {BsFilter as Filter } from "react-icons/bs";
 
 import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
@@ -18,7 +19,7 @@ import AddTransactionPopup from "@/components/AddTransactionPopup";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
-  const { data, setData, dataIn, setDataIn, total, setTotal, setAllUsers } = useTransactionStore();
+  const { data, setData, dataIn, setDataIn, total, setTotal, setAllUsers, setFilterOthers } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
@@ -89,6 +90,7 @@ export default function Page() {
       setError("Connect to internet, if issue persists let us know");
       console.log("Error ", error);
     } finally {
+      setFilterOthers({ trans: "All", bank: "All", users: "All" });
       setLoading(false);
     }
   }, [setData, user, setDataIn]);
@@ -137,9 +139,9 @@ export default function Page() {
           </div>
           <div
             onClick={() => setFilterPopUp(true)}
-            className={`px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+            className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
           >
-            Filter
+           <Filter className="size-5" />
           </div>
 	  {isAdmin(user?.id) ? <div
             onClick={() => setAddPopup(true)}

@@ -350,7 +350,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
               onClick={() =>
                 setLocalOtherFilters((prev) => ({ ...prev, users: "All" }))
               }
-              className={btnClass(localOtherFilters.users === "All") + " hover:bg-white/15"}
+              className={btnClass(localOtherFilters.users === "All")}
             >
               All
             </button>
