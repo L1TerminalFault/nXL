@@ -50,6 +50,8 @@ export const getMockTransactions = (): TransactionParsedType[] => {
           MOCK_CATEGORIES[Math.floor(Math.random() * MOCK_CATEGORIES.length)],
         bank: MOCK_BANKS[Math.floor(Math.random() * MOCK_BANKS.length)],
         remaining: "",
+
+	parsed: true,
       },
     });
   }

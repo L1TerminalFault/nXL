@@ -59,55 +59,55 @@ async function parsePdfReceipt(url: string) {
   }
 }
 
-async function fetchCBETransactionData(
-  receiptUrl: string
-) {
-  try {
-    if (!receiptUrl.includes("apps.cbe.com.et")) {
-      return null;
-    }
-
-    const id = new URL(receiptUrl)
-      .searchParams
-      .get("id");
-
-    if (!id) {
-      return null;
-    }
-
-    const tid =
-      id.slice(0, 12) +
-      "-" +
-      id.slice(12);
-
-    const data = await (
-      await fetch(
-        `https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/${tid}`,
-        {
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0",
-            "X-App-ID":
-              "d1292e42-7400-49de-a2d3-9731caa4c819",
-            "X-App-Version":
-              "0a01980b-9859-1369-8198-59f403820000",
-          },
-        }
-      )
-    ).json();
-
-    if (
-      !data ||
-      data.status > 200
-    ) {
-      return null;
-    }
-
-    return data;
-  } catch {
-    return null;
-  }
-}
+// async function fetchCBETransactionData(
+//   receiptUrl: string
+// ) {
+//   try {
+//     if (!receiptUrl.includes("apps.cbe.com.et")) {
+//       return null;
+//     }
+// 
+//     const id = new URL(receiptUrl)
+//       .searchParams
+//       .get("id");
+// 
+//     if (!id) {
+//       return null;
+//     }
+// 
+//     const tid =
+//       id.slice(0, 12) +
+//       "-" +
+//       id.slice(12);
+// 
+//     const data = await (
+//       await fetch(
+//         `https://mb.cbe.com.et/api/v1/transactions/public/transaction-detail/${tid}`,
+//         {
+//           headers: {
+//             "User-Agent":
+//               "Mozilla/5.0",
+//             "X-App-ID":
+//               "d1292e42-7400-49de-a2d3-9731caa4c819",
+//             "X-App-Version":
+//               "0a01980b-9859-1369-8198-59f403820000",
+//           },
+//         }
+//       )
+//     ).json();
+// 
+//     if (
+//       !data ||
+//       data.status > 200
+//     ) {
+//       return null;
+//     }
+// 
+//     return data;
+//   } catch {
+//     return null;
+//   }
+// }
 
 export async function parseCBE(sms: string): Promise<ParsedTransaction> {
   const text = normalize(sms);
@@ -117,7 +117,7 @@ export async function parseCBE(sms: string): Promise<ParsedTransaction> {
   result.bank = "CBE";
   result.url = receiptUrl(text);
 
-  const apiData = null;
+  // const apiData = null;
   //   result.url
   //     ? await fetchCBETransactionData(
   //         result.url
@@ -126,45 +126,45 @@ export async function parseCBE(sms: string): Promise<ParsedTransaction> {
   
   //  console.log(apiData)
 
-  if (apiData) {
-  
-    result.payerAcc =
-      apiData.debitAccountHolder || "";
-  
-    result.payerAccNo =
-      apiData.debitAccountNo || "";
-  
-    result.recieverAcc =
-      apiData.creditAccountHolder || "";
-  
-    result.recieverAccNo =
-      apiData.creditAccountNo || "";
-  
-    result.reason =
-      apiData.paymentDetails?.[0] || "";
-  
-    result.amount =
-      apiData.debitCurrency &&
-      apiData.debitAmount
-        ? `${apiData.debitCurrency} ${apiData.debitAmount}`
-        : apiData.debitCurrency &&
-            apiData.amountDebited
-          ? `${apiData.debitCurrency} ${apiData.amountDebited}`
-          : "";
-  
-    result.date =
-      apiData.dateTimes?.[0] ||
-      new Date().toISOString();
-  
-    // result.type = "CBE_API";
-  
-    result.parsed =
-      !!result.amount;
-  
-    // result.confidence = 0.98;
-  
-    if (result.parsed) return result;
-  }
+  // if (apiData) {
+  // 
+  //   result.payerAcc =
+  //     apiData.debitAccountHolder || "";
+  // 
+  //   result.payerAccNo =
+  //     apiData.debitAccountNo || "";
+  // 
+  //   result.recieverAcc =
+  //     apiData.creditAccountHolder || "";
+  // 
+  //   result.recieverAccNo =
+  //     apiData.creditAccountNo || "";
+  // 
+  //   result.reason =
+  //     apiData.paymentDetails?.[0] || "";
+  // 
+  //   result.amount =
+  //     apiData.debitCurrency &&
+  //     apiData.debitAmount
+  //       ? `${apiData.debitCurrency} ${apiData.debitAmount}`
+  //       : apiData.debitCurrency &&
+  //           apiData.amountDebited
+  //         ? `${apiData.debitCurrency} ${apiData.amountDebited}`
+  //         : "";
+  // 
+  //   result.date =
+  //     apiData.dateTimes?.[0] ||
+  //     new Date().toISOString();
+  // 
+  //   // result.type = "CBE_API";
+  // 
+  //   result.parsed =
+  //     !!result.amount;
+  // 
+  //   // result.confidence = 0.98;
+  // 
+  //   if (result.parsed) return result;
+  // }
 
   const balance =
     text.match(/Current Balance is\s*ETB\s*([\d,.]+)/i)?.[1] ||

@@ -211,7 +211,7 @@ export default function Page() {
 
               <tbody>
                 {dataIn
-			.filter(d => 'parsed' in d.transaction ? d.parsed : !d.transaction.message?.length)
+			.filter(d => ('parsed' in d.transaction) ? d.transaction.parsed : !d.transaction?.message?.length)
 			.map((rowData) => {
                   const row = rowData.transaction;
                   const toOrFrom = ACC_OWNER.toLowerCase().includes(
