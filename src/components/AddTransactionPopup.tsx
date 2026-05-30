@@ -105,8 +105,8 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
       url: formData.url,
       category: formData.category,
 
-      parsed: true
-      message: "";
+      parsed: true,
+      message: "",
     };
 
     try {
