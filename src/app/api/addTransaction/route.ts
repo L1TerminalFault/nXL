@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   if (isJson) {
     // Manual transaction
     if (parsedObj && typeof parsedObj === "object" && !parsedObj.transaction) {
-      //await addTransaction(JSON.stringify(parsedObj));
+      await addTransaction(JSON.stringify(parsedObj));
       console.log(parsedObj);
 
       return Response.json({
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
   const parsed = await parseTransaction(transaction);
   console.log(parsed);
-  //await addTransaction(JSON.stringify(parsed));
+  await addTransaction(JSON.stringify(parsed));
   return Response.json({
     status: "success",
   });
