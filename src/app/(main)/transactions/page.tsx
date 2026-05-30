@@ -81,6 +81,7 @@ export default function Page() {
       setData(parsedData);
       setDataIn(parsedData);
       fetchUsers();
+      console.log(parsedData.find(each => !each.transaction.date ? each : null));
     } catch (error) {
       setError("Connect to internet, if issue persists let us know");
       console.log("Error ", error);
@@ -210,7 +211,7 @@ export default function Page() {
 
               <tbody>
                 {dataIn
-			.filter(d => !d.transaction.message?.length)
+			.filter(d => 'parsed' in d.transaction ? d.parsed : !d.transaction.message?.length)
 			.map((rowData) => {
                   const row = rowData.transaction;
                   const toOrFrom = ACC_OWNER.toLowerCase().includes(

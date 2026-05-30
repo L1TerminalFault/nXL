@@ -47,7 +47,7 @@ export const useTransactionStore = create(
           ...val,
           transaction: {
             ...val.transaction,
-            date: !val.transaction?.date?.length ? "" : `${
+            date: !('parsed' in val.transaction) && val.transaction.message?.length ? "" : !val.transaction?.date?.length ? "" : `${
               toEthiopian(
                 Number(val.transaction.date.split("-")[0]),
                 Number(val.transaction.date.split("-")[1]),
