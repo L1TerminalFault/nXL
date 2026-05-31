@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import autoTable from "jspdf-autotable";
 
 import { useTransactionStore } from "@/lib/store";
+import {font as customFontBase64} from "@/lib/font";
 
 type Props = {
   data: {
@@ -28,6 +29,28 @@ export default function SummaryTable({ data }: Props) {
 
   const handleExport = async () => {
     const pdf = new jsPDF();
+
+    pdf.addFileToVFS("CustomFont.ttf", customFontBase64);
+
+    // 3. Register it as a font name you can reference
+    pdf.addFont("CustomFont.ttf", "CustomFont", "normal");
+
+    // 4. Set it as the default font for the document
+    pdf.setFont("CustomFont");
+
+    // 5. Pass the font into autoTable styles
+    autoTable(pdf, {
+        html: "#export-summary-table",
+        styles: {
+            font: "CustomFont", // 👈 Ensures the table body uses the font
+            fontStyle: "normal"
+        },
+        headStyles: {
+            font: "CustomFont", // 👈 Ensures the table header uses the font
+            fontStyle: "normal"
+        }
+    });
+
     autoTable(pdf, {
 	    html: "#export-summary-table",
     });
