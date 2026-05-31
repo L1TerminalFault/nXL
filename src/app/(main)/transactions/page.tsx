@@ -16,6 +16,7 @@ import { ACC_OWNER, isAdmin } from "@/lib/utils";
 import Link from "next/link";
 import FilterPopup from "@/components/FilterPopup";
 import AddTransactionPopup from "@/components/AddTransactionPopup";
+import {font as customFontBase64} from "@/lib/font";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
@@ -94,9 +95,30 @@ export default function Page() {
   const handleExport = () => {
     const pdf = new jsPDF();
 
+    pdf.addFileToVFS("CustomFont.ttf", customFontBase64);
+
+    // 3. Register it as a font name you can reference
+    pdf.addFont("CustomFont.ttf", "CustomFont", "normal");
+
+    // 4. Set it as the default font for the document
+    pdf.setFont("CustomFont");
+
+    // 5. Pass the font into autoTable styles
     autoTable(pdf, {
-      html: "#exportable-table",
+        html: "#export-summary-table",
+        styles: {
+            font: "CustomFont", // 👈 Ensures the table body uses the font
+            fontStyle: "normal"
+        },
+        headStyles: {
+            font: "CustomFont", // 👈 Ensures the table header uses the font
+            fontStyle: "normal"
+        }
     });
+
+    // autoTable(pdf, {
+    //   html: "#exportable-table",
+    // });
 
     pdf.save(`table-${Intl.DateTimeFormat("en-GB").format(Date.now())}`);
   };

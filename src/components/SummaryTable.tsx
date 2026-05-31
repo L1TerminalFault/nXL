@@ -51,9 +51,9 @@ export default function SummaryTable({ data }: Props) {
         }
     });
 
-    autoTable(pdf, {
-	    html: "#export-summary-table",
-    });
+    // autoTable(pdf, {
+    //         html: "#export-summary-table",
+    // });
     // const element = document.getElementById("summary-page");
     // if (!element) return;
 
