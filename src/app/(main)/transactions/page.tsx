@@ -105,7 +105,7 @@ export default function Page() {
 
     // 5. Pass the font into autoTable styles
     autoTable(pdf, {
-        html: "#export-summary-table",
+        html: "#exportable-table",
         styles: {
             font: "CustomFont", // 👈 Ensures the table body uses the font
             fontStyle: "normal"
