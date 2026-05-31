@@ -25,12 +25,8 @@ export async function POST(req: Request) {
   if (isJson) {
     // Manual transaction
     if (parsedObj && typeof parsedObj === "object" && !parsedObj.transaction) {
-	    try {
       await addTransaction(JSON.stringify(parsedObj));
       console.log(parsedObj);
-	    } catch (err) {
-		    console.log(err)
-	    }
 
       return Response.json({
         status: "success",

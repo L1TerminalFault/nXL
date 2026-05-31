@@ -207,22 +207,22 @@ export async function parseCBE(sms: string): Promise<ParsedTransaction> {
     // result.type = "DEBIT";
   }
 
-  if (!result.amount && result.url) {
-    const pdfText = await parsePdfReceipt(result.url);
+  // if (!result.amount && result.url) {
+  //   const pdfText = await parsePdfReceipt(result.url);
 
-    if (pdfText) {
-      result.amount =
-        pdfText.match(/Amount\s*:?\s*(ETB\s*[\d,.]+)/i)?.[1] || "";
+  //   if (pdfText) {
+  //     result.amount =
+  //       pdfText.match(/Amount\s*:?\s*(ETB\s*[\d,.]+)/i)?.[1] || "";
 
-      result.payerAcc =
-        pdfText.match(/Debit Account Holder\s*:?\s*(.*)/i)?.[1] || "";
+  //     result.payerAcc =
+  //       pdfText.match(/Debit Account Holder\s*:?\s*(.*)/i)?.[1] || "";
 
-      result.recieverAcc =
-        pdfText.match(/Credit Account Holder\s*:?\s*(.*)/i)?.[1] || "";
+  //     result.recieverAcc =
+  //       pdfText.match(/Credit Account Holder\s*:?\s*(.*)/i)?.[1] || "";
 
-      // result.type = "PDF_RECEIPT";
-    }
-  }
+  //     // result.type = "PDF_RECEIPT";
+  //   }
+  // }
 
   result.parsed = !!result.bank && !!result.amount;
 
