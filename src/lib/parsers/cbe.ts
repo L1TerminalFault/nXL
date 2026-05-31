@@ -1,4 +1,4 @@
-import { PDFParse } from "pdf-parse";
+// import { PDFParse } from "pdf-parse";
 import { ParsedTransaction } from "./types";
 
 function empty(sms: string): ParsedTransaction {
@@ -39,25 +39,25 @@ function receiptUrl(text: string) {
   );
 }
 
-async function parsePdfReceipt(url: string) {
-  try {
-    const res = await fetch(url);
-
-    const type = res.headers.get("content-type") || "";
-
-    if (!type.includes("pdf")) {
-      return null;
-    }
-
-    const buffer = Buffer.from(await res.arrayBuffer());
-
-    const pdf = new PDFParse(buffer);
-
-    return (await pdf.getText()).text;
-  } catch {
-    return null;
-  }
-}
+// async function parsePdfReceipt(url: string) {
+//   try {
+//     const res = await fetch(url);
+// 
+//     const type = res.headers.get("content-type") || "";
+// 
+//     if (!type.includes("pdf")) {
+//       return null;
+//     }
+// 
+//     const buffer = Buffer.from(await res.arrayBuffer());
+// 
+//     const pdf = new PDFParse(buffer);
+// 
+//     return (await pdf.getText()).text;
+//   } catch {
+//     return null;
+//   }
+// }
 
 // async function fetchCBETransactionData(
 //   receiptUrl: string
