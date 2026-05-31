@@ -366,7 +366,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
                 setLocalOtherFilters((prev) => ({ ...prev, category: each }))
               }
 		      key={each}
-		      className={`${btnClass(localOtherFilters.users === each)}`}
+		      className={`${btnClass(localOtherFilters.category === each)}`}
 		    >
 		      <div className="">{each}</div>
 		    </div>
