@@ -18,7 +18,7 @@ export default function TransactionPalette({
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
 
-  if (('parsed' in transaction && !transaction.parsed) || (transaction.message && transaction.message.length > 0)) {
+  if (('parsed' in transaction && !transaction.parsed) || (!('parsed' in transaction) && transaction.message && transaction.message.length > 0)) {
     if (expanded) {
       return (
         <div className="flex flex-col w-full bg-white/5 p-4 rounded-3xl gap-4">
