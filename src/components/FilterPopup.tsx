@@ -5,7 +5,7 @@ import {useUser} from "@clerk/nextjs";
 import Image from "next/image";
 
 import { useTransactionStore, FilterOthersType } from "@/lib/store";
-import { ACC_OWNER, isAdmin } from "@/lib/utils";
+import { ACC_OWNER, isAdmin, categories } from "@/lib/utils";
 
 interface FilterPopupProps {
   onClose: () => void;
@@ -88,6 +88,12 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
     if (localOtherFilters.bank !== "All") {
       filtered = filtered.filter(
         (d) => d.transaction.bank === localOtherFilters.bank,
+      );
+    }
+
+    if (localOtherFilters.category !== "All") {
+      filtered = filtered.filter(
+        (d) => d.transaction.category === localOtherFilters.category,
       );
     }
 
@@ -339,6 +345,35 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
           </div>
         </div>
 
+        <div className="flex flex-col gap-3">
+          <div className="text-gray-500 pl-1 tracking-wider text-xs">
+            By Category
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {/* The user will implement logic for these, we just place the buttons */}
+            <button
+              onClick={() =>
+                setLocalOtherFilters((prev) => ({ ...prev, category: "All" }))
+              }
+              className={btnClass(localOtherFilters.category === "All")}
+            >
+              All
+            </button>
+	    {categories
+		  .map((each) => (
+		    <div
+              onClick={() =>
+                setLocalOtherFilters((prev) => ({ ...prev, category: each }))
+              }
+		      key={each}
+		      className={`${btnClass(localOtherFilters.users === each)}`}
+		    >
+		      <div className="">{each}</div>
+		    </div>
+		  ))
+	      }
+          </div>
+        </div>
 
 	{isAdmin(user?.id) ? <div className="flex flex-col gap-3">
           <div className="text-gray-500 pl-1 tracking-wider text-xs">

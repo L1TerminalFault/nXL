@@ -87,7 +87,7 @@ export default function Page() {
       setError("Connect to internet, if issue persists let us know");
       console.log("Error ", error);
     } finally {
-      setFilterOthers({ trans: "All", bank: "All", users: "All" });
+      setFilterOthers({ trans: "All", bank: "All", category: "All", users: "All" });
       setLoading(false);
     }
   }, [setData, user, setDataIn]);

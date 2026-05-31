@@ -6,6 +6,7 @@ import { TransactionParsedType } from "@/db/methods";
 export type FilterOthersType = {
   trans: string;
   bank: string;
+  category: string;
   users: string;
 };
 
@@ -73,7 +74,7 @@ export const useTransactionStore = create(
         })),
       })),
 
-    filterOthers: { trans: "All", bank: "All", users: "All" },
+    filterOthers: { trans: "All", bank: "All", category: "All", users: "All" },
     setFilterOthers: (value: FilterOthersType) =>
       set(() => ({ filterOthers: value })),
     filterState: ["All"],
