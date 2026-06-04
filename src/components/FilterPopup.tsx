@@ -414,9 +414,11 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
                           height={18}
                           className="rounded-full"
                         />
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col items-start gap-1">
                           <div>{each.username}</div>
-                          <div className="text-xs opacity-50">{each.email}</div>
+                          <div className="text-[10px] opacity-50">
+                            {each.email}
+                          </div>
                         </div>
                       </div>
                     ))
