@@ -11,9 +11,10 @@ export type FilterOthersType = {
 };
 
 type User = {
-    username: string;
-    id: string;
-    image: string;
+  username: string;
+  id: string;
+  image: string;
+  email: string;
 };
 
 export const useTransactionStore = create(
@@ -33,7 +34,7 @@ export const useTransactionStore = create(
     locked: boolean;
     setLocked: (value: boolean) => void;
     allUsers: User[];
-    setAllUsers: (value: User[]) => void; 
+    setAllUsers: (value: User[]) => void;
   } => ({
     data: null,
     setData: (value: TransactionParsedType[] | null) =>
@@ -43,35 +44,51 @@ export const useTransactionStore = create(
     setDataIn: (value: TransactionParsedType[]) =>
       set(() => ({
         dataIn: value
-          .sort((a, b) => new Date(b.transaction.date).getTime() - new Date(a.transaction.date).getTime())
+          .sort(
+            (a, b) =>
+              new Date(b.transaction.date).getTime() -
+              new Date(a.transaction.date).getTime(),
+          )
           .map((val) => ({
-          ...val,
-          transaction: {
-            ...val.transaction,
-            date: (!('parsed' in val.transaction) && (val.transaction.message?.length)) ? "" : !val.transaction?.date?.length ? "" : `${
-              toEthiopian(
-                Number(val.transaction.date.split("-")[0]),
-                Number(val.transaction.date.split("-")[1]),
-                Number(val.transaction.date.split("-")[2].split("T")[0]),
-              ).year
-            }-${
-              toEthiopian(
-                Number(val.transaction.date.split("-")[0]),
-                Number(val.transaction.date.split("-")[1]),
-                Number(val.transaction.date.split("-")[2].split("T")[0]),
-              ).month
-            }-${
-              toEthiopian(
-                Number(val.transaction.date.split("-")[0]),
-                Number(val.transaction.date.split("-")[1]),
-                Number(val.transaction.date.split("-")[2].split("T")[0]),
-              ).day
-            }`
-              .split("-")
-              .reverse()
-              .join("-"),
-          },
-        })),
+            ...val,
+            transaction: {
+              ...val.transaction,
+              date:
+                !("parsed" in val.transaction) &&
+                val.transaction.message?.length
+                  ? ""
+                  : !val.transaction?.date?.length
+                    ? ""
+                    : `${
+                        toEthiopian(
+                          Number(val.transaction.date.split("-")[0]),
+                          Number(val.transaction.date.split("-")[1]),
+                          Number(
+                            val.transaction.date.split("-")[2].split("T")[0],
+                          ),
+                        ).year
+                      }-${
+                        toEthiopian(
+                          Number(val.transaction.date.split("-")[0]),
+                          Number(val.transaction.date.split("-")[1]),
+                          Number(
+                            val.transaction.date.split("-")[2].split("T")[0],
+                          ),
+                        ).month
+                      }-${
+                        toEthiopian(
+                          Number(val.transaction.date.split("-")[0]),
+                          Number(val.transaction.date.split("-")[1]),
+                          Number(
+                            val.transaction.date.split("-")[2].split("T")[0],
+                          ),
+                        ).day
+                      }`
+                        .split("-")
+                        .reverse()
+                        .join("-"),
+            },
+          })),
       })),
 
     filterOthers: { trans: "All", bank: "All", category: "All", users: "All" },
@@ -84,7 +101,6 @@ export const useTransactionStore = create(
     locked: true,
     setLocked: () => set((prev) => ({ locked: !prev })),
     allUsers: [] as User[],
-    setAllUsers: (value: User[]) =>
-      set(() => ({ allUsers: value })),
+    setAllUsers: (value: User[]) => set(() => ({ allUsers: value })),
   }),
 );
