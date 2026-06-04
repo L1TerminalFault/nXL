@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {useUser} from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 
 import { useTransactionStore, FilterOthersType } from "@/lib/store";
@@ -29,7 +29,7 @@ const WEEKS = ["1st", "2nd", "3rd", "4th"];
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function FilterPopup({ onClose }: FilterPopupProps) {
-	const {user} = useUser();
+  const { user } = useUser();
   const {
     data,
     setDataIn,
@@ -100,17 +100,21 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
     if (localOtherFilters.trans !== "All") {
       if (localOtherFilters.trans === "Expense") {
         filtered = filtered.filter((d) =>
-	  ACC_OWNER.toLowerCase().includes(d.transaction.payerAcc.toLowerCase())
+          ACC_OWNER.toLowerCase().includes(
+            d.transaction.payerAcc.toLowerCase(),
+          ),
         );
       } else
         filtered = filtered.filter((d) =>
-	  ACC_OWNER.toLowerCase().includes(d.transaction.recieverAcc.toLowerCase())
+          ACC_OWNER.toLowerCase().includes(
+            d.transaction.recieverAcc.toLowerCase(),
+          ),
         );
     }
 
     if (localOtherFilters.users !== "All") {
-      filtered = filtered.filter(
-        (d) => d.users.includes(localOtherFilters.users),
+      filtered = filtered.filter((d) =>
+        d.users.includes(localOtherFilters.users),
       );
     }
 
@@ -359,61 +363,67 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
             >
               All
             </button>
-	    {categories
-		  .map((each) => (
-		    <div
-              onClick={() =>
-                setLocalOtherFilters((prev) => ({ ...prev, category: each }))
-              }
-		      key={each}
-		      className={`${btnClass(localOtherFilters.category === each)}`}
-		    >
-		      <div className="">{each}</div>
-		    </div>
-		  ))
-	      }
+            {categories.map((each) => (
+              <div
+                onClick={() =>
+                  setLocalOtherFilters((prev) => ({ ...prev, category: each }))
+                }
+                key={each}
+                className={`${btnClass(localOtherFilters.category === each)}`}
+              >
+                <div className="">{each}</div>
+              </div>
+            ))}
           </div>
         </div>
 
-	{isAdmin(user?.id) ? <div className="flex flex-col gap-3">
-          <div className="text-gray-500 pl-1 tracking-wider text-xs">
-            By Users
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {/* The user will implement logic for these, we just place the buttons */}
-            <button
-              onClick={() =>
-                setLocalOtherFilters((prev) => ({ ...prev, users: "All" }))
-              }
-              className={btnClass(localOtherFilters.users === "All")}
-            >
-              All
-            </button>
+        {isAdmin(user?.id) ? (
+          <div className="flex flex-col gap-3">
+            <div className="text-gray-500 pl-1 tracking-wider text-xs">
+              By Users
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {/* The user will implement logic for these, we just place the buttons */}
+              <button
+                onClick={() =>
+                  setLocalOtherFilters((prev) => ({ ...prev, users: "All" }))
+                }
+                className={btnClass(localOtherFilters.users === "All")}
+              >
+                All
+              </button>
 
-	    {allUsers.length
-	      ? allUsers
-		  // {/* .filter((u) => u.id !== user?.id) */}
-		  .map((each) => (
-		    <div
-              onClick={() =>
-                setLocalOtherFilters((prev) => ({ ...prev, users: each.id }))
-              }
-		      key={each.id}
-		      className={`${btnClass(localOtherFilters.users === each.id)} px-4 py-0 rounded-full border border-white/8 text-base text-xs flex items-center justify-start gap-3 w-max text-center cursor-pointer transition-colors`}
-		    >
-		      <Image
-			alt=""
-			src={each.image}
-			width={18}
-			height={18}
-			className="rounded-full"
-		      />
-		      <div className="">{each.username}</div>
-		    </div>
-		  ))
-	      : null}
-	  </div>
-        </div> : null}
+              {allUsers.length
+                ? allUsers
+                    // {/* .filter((u) => u.id !== user?.id) */}
+                    .map((each) => (
+                      <div
+                        onClick={() =>
+                          setLocalOtherFilters((prev) => ({
+                            ...prev,
+                            users: each.id,
+                          }))
+                        }
+                        key={each.id}
+                        className={`${btnClass(localOtherFilters.users === each.id)} px-4 py-0 rounded-full border border-white/8 text-base text-xs flex items-center justify-start gap-3 w-max text-center cursor-pointer transition-colors`}
+                      >
+                        <Image
+                          alt=""
+                          src={each.image}
+                          width={18}
+                          height={18}
+                          className="rounded-full"
+                        />
+                        <div className="flex flex-col gap-1">
+                          <div>{each.username}</div>
+                          <div className="text-xs opacity-50">{each.email}</div>
+                        </div>
+                      </div>
+                    ))
+                : null}
+            </div>
+          </div>
+        ) : null}
 
         <div className="mt-4 flex w-full gap-4 justify-end">
           <button

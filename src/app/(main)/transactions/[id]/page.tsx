@@ -85,7 +85,7 @@ export default function TransactionPage() {
               date,
               reason,
               category,
-	      url: url || trans.transaction.url,
+              url: url || trans.transaction.url,
             },
             users: allowedUsers,
           },
@@ -147,21 +147,23 @@ export default function TransactionPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-	    {trans.transaction.url.length ? <Link
-                href={trans.transaction.url || ""}
-                className="rounded-full p-3 px-5 md:text-xl text-nowrap text-sm bg-white/5 hover:bg-white/10 transition-colors"
-                target="_blank"
-              >
-                View Receipt
-              </Link> : 
-		      isAdmin(user?.id) ? <input
-	        type="text"
-		placeholder="Paste Reciept Link"
-		value={url || ""}
-		onChange={(e) => setUrl(e.target.value)}
-		className="outline-none text-xs rounded-full p-3 px-5 border-gray-700/60 focus:border-gray-700 hover:border-gray-700 border"
-	      /> : null
-	    }
+              {trans.transaction.url.length ? (
+                <Link
+                  href={trans.transaction.url || ""}
+                  className="rounded-full p-3 px-5 md:text-xl text-nowrap text-sm bg-white/5 hover:bg-white/10 transition-colors"
+                  target="_blank"
+                >
+                  View Receipt
+                </Link>
+              ) : isAdmin(user?.id) ? (
+                <input
+                  type="text"
+                  placeholder="Paste Reciept Link"
+                  value={url || ""}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="outline-none text-xs rounded-full p-3 px-5 border-gray-700/60 focus:border-gray-700 hover:border-gray-700 border"
+                />
+              ) : null}
             </div>
           </div>
 
@@ -197,70 +199,73 @@ export default function TransactionPage() {
               </div>
             </div>
 
-                <div
-                  className={`flex flex-col gap-2 ${isAdminUser ? "" : "hidden"}`}
-                >
-                  <div className="text-gray-500 uppercase/ text-sm">
-                    Allow Users{" "}
-                    <i className="text-xs text-gray-600">
-                      Highlighted users are allowed
-                    </i>
-                  </div>
-                  <div className="flex flex-col gap-3 items-start">
-                    {allUsers.length
-                      ? allUsers
-                          // {/* .filter((u) => u.id !== user?.id) */}
-                          .map((each) => (
-                            <div
-                              onClick={() =>
-                                setAllowedUsers((prev) =>
-                                  prev.includes(each.id)
-                                    ? prev.filter((id) => id !== each.id)
-                                    : [...prev, each.id],
-                                )
-                              }
-                              key={each.id}
-                              className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-start gap-3 w-max text-center cursor-pointer hover:bg-white/10 transition-colors ${allowedUsers.includes(each.id) ? "bg-white/10" : ""}`}
-                            >
-                              <Image
-                                alt=""
-                                src={each.image}
-                                width={20}
-                                height={20}
-                                className="rounded-full"
-                              />
-                              <div className="">{each.username}</div>
-                              {allowedUsers.includes(each.id) ? (
-                                <i className="text-gray-400 text-[8px]">
-                                  Allowed
-                                </i>
-                              ) : (
-                                <i className="text-gray-500 text-[8px]">
-                                  Not allowed
-                                </i>
-                              )}
+            <div
+              className={`flex flex-col gap-2 ${isAdminUser ? "" : "hidden"}`}
+            >
+              <div className="text-gray-500 uppercase/ text-sm">
+                Allow Users{" "}
+                <i className="text-xs text-gray-600">
+                  Highlighted users are allowed
+                </i>
+              </div>
+              <div className="flex flex-col gap-3 items-start">
+                {allUsers.length
+                  ? allUsers
+                      // {/* .filter((u) => u.id !== user?.id) */}
+                      .map((each) => (
+                        <div
+                          onClick={() =>
+                            setAllowedUsers((prev) =>
+                              prev.includes(each.id)
+                                ? prev.filter((id) => id !== each.id)
+                                : [...prev, each.id],
+                            )
+                          }
+                          key={each.id}
+                          className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-start gap-3 w-max text-center cursor-pointer hover:bg-white/10 transition-colors ${allowedUsers.includes(each.id) ? "bg-white/10" : ""}`}
+                        >
+                          <Image
+                            alt=""
+                            src={each.image}
+                            width={20}
+                            height={20}
+                            className="rounded-full"
+                          />
+                          <div className="flex flex-col gap-1">
+                            <div>{each.username}</div>
+                            <div className="text-xs opacity-50">
+                              {each.email}
                             </div>
-                          ))
-                      : null}
-                  </div>
-                </div>
+                          </div>
+                          {allowedUsers.includes(each.id) ? (
+                            <i className="text-gray-400 text-[8px]">Allowed</i>
+                          ) : (
+                            <i className="text-gray-500 text-[8px]">
+                              Not allowed
+                            </i>
+                          )}
+                        </div>
+                      ))
+                  : null}
+              </div>
+            </div>
 
-                <div
-                  className={`flex gap-3 justify-end ${isAdminUser ? "" : "hidden"}`}
-                >
-                  <div
-                    className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-white/30 hover:bg-white/20 transition-colors"
-                    onClick={update}
-                  >
-                    {updateBtn}
-                  </div>
-                  <div
-                    className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-red-500/60 hover:bg-red-500/90 transition-colors"
-                    onClick={delete_}
-                  >
-                    {deleteBtn}
-                  </div>
-                </div>
+            <div
+              className={`flex gap-3 justify-end ${isAdminUser ? "" : "hidden"}`}
+            >
+              <div
+                className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-white/30 hover:bg-white/20 transition-colors"
+                onClick={update}
+              >
+                {updateBtn}
+              </div>
+              <div
+                className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-red-500/60 hover:bg-red-500/90 transition-colors"
+                onClick={delete_}
+              >
+                {deleteBtn}
+              </div>
+            </div>
           </div>
         </div>
       </div>

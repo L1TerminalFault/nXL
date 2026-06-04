@@ -18,6 +18,7 @@ export async function GET() {
           `${u.firstName || ""} ${u.lastName || ""}`.trim() ||
           u.primaryEmailAddress?.emailAddress,
         image: u.imageUrl,
+        email: u.emailAddresses[0].emailAddress,
       })),
     );
   } catch (error) {
