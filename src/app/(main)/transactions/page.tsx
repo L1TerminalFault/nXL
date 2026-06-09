@@ -4,9 +4,9 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
-import {VscRefresh as Refresh } from "react-icons/vsc";
-import {IoAdd as FaAdd } from "react-icons/io5";
-import {BsFilter as Filter } from "react-icons/bs";
+import { VscRefresh as Refresh } from "react-icons/vsc";
+import { IoAdd as FaAdd } from "react-icons/io5";
+import { BsFilter as Filter } from "react-icons/bs";
 
 import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
@@ -16,17 +16,27 @@ import { ACC_OWNER, isAdmin } from "@/lib/utils";
 import Link from "next/link";
 import FilterPopup from "@/components/FilterPopup";
 import AddTransactionPopup from "@/components/AddTransactionPopup";
-import {font as customFontBase64} from "@/lib/font";
+import { font as customFontBase64 } from "@/lib/font";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
-  const { data, setData, dataIn, setDataIn, total, setTotal, setAllUsers, setFilterOthers } = useTransactionStore();
+  const {
+    data,
+    setData,
+    dataIn,
+    setDataIn,
+    total,
+    setTotal,
+    setAllUsers,
+    setFilterOthers,
+  } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const [filterPopUp, setFilterPopUp] = useState(false);
   const [addPopup, setAddPopup] = useState(false);
   const [listType, setListType] = useState<string>("ui");
+  const [showRemaining, setShowRemaining] = useState([false, false]);
 
   const fetchUsers = async () => {
     try {
@@ -40,22 +50,21 @@ export default function Page() {
   };
 
   useEffect(() => {
-      let total_ = 0;
+    let total_ = 0;
 
-      const data_ = dataIn
-			.filter(d => !d.transaction.message?.length)
+    const data_ = dataIn
+      .filter((d) => !d.transaction.message?.length)
       .forEach(({ transaction }) => {
         const accCredited = ACC_OWNER.toLowerCase().includes(
           transaction.recieverAcc.trim().toLowerCase(),
         );
 
-        if (accCredited) total_ += parseFloat(transaction.amount.split(" ")[1])
-        else total_ -= parseFloat(transaction.amount.split(" ")[1])
+        if (accCredited) total_ += parseFloat(transaction.amount.split(" ")[1]);
+        else total_ -= parseFloat(transaction.amount.split(" ")[1]);
       });
 
-      setTotal(total_);
-
-  }, [dataIn])
+    setTotal(total_);
+  }, [dataIn]);
 
   const fetchData = useCallback(async () => {
     // setLoading(false);
@@ -74,20 +83,27 @@ export default function Page() {
       };
 
       const parsedData = fetched.data.map(({ _id, transaction, users }) => ({
-          _id,
-          users,
-          transaction: JSON.parse(transaction),
-        }))
+        _id,
+        users,
+        transaction: JSON.parse(transaction),
+      }));
 
       setData(parsedData);
       setDataIn(parsedData);
       fetchUsers();
-      console.log(parsedData.find(each => !each.transaction.date ? each : null));
+      console.log(
+        parsedData.find((each) => (!each.transaction.date ? each : null)),
+      );
     } catch (error) {
       setError("Connect to internet, if issue persists let us know");
       console.log("Error ", error);
     } finally {
-      setFilterOthers({ trans: "All", bank: "All", category: "All", users: "All" });
+      setFilterOthers({
+        trans: "All",
+        bank: "All",
+        category: "All",
+        users: "All",
+      });
       setLoading(false);
     }
   }, [setData, user, setDataIn]);
@@ -105,15 +121,15 @@ export default function Page() {
 
     // 5. Pass the font into autoTable styles
     autoTable(pdf, {
-        html: "#exportable-table",
-        styles: {
-            font: "CustomFont", // 👈 Ensures the table body uses the font
-            fontStyle: "normal"
-        },
-        headStyles: {
-            font: "CustomFont", // 👈 Ensures the table header uses the font
-            fontStyle: "normal"
-        }
+      html: "#exportable-table",
+      styles: {
+        font: "CustomFont", // 👈 Ensures the table body uses the font
+        fontStyle: "normal",
+      },
+      headStyles: {
+        font: "CustomFont", // 👈 Ensures the table header uses the font
+        fontStyle: "normal",
+      },
     });
 
     // autoTable(pdf, {
@@ -131,7 +147,12 @@ export default function Page() {
   return (
     <div className="md:p-10 p-3 pt-6 gap-8 h-full min-h-screen items-center justify-center/ w-full flex flex-col">
       {filterPopUp && <FilterPopup onClose={() => setFilterPopUp(false)} />}
-      {addPopup && <AddTransactionPopup onClose={() => setAddPopup(false)} onSuccess={() => setData(null)} />}
+      {addPopup && (
+        <AddTransactionPopup
+          onClose={() => setAddPopup(false)}
+          onSuccess={() => setData(null)}
+        />
+      )}
       <div className="z-1 px-3 backdrop-blur-2xl w-full justify-between flex gap-10 items-center">
         <div className="flex gap-4">
           <div
@@ -153,37 +174,49 @@ export default function Page() {
             onClick={fetchData}
             className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
           >
-           <Refresh className="size-5" />
+            <Refresh className="size-5" />
           </div>
           <div
             onClick={() => setFilterPopUp(true)}
             className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
           >
-           <Filter className="size-5" />
+            <Filter className="size-5" />
           </div>
-	  {isAdmin(user?.id) ? <div
-            onClick={() => setAddPopup(true)}
-            className={`px-6/ p-3 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
-          >
-           <FaAdd className="size-5" />
-          </div> : null}
+          {isAdmin(user?.id) ? (
+            <div
+              onClick={() => setAddPopup(true)}
+              className={`px-6/ p-3 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+            >
+              <FaAdd className="size-5" />
+            </div>
+          ) : null}
         </div>
       </div>
 
       <div className="flex flex-col w-full gap-3">
         <div className="flex w-full justify-between px-4  items-center">
           <div className="text-gray-500">CBE Balance</div>
-          <div className="">
-            {dataIn.find((dat) => dat.transaction.bank === "CBE")?.transaction
-              ?.remaining || ""}
+          <div
+            onClick={() => setShowRemaining((prev) => [!prev[0], ...prev])}
+            className=""
+          >
+            {showRemaining[0]
+              ? dataIn.find((dat) => dat.transaction.bank === "CBE")
+                  ?.transaction?.remaining || ""
+              : "*****"}
           </div>
         </div>
 
         <div className="flex w-full justify-between px-4  items-center">
           <div className="text-gray-500">TeleBirr Balance</div>
-          <div className="">
-            {dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
-              ?.transaction?.remaining || ""}
+          <div
+            onClick={() => setShowRemaining((prev) => [...prev, !prev[1]])}
+            className=""
+          >
+            {showRemaining[1]
+              ? dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
+                  ?.transaction?.remaining || ""
+              : "*****"}
           </div>
         </div>
       </div>
@@ -233,50 +266,54 @@ export default function Page() {
 
               <tbody>
                 {dataIn
-			.filter(d => ('parsed' in d.transaction) ? d.transaction.parsed : !d.transaction?.message?.length)
-			.map((rowData) => {
-                  const row = rowData.transaction;
-                  const toOrFrom = ACC_OWNER.toLowerCase().includes(
-                    row.recieverAcc.toLowerCase(),
-                  ) ? (
-                    <div className="flex text-center items-center">
-                      <span className="text-xs text-center text-gray-500">
-                        FROM{" "}
-                      </span>
-                      <span className="capitalize">{row.payerAcc}</span>
-                    </div>
-                  ) : (
-                    <>
-                      <span className="text-xs text-gray-500">TO </span>
-                      <span className="capitalize">{row.recieverAcc}</span>
-                    </>
-                  );
+                  .filter((d) =>
+                    "parsed" in d.transaction
+                      ? d.transaction.parsed
+                      : !d.transaction?.message?.length,
+                  )
+                  .map((rowData) => {
+                    const row = rowData.transaction;
+                    const toOrFrom = ACC_OWNER.toLowerCase().includes(
+                      row.recieverAcc.toLowerCase(),
+                    ) ? (
+                      <div className="flex text-center items-center">
+                        <span className="text-xs text-center text-gray-500">
+                          FROM{" "}
+                        </span>
+                        <span className="capitalize">{row.payerAcc}</span>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="text-xs text-gray-500">TO </span>
+                        <span className="capitalize">{row.recieverAcc}</span>
+                      </>
+                    );
 
-                  return (
-                    <tr
-                      key={Math.random()}
-                      className="border-b border-white/5 hover:bg-white/5"
-                    >
-                      <td className="p-3">{row.date}</td>
-                      <td className="p-3">{toOrFrom}</td>
-                      <td className="p-3">{row.reason}</td>
-                      <td className="p-3">{row.amount}</td>
-                      <td className="p-3">{row.category}</td>
-                      <td className="p-3">{row.bank}</td>
-                      <td className="w-35">
-                        {row.url ? (
-                          <Link
-                            target="_blank"
-                            href={row.url}
-                            className="px-5 py-2 bg-white/5 rounded-full"
-                          >
-                            View Reciept
-                          </Link>
-                        ) : null}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    return (
+                      <tr
+                        key={Math.random()}
+                        className="border-b border-white/5 hover:bg-white/5"
+                      >
+                        <td className="p-3">{row.date}</td>
+                        <td className="p-3">{toOrFrom}</td>
+                        <td className="p-3">{row.reason}</td>
+                        <td className="p-3">{row.amount}</td>
+                        <td className="p-3">{row.category}</td>
+                        <td className="p-3">{row.bank}</td>
+                        <td className="w-35">
+                          {row.url ? (
+                            <Link
+                              target="_blank"
+                              href={row.url}
+                              className="px-5 py-2 bg-white/5 rounded-full"
+                            >
+                              View Reciept
+                            </Link>
+                          ) : null}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 <tr className="border-b border-white/5 hover:bg-white/5 font-bold">
                   <td className="p-3">Total</td>
                   <td className="p-3"></td>
