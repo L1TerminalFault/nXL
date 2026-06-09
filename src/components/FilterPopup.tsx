@@ -319,19 +319,19 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
               <div className="flex flex-col gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex flex-row gap-3">
                   <div className="flex flex-col">
-                    <label className="text-[10px] px-3 pb-1 text-white/70">
+                    <label className="text-[10px] px-3 pb-1 text-white/40">
                       FROM
                     </label>
                     <input
                       type="date"
                       value={customFrom}
                       onChange={(e) => setCustomFrom(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-full px-4 py-2"
+                      className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
                     />
                   </div>
 
                   <div className="flex flex-col">
-                    <label className="text-[10px] px-3 pb-1 text-white/70">
+                    <label className="text-[10px] px-3 pb-1 text-white/40">
                       TO
                     </label>
                     <input

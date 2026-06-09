@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 import autoTable from "jspdf-autotable";
 
 import { useTransactionStore } from "@/lib/store";
-import {font as customFontBase64} from "@/lib/font";
+import { font as customFontBase64 } from "@/lib/font";
 
 type Props = {
   data: {
@@ -17,7 +17,7 @@ type Props = {
 };
 
 export default function SummaryTable({ data }: Props) {
-  const { filterState } = useTransactionStore();
+  const { filterState, customFrom, customTo } = useTransactionStore();
 
   let allTotal = 0;
   let allNum = 0;
@@ -40,15 +40,15 @@ export default function SummaryTable({ data }: Props) {
 
     // 5. Pass the font into autoTable styles
     autoTable(pdf, {
-        html: "#export-summary-table",
-        styles: {
-            font: "CustomFont", // 👈 Ensures the table body uses the font
-            fontStyle: "normal"
-        },
-        headStyles: {
-            font: "CustomFont", // 👈 Ensures the table header uses the font
-            fontStyle: "normal"
-        }
+      html: "#export-summary-table",
+      styles: {
+        font: "CustomFont", // 👈 Ensures the table body uses the font
+        fontStyle: "normal",
+      },
+      headStyles: {
+        font: "CustomFont", // 👈 Ensures the table header uses the font
+        fontStyle: "normal",
+      },
     });
 
     // autoTable(pdf, {
@@ -72,7 +72,7 @@ export default function SummaryTable({ data }: Props) {
     //   const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
     //   pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
-       pdf.save(`summary-${Intl.DateTimeFormat("en-GB").format(Date.now())}.pdf`,);
+    pdf.save(`summary-${Intl.DateTimeFormat("en-GB").format(Date.now())}.pdf`);
     // } catch (err) {
     //   console.error(err);
     // }
@@ -92,6 +92,14 @@ export default function SummaryTable({ data }: Props) {
         id="export-summary-table"
         className="w-full text-left border-collapse"
       >
+        <thead>
+          <tr className="text-gray-400 border-b border-white/10">
+            <th className="p-3">From</th>
+            <th className="p-3">{new Date(customFrom).getDate()}</th>
+            <th className="p-3">To</th>
+            <th className="p-3">{new Date(customTo).getDate()}</th>
+          </tr>
+        </thead>
         <thead>
           <tr className="text-gray-400 border-b border-white/10">
             <th className="p-3">Category</th>
@@ -124,9 +132,16 @@ export default function SummaryTable({ data }: Props) {
                     (filterState.length === 5 &&
                       filterState.at(filterState.length - 1) === "All")
                   ? (allTotal / 7).toFixed(2)
-                  : filterState.length === 1
+                  : filterState.length === 1 && filterState[0] === "All"
                     ? (allTotal / 360).toFixed(2)
-                    : allTotal.toFixed(2)}
+                    : (
+                        allTotal /
+                        Math.floor(
+                          (new Date(customTo).getTime() -
+                            new Date(customFrom).getTime()) /
+                            86400000,
+                        )
+                      ).toFixed(2)}
             </td>
           </tr>
         </tbody>
