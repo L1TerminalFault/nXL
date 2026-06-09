@@ -210,7 +210,7 @@ export default function Page() {
         <div className="flex w-full justify-between px-4  items-center">
           <div className="text-gray-500">TeleBirr Balance</div>
           <div
-            onClick={() => setShowRemaining((prev) => [previ[0], !prev[1]])}
+            onClick={() => setShowRemaining((prev) => [prev[0], !prev[1]])}
             className=""
           >
             {showRemaining[1]
