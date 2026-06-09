@@ -269,6 +269,18 @@ export default function TransactionPage() {
           </div>
         </div>
       </div>
+
+
+      {trans.transaction.message.length ? <div className="bg-white/5 w-full md:p-20 p-5 flex flex-col rounded-4xl ">
+
+              <div className="text-gray-500 text-sm md:text-xl">
+	      Original Message
+	      </div>
+	      <div>
+	      {trans.transaction.message}
+	      </div>
+
+      </div> : null}
     </div>
   );
 }

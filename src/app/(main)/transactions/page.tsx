@@ -201,8 +201,8 @@ export default function Page() {
             className=""
           >
             {showRemaining[0]
-              ? "ETB " + dataIn.find((dat) => dat.transaction.bank === "CBE")
-                  ?.transaction?.remaining || ""
+              ? "ETB " + (dataIn.find((dat) => dat.transaction.bank === "CBE")
+                  ?.transaction?.remaining || "")
               : "*****"}
           </div>
         </div>
@@ -214,8 +214,8 @@ export default function Page() {
             className=""
           >
             {showRemaining[1]
-              ? "ETB " + dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
-                  ?.transaction?.remaining || ""
+              ? "ETB " + (dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
+                  ?.transaction?.remaining || "")
               : "*****"}
           </div>
         </div>
