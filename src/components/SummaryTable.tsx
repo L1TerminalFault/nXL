@@ -95,9 +95,9 @@ export default function SummaryTable({ data }: Props) {
         <thead>
           <tr className="text-gray-400 border-b border-white/10">
             <th className="p-3">From</th>
-            <th className="p-3">{new Date(customFrom).getDate()}</th>
+            <th className="p-3">{new Date(customFrom).toDateString()}</th>
             <th className="p-3">To</th>
-            <th className="p-3">{new Date(customTo).getDate()}</th>
+            <th className="p-3">{new Date(customTo).toDateString()}</th>
           </tr>
         </thead>
         <thead>
