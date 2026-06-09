@@ -269,12 +269,12 @@ export default function TransactionPage() {
           </div>
 
 	  
-      {trans.transaction.message?.length ? <div className="bg-white/5 text-xs w-full md:p-20 p-5 flex flex-col rounded-4xl ">
+      {trans.transaction.message?.length ? <div className="bg-white/5 gap-3 text-xs w-full md:p-20 p-5 flex flex-col rounded-4xl ">
 
               <div className="text-gray-500 text-sm md:text-xl">
 	      Original Message
 	      </div>
-	      <div>
+	      <div className="wrap-break-word">
 	      {trans.transaction.message}
 	      </div>
 
