@@ -316,10 +316,11 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
 
             {localState[0] === "Custom" && (
               <div className="flex flex-col gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-row gap-3">
                   <input
                     type="date"
                     value={customFrom}
+                    placeholder="FROM"
                     onChange={(e) => setCustomFrom(e.target.value)}
                     className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
                   />
@@ -327,6 +328,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
                   <input
                     type="date"
                     value={customTo}
+                    placeholder="TO"
                     onChange={(e) => setCustomTo(e.target.value)}
                     className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
                   />
