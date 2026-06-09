@@ -197,11 +197,11 @@ export default function Page() {
         <div className="flex w-full justify-between px-4  items-center">
           <div className="text-gray-500">CBE Balance</div>
           <div
-            onClick={() => setShowRemaining((prev) => [!prev[0], ...prev])}
+            onClick={() => setShowRemaining((prev) => [!prev[0], prev[1]])}
             className=""
           >
             {showRemaining[0]
-              ? dataIn.find((dat) => dat.transaction.bank === "CBE")
+              ? "ETB " + dataIn.find((dat) => dat.transaction.bank === "CBE")
                   ?.transaction?.remaining || ""
               : "*****"}
           </div>
@@ -210,11 +210,11 @@ export default function Page() {
         <div className="flex w-full justify-between px-4  items-center">
           <div className="text-gray-500">TeleBirr Balance</div>
           <div
-            onClick={() => setShowRemaining((prev) => [...prev, !prev[1]])}
+            onClick={() => setShowRemaining((prev) => [previ[0], !prev[1]])}
             className=""
           >
             {showRemaining[1]
-              ? dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
+              ? "ETB " + dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
                   ?.transaction?.remaining || ""
               : "*****"}
           </div>
