@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SVGProps } from "react";
 import { FaAlignLeft as List } from "react-icons/fa";
 import { RiFileList2Line as Sum } from "react-icons/ri";
+import {MdOutlineTask as Ord} from "react-icons/md";
 import { GoHomeFill as Home } from "react-icons/go";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -23,6 +24,11 @@ const routes = [
     name: "Summary",
     href: "/summary",
     icon: (props: SVGProps<SVGSVGElement>) => <Sum {...props} />,
+  },
+  {
+    name: "Orders",
+    href: "#",
+    icon: (props: SVGProps<SVGSVGElement>) => <Ord {...props} />,
   },
 ];
 
@@ -53,7 +59,7 @@ export default function NavBar() {
         id="follower"
         className="p-4 hidden bg-white/10 absolute mt-2 transition-all z-10 rounded-full duration-400"
       />
-      <div className="flex //max-md: items-center //md:flex-col //md:gap-4 shadow-lg shadow-black/30 p-2 //max-md:p-1 rounded-full //md:h-full //max-md: backdrop-blur-xl w-full //max-md: bg-gray-100/5 //max-md: justify-evenly //md:pt-34">
+      <div className="flex //max-md: items-center //md:flex-col //md:gap-4 shadow-lg shadow-black/30 p-2 //max-md:p-1 rounded-full //md:h-full //max-md: backdrop-blur-xl w-full //max-md: bg-gray-100/5 //max-md: justify-between //md:pt-34">
         {routes.map((route) => (
           <Link
             id={`${route.href.includes(pathname) ? "followee" : ""}`}
@@ -61,8 +67,8 @@ export default function NavBar() {
             href={route.href}
             className={`flex max-md:flex-col items-center justify-center gap-1.5 md:gap-3 text-lg p-1.5 px-6 //px-4 rounded-full ${route.href.includes(pathname) ? "hover:bg-transparent" : "hover:bg-white/5 text-gray-400"} transition-all items-center`}
           >
-            <route.icon className="text-2xl" />
-            <div className={`flex items-center max-md:text-xs justify-center`}>
+            <route.icon className="text-xl" />
+            <div className={`flex items-center max-md:text-[10px] justify-center`}>
               {route.name}
             </div>
           </Link>
