@@ -99,7 +99,7 @@ export const useTransactionStore = create(
     total: 0,
     setTotal: (value: number) => set(() => ({ total: value })),
     locked: true,
-    setLocked: () => set((prev) => ({ locked: !prev })),
+    setLocked: () => set((prev: boolean) => ({ locked: !prev })),
     allUsers: [] as User[],
     setAllUsers: (value: User[]) => set(() => ({ allUsers: value })),
   }),

@@ -16,7 +16,15 @@ export default function Filter() {
     // if (locked) redirect("/");
     (() =>
       setDataUsed(
-        dataIn.filter((d) => !d.transaction.recieverAcc.includes(ACC_OWNER)),
+        dataIn.filter(
+          (d: TransactionParsedType) =>
+            !d.transaction.recieverAcc
+              .toLowerCase()
+              .includes(ACC_OWNER.toLowerCase()) &&
+            !ACC_OWNER.toLowerCase().includes(
+              d.transaction.recieverAcc.toLowerCase(),
+            ),
+        ),
       ))();
   }, [locked, dataIn]);
 
