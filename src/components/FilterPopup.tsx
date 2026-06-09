@@ -319,7 +319,9 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
               <div className="flex flex-col gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex flex-row gap-3">
                   <div className="flex flex-col">
-                    <label className="text-xs text-white/70 mb-1">FROM</label>
+                    <label className="text-[10px] px-3 pb-1 text-white/70">
+                      FROM
+                    </label>
                     <input
                       type="date"
                       value={customFrom}
@@ -329,7 +331,9 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
                   </div>
 
                   <div className="flex flex-col">
-                    <label className="text-xs text-white/70 mb-1">TO</label>
+                    <label className="text-[10px] px-3 pb-1 text-white/70">
+                      TO
+                    </label>
                     <input
                       type="date"
                       value={customTo}
