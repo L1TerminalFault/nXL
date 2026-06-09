@@ -36,6 +36,10 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
     filterState,
     setFilterState,
     filterOthers,
+    setCustomFrom,
+    setCustomTo,
+    customTo,
+    customFrom,
     setFilterOthers,
     allUsers,
   } = useTransactionStore();
@@ -46,9 +50,6 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
 
   const [localOtherFilters, setLocalOtherFilters] =
     useState<FilterOthersType>(filterOthers);
-
-  const [customFrom, setCustomFrom] = useState("");
-  const [customTo, setCustomTo] = useState("");
 
   const handleSelect = (level: number, value: string) => {
     const newState = [...localState].slice(0, level); // Drop everything after this level
@@ -317,21 +318,25 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
             {localState[0] === "Custom" && (
               <div className="flex flex-col gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex flex-row gap-3">
-                  <input
-                    type="date"
-                    value={customFrom}
-                    placeholder="FROM"
-                    onChange={(e) => setCustomFrom(e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
-                  />
+                  <div className="flex flex-col">
+                    <label className="text-xs text-white/70 mb-1">FROM</label>
+                    <input
+                      type="date"
+                      value={customFrom}
+                      onChange={(e) => setCustomFrom(e.target.value)}
+                      className="bg-white/5 border border-white/10 rounded-full px-4 py-2"
+                    />
+                  </div>
 
-                  <input
-                    type="date"
-                    value={customTo}
-                    placeholder="TO"
-                    onChange={(e) => setCustomTo(e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
-                  />
+                  <div className="flex flex-col">
+                    <label className="text-xs text-white/70 mb-1">TO</label>
+                    <input
+                      type="date"
+                      value={customTo}
+                      onChange={(e) => setCustomTo(e.target.value)}
+                      className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
+                    />
+                  </div>
                 </div>
               </div>
             )}

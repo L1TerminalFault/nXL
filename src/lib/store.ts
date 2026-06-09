@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import { toEthiopian } from "ethiopian-calendar-new";
 import { TransactionParsedType } from "@/db/methods";
+import strict from "node:assert/strict";
 
 export type FilterOthersType = {
   trans: string;
@@ -29,6 +30,10 @@ export const useTransactionStore = create(
     setFilterOthers: (value: FilterOthersType) => void;
     filterState: string[];
     setFilterState: (value: string[]) => void;
+    customFrom: string;
+    setCustomFrom: (value: string) => void;
+    customTo: string;
+    setCustomTo: (value: string) => void;
     total: number;
     setTotal: (value: number) => void;
     locked: boolean;
@@ -96,10 +101,14 @@ export const useTransactionStore = create(
       set(() => ({ filterOthers: value })),
     filterState: ["All"],
     setFilterState: (value: string[]) => set(() => ({ filterState: value })),
+    customFrom: Date.now().toString(),
+    customTo: Date.now().toString(),
+    setCustomFrom: (value: string) => set(() => ({ customFrom: value })),
+    setCustomTo: (value: string) => set(() => ({ customTo: value })),
     total: 0,
     setTotal: (value: number) => set(() => ({ total: value })),
     locked: true,
-    setLocked: () => set((prev) => ({ locked: !prev })),
+    setLocked: () => set((prev) => ({ locked: !prev.locked })),
     allUsers: [] as User[],
     setAllUsers: (value: User[]) => set(() => ({ allUsers: value })),
   }),
