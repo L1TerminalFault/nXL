@@ -47,6 +47,9 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
   const [localOtherFilters, setLocalOtherFilters] =
     useState<FilterOthersType>(filterOthers);
 
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+
   const handleSelect = (level: number, value: string) => {
     const newState = [...localState].slice(0, level); // Drop everything after this level
     newState[level] = value;
@@ -119,6 +122,19 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
     }
 
     const t0 = localState[0];
+    if (t0 === "Custom" && customFrom && customTo) {
+      const from = new Date(customFrom);
+      from.setHours(0, 0, 0, 0);
+
+      const to = new Date(customTo);
+      to.setHours(23, 59, 59, 999);
+
+      filtered = filtered.filter((row) => {
+        const date = new Date(row.transaction.date);
+        return date >= from && date <= to;
+      });
+    }
+
     if (t0 === "Monthly") {
       const t1 = localState[1];
       if (t1 === "Relative") {
@@ -273,7 +289,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex flex-wrap gap-3">
-              {["All", "Monthly"].map((v) => (
+              {["All", "Monthly", "Custom"].map((v) => (
                 <button
                   key={v}
                   onClick={() => handleSelect(0, v)}
@@ -295,6 +311,26 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
                     {v}
                   </button>
                 ))}
+              </div>
+            )}
+
+            {localState[0] === "Custom" && (
+              <div className="flex flex-col gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="date"
+                    value={customFrom}
+                    onChange={(e) => setCustomFrom(e.target.value)}
+                    className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
+                  />
+
+                  <input
+                    type="date"
+                    value={customTo}
+                    onChange={(e) => setCustomTo(e.target.value)}
+                    className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
+                  />
+                </div>
               </div>
             )}
 
