@@ -95,7 +95,7 @@ export default function Home() {
                 placeholder="Enter Password"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="outline-none rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
+                className="outline-none flex-1 rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
               />
 
           <div
