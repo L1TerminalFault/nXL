@@ -9,11 +9,11 @@ import { useEffect } from "react";
 import { redirect } from "next/navigation";
 
 export default function Home() {
-  const { locked } = useTransactionStore();
+  // const { locked } = useTransactionStore();
 
-  useEffect(() => {
-    if (locked) redirect("/");
-  });
+  // useEffect(() => {
+  //   if (locked) redirect("/");
+  // });
 
   return (
     <div className="p-4 flex flex-col w-full h-full gap-6">

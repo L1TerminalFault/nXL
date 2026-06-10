@@ -17,7 +17,7 @@ export default function Home() {
   const [showPass, setShowPass] = useState(false);
 
   useEffect(() => {
-    if (!locked) redirect("/home");
+    if (!locked) redirect("/transactions");
     const passwd = localStorage.getItem("__n-xl_password__");
 
     if (!passwd || !passwd.length) {
@@ -32,20 +32,23 @@ export default function Home() {
 
     window.addEventListener("focus", () => {
       if (document.hidden || !document.hasFocus()) {
+	redirect("/");
         setLocked(true);
       }
     });
     window.addEventListener("blur", () => {
       if (document.hidden || !document.hasFocus()) {
+	redirect("/");
         setLocked(true);
       }
     });
     window.addEventListener("visibilitychange", () => {
       if (document.hidden || !document.hasFocus()) {
+	redirect("/");
         setLocked(true);
       }
     });
-  });
+  }, []);
 
   const handleSumbmit = () => {
     if (input === pass) setLocked(false);
