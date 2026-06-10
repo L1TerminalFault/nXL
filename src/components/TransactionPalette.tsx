@@ -22,7 +22,7 @@ export default function TransactionPalette({
     if (expanded) {
       return (
         <div className="flex flex-col w-full bg-white/5 p-4 rounded-3xl gap-4">
-          <div className="text-gray-300 text-sm p-4 bg-white/10 rounded-2xl whitespace-pre-wrap font-mono">
+          <div className="text-gray-300 wrap-break-word text-sm p-4 bg-white/10 rounded-2xl whitespace-pre-wrap font-mono">
             {transaction.message}
           </div>
           <AddTransactionPopup 
@@ -115,7 +115,7 @@ export default function TransactionPalette({
             </div>
             <div className="md:text-lg text-xs text-gray-400">
               {"Category: " +
-                (transaction.category.length ? transaction.category : "None")}
+                (transaction.category.length ? transaction.category : "Uncategorized")}
             </div>
           </div>
           <div className="text-gray-400 text-xs md:text-sm">
