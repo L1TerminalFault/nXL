@@ -83,9 +83,9 @@ export default function Home() {
 
   return (
     <div className="w-svw h-svh flex items-center justify-center">
-      <div className="border-2 w-full rounded-3xl p-5 gap-5 flex-col border-gray-800/50 shadow-l shadow-black/60 flex items-center justify-center">
+      <div className="border-2 w-full rounded-3xl p-5 /gap-5 flex-col border-gray-800/50 shadow-l shadow-black/60 flex items-center justify-center">
         {firstTime === false ? (
-          <>
+          <div className="flex w-full gap-5 flex-col">
             <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
             <form onSubmit={submit} className="flex flex-col w-full gap-5 items-center">
 	    <div className="flex gap-5 items-center justify-start w-full">
@@ -106,6 +106,8 @@ export default function Home() {
           </div>
 	  </div>
 
+            <div className="text-red-500 text-xs w-full px-3.5">{error}</div>
+
             <div className="flex w-full justify-end">
               <div
                 role="button"
@@ -117,8 +119,6 @@ export default function Home() {
 	      </div>
             </form>
 	    
-            <div className="text-red-500 text-xs w-full px-3.5">{error}</div>
-
             <div className="flex w-full justify-end">
               <div
                 role="button"
@@ -128,7 +128,7 @@ export default function Home() {
                 Change
               </div>
             </div>
-          </>
+          </div>
         ) : firstTime === true ? (
           <>
             <div className="text-gray-500 w-full px-3.5 text-xs">
