@@ -12,23 +12,28 @@ export default function TransactionPalette({
 }: {
   data: TransactionParsedType;
 }) {
-	const {user} = useUser();
+  const { user } = useUser();
   const _id = data._id;
   const transaction = data.transaction;
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
 
-  if (('parsed' in transaction && !transaction.parsed) || (!('parsed' in transaction) && transaction.message && transaction.message.length > 0)) {
+  if (
+    ("parsed" in transaction && !transaction.parsed) ||
+    (!("parsed" in transaction) &&
+      transaction.message &&
+      transaction.message.length > 0)
+  ) {
     if (expanded) {
       return (
         <div className="flex flex-col w-full bg-white/5 p-4 rounded-3xl gap-4">
           <div className="text-gray-300 wrap-break-word text-sm p-4 bg-white/10 rounded-2xl whitespace-pre-wrap font-mono">
             {transaction.message}
           </div>
-          <AddTransactionPopup 
-            inline 
-	    id={_id || ""}
-            onClose={() => setExpanded(false)} 
+          <AddTransactionPopup
+            inline
+            id={_id || ""}
+            onClose={() => setExpanded(false)}
             onSuccess={() => {
               fetch(`/api/deleteTransaction?id=${_id}`).then(() => {
                 setExpanded(false);
@@ -42,24 +47,36 @@ export default function TransactionPalette({
 
     return (
       <div
-        onClick={() => isAdmin(user?.id) ? setExpanded(true) : null}
+        onClick={() => (isAdmin(user?.id) ? setExpanded(true) : null)}
         className="flex w-full bg-red-500/10 border border-red-500/20 md:p-5 p-4 rounded-3xl hover:bg-red-500/20 transition-colors cursor-pointer"
       >
         <div className="flex flex-col gap-2 w-full">
           <div className="text-red-400 font-semibold text-sm md:text-base">
-            This message couldn't be parsed. Click to add manually.
+            This message couldn&apos;t be parsed. Click to add manually.
           </div>
           <div className="text-gray-400 text-xs md:text-sm line-clamp-2">
-             {transaction.message}
+            {transaction.message}
           </div>
         </div>
       </div>
     );
   }
 
-  const accCredited = ACC_OWNER.toLowerCase().includes(
-    transaction.recieverAcc.trim().toLowerCase(),
-  );
+  const resolveDirection = (tx: any): "TO" | "FROM" => {
+    return (
+      tx.direction ??
+      (ACC_OWNER.toLowerCase().includes(tx.recieverAcc.trim().toLowerCase())
+        ? "FROM"
+        : "TO")
+    );
+  };
+
+  const accCredited =
+    resolveDirection(transaction) === "FROM";
+
+  // const accCredited = ACC_OWNER.toLowerCase().includes(
+  //   transaction.recieverAcc.trim().toLowerCase(),
+  // );
 
   const otherAccount = accCredited
     ? {
@@ -82,10 +99,12 @@ export default function TransactionPalette({
         <div className="flex gap-3 justify-between w-full flex-row items-center">
           <div className="flex flex-col w-full/ gap-3">
             <div className="text-gray-400/90 uppercase md:text-base text-xs">
-              {(accCredited ? "From " : "To ") +
-                otherAccount.holder +
-                "  **" +
-                otherAccount.number.split("*").slice(-1)[0]}
+              {"direction" in transaction
+                ? transaction.direction + " "
+                : (accCredited ? "From " : "To ") +
+                  otherAccount.holder +
+                  "  **" +
+                  otherAccount.number.split("*").slice(-1)[0]}
             </div>
 
             <div className="font-bold flex gap-2 text-2xl">
@@ -98,14 +117,16 @@ export default function TransactionPalette({
             </div>
           </div>
 
-	  {transaction.url ? <Link
-            onClick={(e) => e.stopPropagation()}
-            href={transaction.url || ""}
-            target="_blank"
-            className={`${!transaction.url ? "hidden" : ""} px-4 py-2 bg-white/5 hover:bg-white/10 text-white md:text-base text-xs text-nowrap rounded-full transition-colors`}
-          >
-            View Receipt
-          </Link> : null}
+          {transaction.url ? (
+            <Link
+              onClick={(e) => e.stopPropagation()}
+              href={transaction.url || ""}
+              target="_blank"
+              className={`${!transaction.url ? "hidden" : ""} px-4 py-2 bg-white/5 hover:bg-white/10 text-white md:text-base text-xs text-nowrap rounded-full transition-colors`}
+            >
+              View Receipt
+            </Link>
+          ) : null}
         </div>
 
         <div className="flex justify-between w-full">
@@ -115,7 +136,9 @@ export default function TransactionPalette({
             </div>
             <div className="md:text-lg text-xs text-gray-400">
               {"Category: " +
-                (transaction.category.length ? transaction.category : "Uncategorized")}
+                (transaction.category.length
+                  ? transaction.category
+                  : "Uncategorized")}
             </div>
           </div>
           <div className="text-gray-400 text-xs md:text-sm">

@@ -57,9 +57,21 @@ export default function TransactionPage() {
 
   if (!trans) return router.replace("/transactions");
 
-  const accCredited = ACC_OWNER.toLowerCase().includes(
-    trans.transaction.recieverAcc.trim().toLowerCase(),
-  );
+  const resolveDirection = (tx: any): "TO" | "FROM" => {
+    return (
+      tx.direction ??
+      (ACC_OWNER.toLowerCase().includes(tx.recieverAcc.trim().toLowerCase())
+        ? "FROM"
+        : "TO")
+    );
+  };
+
+  const accCredited =
+    resolveDirection(trans.transaction) === "FROM";
+
+  // const accCredited = ACC_OWNER.toLowerCase().includes(
+  //   trans.transaction.recieverAcc.trim().toLowerCase(),
+  // );
 
   const otherAccount = accCredited
     ? {

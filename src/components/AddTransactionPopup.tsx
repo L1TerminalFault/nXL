@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { TransactionParsedType } from "@/db/methods";
+import { TransactionParsedType, Direction } from "@/db/methods";
 import { categories } from "@/lib/utils";
 import { toGregorian, toEthiopian } from "ethiopian-calendar-new";
-import {useTransactionStore} from "@/lib/store";
+import { useTransactionStore } from "@/lib/store";
 
 interface AddTransactionPopupProps {
   onClose: () => void;
@@ -13,13 +13,18 @@ interface AddTransactionPopupProps {
   id?: string;
 }
 
-export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: AddTransactionPopupProps) {
+export default function AddTransactionPopup({
+  onClose,
+  inline,
+  onSuccess,
+  id,
+}: AddTransactionPopupProps) {
   const [loading, setLoading] = useState(false);
-  const [direction, setDirection] = useState<"TO" | "FROM">("TO");
+  const [direction, setDirection] = useState<Direction>("TO");
   const [accountInput, setAccountInput] = useState("");
   const [deleteBtn, setDeleteBtn] = useState("Delete");
   const { setData } = useTransactionStore();
-  
+
   const [formData, setFormData] = useState({
     reason: "",
     amount: "",
@@ -45,7 +50,7 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
   };
 
   const delete_ = async () => {
-  setDeleteBtn("Deleting...");
+    setDeleteBtn("Deleting...");
     try {
       await fetch(`/api/deleteTransaction?id=${id}`);
     } catch (err) {
@@ -65,7 +70,13 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
   };
 
   const handleAdd = async () => {
-    if (!accountInput || !formData.amount || !formData.date || !direction || !formData.bank) {
+    if (
+      !accountInput ||
+      !formData.amount ||
+      !formData.date ||
+      !direction ||
+      !formData.bank
+    ) {
       alert("Please fill all required fields: Account Name, Amount, and Date.");
       return;
     }
@@ -78,7 +89,7 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
       const year = parseInt(yearStr);
       const month = parseInt(monthStr);
       const day = parseInt(dayStr);
-      
+
       if (!year || !month || !day) throw new Error("Invalid date parts");
 
       const dateObj = new Date(year, month - 1, day);
@@ -105,6 +116,7 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
       url: formData.url,
       category: formData.category,
 
+      direction,
       parsed: true,
       message: "",
     };
@@ -125,128 +137,157 @@ export default function AddTransactionPopup({ onClose, inline, onSuccess, id }: 
   };
 
   const content = (
-      <div
-        onClick={(e) => {
-          if (!inline) e.stopPropagation();
-        }}
-        className={`w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-white/10 ${inline ? "rounded-2xl p-4 md:p-6" : "rounded-4xl p-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"} flex flex-col gap-6`}
-      >
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg text-gray-500 pl-3">Add Transaction</h2>
-          <button
-            onClick={onClose}
-            className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+    <div
+      onClick={(e) => {
+        if (!inline) e.stopPropagation();
+      }}
+      className={`w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-white/10 ${inline ? "rounded-2xl p-4 md:p-6" : "rounded-4xl p-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"} flex flex-col gap-6`}
+    >
+      <div className="flex justify-between items-center">
+        <h2 className="text-lg text-gray-500 pl-3">Add Transaction</h2>
+        <button
+          onClick={onClose}
+          className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
+          <label className="text-xs text-gray-500 pl-1">
+            Transaction Direction & Account{" "}
+            <span className="text-red-500">*</span>
+          </label>
+          <div className="flex bg-white/5 border-0 border-white/10 rounded-full overflow-hidden">
+            <button
+              onClick={() => setDirection("FROM")}
+              className={`flex-1 py-2 text-sm transition-colors ${direction === "FROM" ? "bg-white/20 text-white" : "text-gray-400 hover:text-white"}`}
             >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+              FROM
+            </button>
+            <button
+              onClick={() => setDirection("TO")}
+              className={`flex-1 py-2 text-sm transition-colors border-l border-white/10 ${direction === "TO" ? "bg-white/20 text-white" : "text-gray-400 hover:text-white"}`}
+            >
+              TO
+            </button>
+          </div>
+          <input
+            type="text"
+            value={accountInput}
+            onChange={(e) => setAccountInput(e.target.value)}
+            className="bg-white/5 border-0 border-white/10 rounded-full px-4 py-2 text-white outline-none focus:border-white/30 transition-colors w-full mt-2"
+            placeholder={`Enter ${direction === "TO" ? "Receiver's" : "Payer's"} Account Name`}
+          />
         </div>
 
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-4">
-             <label className="text-xs text-gray-500 pl-1">Transaction Direction & Account <span className="text-red-500">*</span></label>
-            <div className="flex bg-white/5 border-0 border-white/10 rounded-full overflow-hidden">
-              <button
-                onClick={() => setDirection("FROM")}
-                className={`flex-1 py-2 text-sm transition-colors ${direction === "FROM" ? "bg-white/20 text-white" : "text-gray-400 hover:text-white"}`}
-              >
-                FROM
-              </button>
-              <button
-                onClick={() => setDirection("TO")}
-                className={`flex-1 py-2 text-sm transition-colors border-l border-white/10 ${direction === "TO" ? "bg-white/20 text-white" : "text-gray-400 hover:text-white"}`}
-              >
-                TO
-              </button>
-            </div>
-            <input
-              type="text"
-              value={accountInput}
-              onChange={(e) => setAccountInput(e.target.value)}
-              className="bg-white/5 border-0 border-white/10 rounded-full px-4 py-2 text-white outline-none focus:border-white/30 transition-colors w-full mt-2"
-              placeholder={`Enter ${direction === "TO" ? "Receiver's" : "Payer's"} Account Name`}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.keys(formData).filter(k => k !== "category" && k !== "bank").map((key) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Object.keys(formData)
+            .filter((k) => k !== "category" && k !== "bank")
+            .map((key) => (
               <div key={key} className="flex flex-col gap-1">
                 <label className="text-xs text-gray-500 pl-1 capitalize">
-                  {key.replace(/([A-Z])/g, " $1") === "url" ? "Reciept Link" : key.replace(/([A-Z])/g, " $1") === "date" ? "Date In Gregorian" : key.replace(/([A-Z])/g, " $1")} {['amount', 'date'].includes(key) && <span className="text-red-500">*</span>}
+                  {key.replace(/([A-Z])/g, " $1") === "url"
+                    ? "Reciept Link"
+                    : key.replace(/([A-Z])/g, " $1") === "date"
+                      ? "Date In Gregorian"
+                      : key.replace(/([A-Z])/g, " $1")}{" "}
+                  {["amount", "date"].includes(key) && (
+                    <span className="text-red-500">*</span>
+                  )}
                 </label>
                 <input
-                  type={key === 'date' ? 'date' : 'text'}
+                  type={key === "date" ? "date" : "text"}
                   name={key}
                   value={formData[key as keyof typeof formData]}
                   onChange={handleChange}
                   className="bg-white/5 border-0 border-white/10 rounded-full px-4 py-2 text-white outline-none focus:border-white/30 transition-colors"
-                  placeholder={key === 'date' ? "MM-DD-YYYY" : key === "url" ? "Reciept Link" : key.replace(/([A-Z])/g, " $1").trim()[0].toUpperCase() + key.replace(/([A-Z])/g, " $1").trim().slice(1)}
+                  placeholder={
+                    key === "date"
+                      ? "MM-DD-YYYY"
+                      : key === "url"
+                        ? "Reciept Link"
+                        : key
+                            .replace(/([A-Z])/g, " $1")
+                            .trim()[0]
+                            .toUpperCase() +
+                          key
+                            .replace(/([A-Z])/g, " $1")
+                            .trim()
+                            .slice(1)
+                  }
                 />
               </div>
             ))}
-          </div>
+        </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-xs text-gray-500 pl-1">Bank <span className="text-red-500">*</span></label>
-            <div className="flex flex-wrap gap-2">
-              {banks.map((b) => (
-                <button
-                  key={b}
-                  onClick={() => setFormData({ ...formData, bank: b })}
-                  className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.bank === b ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
-                >
-                  {b}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-xs text-gray-500 pl-1">Category </label>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.category === cat ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs text-gray-500 pl-1">
+            Bank <span className="text-red-500">*</span>
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {banks.map((b) => (
+              <button
+                key={b}
+                onClick={() => setFormData({ ...formData, bank: b })}
+                className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.bank === b ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
+              >
+                {b}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="mt-4 gap-3 flex w-full justify-end">
-          <button
-            onClick={handleAdd}
-            disabled={loading}
-            className="flex py-3 px-7 bg-white/10 text-white hover:bg-white/15 rounded-full transition-colors disabled:opacity-50"
-          >
-            {loading ? "Adding..." : "Add"}
-          </button>
+        <div className="flex flex-col gap-2">
+          <label className="text-xs text-gray-500 pl-1">Category </label>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setCategory(cat)}
+                className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.category === cat ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-	  {inline ? <button
+      <div className="mt-4 gap-3 flex w-full justify-end">
+        <button
+          onClick={handleAdd}
+          disabled={loading}
+          className="flex py-3 px-7 bg-white/10 text-white hover:bg-white/15 rounded-full transition-colors disabled:opacity-50"
+        >
+          {loading ? "Adding..." : "Add"}
+        </button>
+
+        {inline ? (
+          <button
             onClick={delete_}
             disabled={loading}
             className="flex py-3 px-7 bg-red-500/60 hover:bg-red-500/90 text-white rounded-full transition-colors disabled:opacity-50"
           >
             {deleteBtn}
-          </button> : null}
-        </div>
+          </button>
+        ) : null}
       </div>
+    </div>
   );
 
   if (inline) {

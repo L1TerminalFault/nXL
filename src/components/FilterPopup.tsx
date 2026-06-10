@@ -103,18 +103,48 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
 
     if (localOtherFilters.trans !== "All") {
       if (localOtherFilters.trans === "Expense") {
-        filtered = filtered.filter((d) =>
-          !ACC_OWNER.toLowerCase().includes(
-            d.transaction.recieverAcc.toLowerCase(),
-          ),
-        );
-      } else
-        filtered = filtered.filter((d) =>
-          ACC_OWNER.toLowerCase().includes(
-            d.transaction.recieverAcc.toLowerCase(),
-          ),
-        );
+        filtered = filtered.filter((d) => {
+          const tx = d.transaction;
+
+          // ✅ prefer new schema
+          if (tx.direction) {
+            return tx.direction === "FROM";
+          }
+
+          // 🔙 fallback old logic
+          return !ACC_OWNER.toLowerCase().includes(
+            tx.recieverAcc.toLowerCase(),
+          );
+        });
+      } else {
+        filtered = filtered.filter((d) => {
+          const tx = d.transaction;
+
+          // ✅ prefer new schema
+          if (tx.direction) {
+            return tx.direction === "TO";
+          }
+
+          // 🔙 fallback old logic
+          return ACC_OWNER.toLowerCase().includes(tx.recieverAcc.toLowerCase());
+        });
+      }
     }
+
+    // if (localOtherFilters.trans !== "All") {
+    //   if (localOtherFilters.trans === "Expense") {
+    //     filtered = filtered.filter((d) =>
+    //       !ACC_OWNER.toLowerCase().includes(
+    //         d.transaction.recieverAcc.toLowerCase(),
+    //       ),
+    //     );
+    //   } else
+    //     filtered = filtered.filter((d) =>
+    //       ACC_OWNER.toLowerCase().includes(
+    //         d.transaction.recieverAcc.toLowerCase(),
+    //       ),
+    //     );
+    // }
 
     if (localOtherFilters.users !== "All") {
       filtered = filtered.filter((d) =>

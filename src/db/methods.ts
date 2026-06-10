@@ -6,6 +6,8 @@ export type TransactionType = {
   users: string[];
 };
 
+export type Direction = "TO" | "FROM" | "";
+
 export type TransactionParsedType = Omit<TransactionType, "transaction"> & {
   transaction: {
     payerAcc: string;
@@ -21,6 +23,7 @@ export type TransactionParsedType = Omit<TransactionType, "transaction"> & {
     category: string;
     message?: string;
 
+    direction?: Direction;
     parsed?: boolean;
   };
 };

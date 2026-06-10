@@ -33,6 +33,7 @@ export async function parseTransaction(
     remaining: "",
     parsed: false,
     message: sms,
+    direction: "",
     // type: "UNKNOWN",
     // confidence: 0,
   };

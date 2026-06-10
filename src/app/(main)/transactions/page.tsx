@@ -53,14 +53,26 @@ export default function Page() {
     let total_ = 0;
 
     const data_ = dataIn
-      .filter((d) => !d.transaction.message?.length)
+      .filter((d) => "parsed" in d.transaction ? d.transaction.parsed : !d.transaction.message?.length)
       .forEach(({ transaction }) => {
-        const accCredited = ACC_OWNER.toLowerCase().includes(
-          transaction.recieverAcc.trim().toLowerCase(),
-        );
+        const amount = parseFloat(transaction.amount.split(" ")[1]);
 
-        if (accCredited) total_ += parseFloat(transaction.amount.split(" ")[1]);
-        else total_ -= parseFloat(transaction.amount.split(" ")[1]);
+        const owner = ACC_OWNER.toLowerCase();
+        const receiver = transaction.recieverAcc.trim().toLowerCase();
+
+        const isCredited =
+          transaction.direction
+            ? transaction.direction === "FROM"
+            : owner.includes(receiver);
+
+        if (isCredited) total_ += amount;
+        else total_ -= amount;
+        // const accCredited = ACC_OWNER.toLowerCase().includes(
+        //   transaction.recieverAcc.trim().toLowerCase(),
+        // );
+
+        // if (accCredited) total_ += parseFloat(transaction.amount.split(" ")[1]);
+        // else total_ -= parseFloat(transaction.amount.split(" ")[1]);
       });
 
     setTotal(total_);
@@ -201,7 +213,8 @@ export default function Page() {
             className=""
           >
             {showRemaining[0]
-              ? "ETB " + (dataIn.find((dat) => dat.transaction.bank === "CBE")
+              ? "ETB " +
+                (dataIn.find((dat) => dat.transaction.bank === "CBE")
                   ?.transaction?.remaining || "")
               : "*****"}
           </div>
@@ -214,7 +227,8 @@ export default function Page() {
             className=""
           >
             {showRemaining[1]
-              ? "ETB " + (dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
+              ? "ETB " +
+                (dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
                   ?.transaction?.remaining || "")
               : "*****"}
           </div>
@@ -265,7 +279,7 @@ export default function Page() {
               </thead>
 
               <tbody>
-                {dataIn
+                {/* dataIn
                   .filter((d) =>
                     "parsed" in d.transaction
                       ? d.transaction.parsed
@@ -313,7 +327,67 @@ export default function Page() {
                         </td>
                       </tr>
                     );
+                  }) */}
+
+                {dataIn
+                  .filter((d) =>
+                    "parsed" in d.transaction
+                      ? d.transaction.parsed
+                      : !d.transaction?.message?.length,
+                  )
+                  .map((rowData) => {
+                    const row = rowData.transaction;
+
+                    // ✅ NEW: prefer direction field if available
+                    const direction =
+                      row.direction ??
+                      (ACC_OWNER.toLowerCase().includes(
+                        row.recieverAcc.toLowerCase(),
+                      )
+                        ? "TO"
+                        : "FROM");
+
+                    const toOrFrom =
+                      direction === "FROM" ? (
+                        <div className="flex text-center items-center">
+                          <span className="text-xs text-center text-gray-500">
+                            FROM{" "}
+                          </span>
+                          <span className="capitalize">{row.payerAcc}</span>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="text-xs text-gray-500">TO </span>
+                          <span className="capitalize">{row.recieverAcc}</span>
+                        </>
+                      );
+
+                    return (
+                      <tr
+                        key={`${row.date}-${row.amount}-${row.recieverAcc}`} // better than Math.random()
+                        className="border-b border-white/5 hover:bg-white/5"
+                      >
+                        <td className="p-3">{row.date}</td>
+                        <td className="p-3">{toOrFrom}</td>
+                        <td className="p-3">{row.reason}</td>
+                        <td className="p-3">{row.amount}</td>
+                        <td className="p-3">{row.category}</td>
+                        <td className="p-3">{row.bank}</td>
+                        <td className="w-35">
+                          {row.url ? (
+                            <Link
+                              target="_blank"
+                              href={row.url}
+                              className="px-5 py-2 bg-white/5 rounded-full"
+                            >
+                              View Receipt
+                            </Link>
+                          ) : null}
+                        </td>
+                      </tr>
+                    );
                   })}
+
                 <tr className="border-b border-white/5 hover:bg-white/5 font-bold">
                   <td className="p-3">Total</td>
                   <td className="p-3"></td>

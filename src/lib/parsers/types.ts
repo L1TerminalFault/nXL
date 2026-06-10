@@ -1,3 +1,5 @@
+import type { Direction } from "@/db/methods";
+
 export interface ParsedTransaction {
   payerAcc: string;
   payerAccNo: string;
@@ -11,6 +13,7 @@ export interface ParsedTransaction {
   category: string;
   remaining: string;
 
+  direction: Direction;
   parsed: boolean;
   message: string;
 

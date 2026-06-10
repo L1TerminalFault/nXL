@@ -13,20 +13,45 @@ export default function Filter() {
   const [dataUsed, setDataUsed] = useState<TransactionParsedType[]>([]);
 
   useEffect(() => {
-    // if (locked) redirect("/");
-    (() =>
-      setDataUsed(
-        dataIn.filter(
-          (d: TransactionParsedType) =>
-            !d.transaction.recieverAcc
-              .toLowerCase()
-              .includes(ACC_OWNER.toLowerCase()) &&
-            !ACC_OWNER.toLowerCase().includes(
-              d.transaction.recieverAcc.toLowerCase(),
-            ),
-        ),
-      ))();
+    setDataUsed(
+      dataIn.filter((d: TransactionParsedType): boolean => {
+        const tx = d.transaction;
+  
+        const owner = ACC_OWNER.toLowerCase();
+        const receiver = tx.recieverAcc.trim().toLowerCase();
+  
+        // 🔥 NEW SYSTEM (preferred)
+        if (tx.direction) {
+          if (tx.direction === "TO") return true;
+  
+          return false;
+        }
+  
+        // 🔙 OLD SYSTEM fallback (bidirectional fuzzy match)
+        const isExpense =
+          owner.includes(receiver) || receiver.includes(owner);
+  
+        // If owner is involved and it's likely "sent", exclude it
+        return !isExpense;
+      })
+    );
   }, [locked, dataIn]);
+
+  // useEffect(() => {
+  //   // if (locked) redirect("/");
+  //   (() =>
+  //     setDataUsed(
+  //       dataIn.filter(
+  //         (d: TransactionParsedType) =>
+  //           !d.transaction.recieverAcc
+  //             .toLowerCase()
+  //             .includes(ACC_OWNER.toLowerCase()) &&
+  //           !ACC_OWNER.toLowerCase().includes(
+  //             d.transaction.recieverAcc.toLowerCase(),
+  //           ),
+  //       ),
+  //     ))();
+  // }, [locked, dataIn]);
 
   // NOTE: Use this instead of data to have only the expenses - data.filter((d) => !d.transaction.recieverAcc.includes(ACC_OWNER)),
   // NOTE: Use this instead of data to have only the incomes - data.filter((d) => !d.transaction.payerAcc.includes(ACC_OWNER)),
