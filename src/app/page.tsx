@@ -2,12 +2,10 @@
 
 import { redirect } from "next/navigation";
 
-import { useTransactionStore } from "@/lib/store";
 import { SubmitEventHandler, useEffect, useState } from "react";
 import { VscEye as Eye, VscEyeClosed as EyeOff } from "react-icons/vsc";
 
 export default function Home() {
-  const { locked, setLocked } = useTransactionStore();
   const [input, setInput] = useState("");
   const [input_, setInput_] = useState("");
   const [error, setError] = useState("");
@@ -17,7 +15,6 @@ export default function Home() {
   const [showPass, setShowPass] = useState(false);
 
   useEffect(() => {
-    if (!locked) redirect("/transactions");
     const passwd = localStorage.getItem("__n-xl_password__");
 
     if (!passwd || !passwd.length) {
@@ -30,24 +27,6 @@ export default function Home() {
       document.getElementById("inputPass")?.focus();
     }
 
-    window.addEventListener("focus", () => {
-      if (document.hidden || !document.hasFocus()) {
-	redirect("/");
-        setLocked(true);
-      }
-    });
-    window.addEventListener("blur", () => {
-      if (document.hidden || !document.hasFocus()) {
-	redirect("/");
-        setLocked(true);
-      }
-    });
-    window.addEventListener("visibilitychange", () => {
-      if (document.hidden || !document.hasFocus()) {
-	redirect("/");
-        setLocked(true);
-      }
-    });
   }, []);
 
   const handleSumbmit = () => {

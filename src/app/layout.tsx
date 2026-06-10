@@ -1,3 +1,6 @@
+"use client"
+
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -25,6 +28,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { locked, setLocked } = useTransactionStore();
+
+  useEffect(() => {
+    if (!locked) redirect("/home");
+
+    window.addEventListener("focus", () => {
+      if (document.hidden || !document.hasFocus()) {
+	redirect("/");
+        setLocked(true);
+      }
+    });
+    window.addEventListener("blur", () => {
+      if (document.hidden || !document.hasFocus()) {
+	redirect("/");
+        setLocked(true);
+      }
+    });
+    window.addEventListener("visibilitychange", () => {
+      if (document.hidden || !document.hasFocus()) {
+	redirect("/");
+        setLocked(true);
+      }
+    });
+  }, [locked]);
+
   return (
     <html lang="en">
       <body
