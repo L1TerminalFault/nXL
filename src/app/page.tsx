@@ -87,8 +87,8 @@ export default function Home() {
         {firstTime === false ? (
           <>
             <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
-            <form onSubmit={submit} className="flex flex-col w-full text-xl gap-5 items-center">
-	    <div className="flex gap-5">
+            <form onSubmit={submit} className="flex flex-col w-full gap-5 items-center">
+	    <div className="flex gap-5 items-center">
               <input
 	        id="inputPass"
                 type={showPass ? "text" : "password"}
