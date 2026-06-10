@@ -88,7 +88,7 @@ export default function Home() {
           <>
             <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
             <form onSubmit={submit} className="flex flex-col w-full gap-5 items-center">
-	    <div className="flex gap-5 items-center">
+	    <div className="flex gap-5 items-center w-full">
               <input
 	        id="inputPass"
                 type={showPass ? "text" : "password"}
