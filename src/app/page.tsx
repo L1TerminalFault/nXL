@@ -31,14 +31,20 @@ export default function Home() {
     }
 
     window.addEventListener("focus", () => {
-	    if (document.hidden || !document.hasFocus()) {setLocked(true)};
-    })
+      if (document.hidden || !document.hasFocus()) {
+        setLocked(true);
+      }
+    });
     window.addEventListener("blur", () => {
-	    if (document.hidden || !document.hasFocus()) {setLocked(true)};
-    })
+      if (document.hidden || !document.hasFocus()) {
+        setLocked(true);
+      }
+    });
     window.addEventListener("visibilitychange", () => {
-	    if (document.hidden || !document.hasFocus()) {setLocked(true)};
-    })
+      if (document.hidden || !document.hasFocus()) {
+        setLocked(true);
+      }
+    });
   });
 
   const handleSumbmit = () => {
@@ -47,13 +53,12 @@ export default function Home() {
   };
 
   const handleUpdate = () => {
-	  if (input === pass) {
-	      localStorage.removeItem("__n-xl_password__");
-	      setTitle("Change Password");
-	      setFirstTime(true);
-	  }
-	  else setError("Incorrect password");
-  }
+    if (input === pass) {
+      localStorage.removeItem("__n-xl_password__");
+      setTitle("Change Password");
+      setFirstTime(true);
+    } else setError("Incorrect password");
+  };
 
   const handleSetup = () => {
     if (input === input_) {
@@ -87,38 +92,45 @@ export default function Home() {
         {firstTime === false ? (
           <div className="flex w-full gap-5 flex-col">
             <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
-            <form onSubmit={submit} className="flex flex-col w-full gap-5 items-center">
-	    <div className="flex gap-5 items-center justify-start w-full">
-              <input
-	        id="inputPass"
-                type={showPass ? "text" : "password"}
-                placeholder="Enter Password"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="outline-none flex-1 rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
-              />
+            <form
+              onSubmit={submit}
+              className="flex flex-col w-full gap-5 items-center"
+            >
+              <div className="flex gap-5 items-center justify-start">
+                <input
+                  id="inputPass"
+                  type={showPass ? "text" : "password"}
+                  placeholder="Enter Password"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="outline-none flex-1 rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
+                />
 
-          <div
-            onClick={() => setShowPass(prev => !prev)}
-            className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
-          >
-	  {showPass ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
-          </div>
-	  </div>
-
-            <div className="text-red-500 text-xs w-full px-3.5">{error}</div>
-
-            <div className="flex w-full justify-end">
-              <div
-                role="button"
-                onClick={handleSumbmit}
-                className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-              >
-                Unlock
+                <div
+                  onClick={() => setShowPass((prev) => !prev)}
+                  className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
+                >
+                  {showPass ? (
+                    <EyeOff className="size-5" />
+                  ) : (
+                    <Eye className="size-5" />
+                  )}
+                </div>
               </div>
-	      </div>
+
+              <div className="text-red-500 text-xs w-full px-3.5">{error}</div>
+
+              <div className="flex w-full justify-end">
+                <div
+                  role="button"
+                  onClick={handleSumbmit}
+                  className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  Unlock
+                </div>
+              </div>
             </form>
-	    
+
             <div className="flex w-full justify-end">
               <div
                 role="button"
@@ -131,9 +143,7 @@ export default function Home() {
           </div>
         ) : firstTime === true ? (
           <>
-            <div className="text-gray-500 w-full px-3.5 text-xs">
-              {title}
-            </div>
+            <div className="text-gray-500 w-full px-3.5 text-xs">{title}</div>
             <form
               onSubmit={submitSetup1}
               className="flex text-xl gap-5 items-center"
