@@ -32,22 +32,20 @@ export default function RootLayout({
 
   useEffect(() => {
     if (!locked) redirect("/home");
+    else redirect("/");
 
     window.addEventListener("focus", () => {
       if (document.hidden || !document.hasFocus()) {
-	redirect("/");
         setLocked(true);
       }
     });
     window.addEventListener("blur", () => {
       if (document.hidden || !document.hasFocus()) {
-	redirect("/");
         setLocked(true);
       }
     });
     window.addEventListener("visibilitychange", () => {
       if (document.hidden || !document.hasFocus()) {
-	redirect("/");
         setLocked(true);
       }
     });
