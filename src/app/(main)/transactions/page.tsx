@@ -350,8 +350,8 @@ export default function Page() {
                       (ACC_OWNER.toLowerCase().includes(
                         row.recieverAcc.toLowerCase(),
                       )
-                        ? "TO"
-                        : "FROM");
+                        ? "FROM"
+                        : "TO");
 
                     const toOrFrom =
                       direction === "FROM" ? (
