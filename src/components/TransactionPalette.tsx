@@ -99,9 +99,7 @@ export default function TransactionPalette({
         <div className="flex gap-3 justify-between w-full flex-row items-center">
           <div className="flex flex-col w-full/ gap-3">
             <div className="text-gray-400/90 uppercase md:text-base text-xs">
-              {"direction" in transaction
-                ? transaction.direction + " "
-                : (accCredited ? "From " : "To ") +
+              {(accCredited ? "From " : "To ") +
                   otherAccount.holder +
                   "  **" +
                   otherAccount.number.split("*").slice(-1)[0]}
