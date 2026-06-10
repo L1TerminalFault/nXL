@@ -29,6 +29,9 @@ export default function Page() {
     setTotal,
     setAllUsers,
     setFilterOthers,
+    setFilterState,
+    setCustomTo,
+    setCustomFrom,
   } = useTransactionStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -103,9 +106,9 @@ export default function Page() {
       setData(parsedData);
       setDataIn(parsedData);
       fetchUsers();
-      console.log(
-        parsedData.find((each) => (!each.transaction.date ? each : null)),
-      );
+      // console.log(
+      //   parsedData.find((each) => (!each.transaction.date ? each : null)),
+      // );
     } catch (error) {
       setError("Connect to internet, if issue persists let us know");
       console.log("Error ", error);
@@ -116,6 +119,9 @@ export default function Page() {
         category: "All",
         users: "All",
       });
+      setFilterState("All");
+      setCustomTo("");
+      setCustomFrom("");
       setLoading(false);
     }
   }, [setData, user, setDataIn]);
