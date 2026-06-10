@@ -2,10 +2,12 @@
 
 import { redirect } from "next/navigation";
 
+import { useTransactionStore } from "@/lib/store";
 import { SubmitEventHandler, useEffect, useState } from "react";
 import { VscEye as Eye, VscEyeClosed as EyeOff } from "react-icons/vsc";
 
 export default function Home() {
+  const { locked, setLocked } = useTransactionStore();
   const [input, setInput] = useState("");
   const [input_, setInput_] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +28,6 @@ export default function Home() {
       })();
       document.getElementById("inputPass")?.focus();
     }
-
   }, []);
 
   const handleSumbmit = () => {
