@@ -15,18 +15,14 @@ export default function ClientShell({
   // 🔐 LOCK DETECTION (global, route-independent)
   useEffect(() => {
     const handleLock = () => {
-      if (document.hidden || !document.hasFocus()) {
+      if (document.hidden && !useTransactionStore.getState().locked) {
         setLocked(true);
       }
     };
 
-    window.addEventListener("focus", handleLock);
-    window.addEventListener("blur", handleLock);
     document.addEventListener("visibilitychange", handleLock);
 
     return () => {
-      window.removeEventListener("focus", handleLock);
-      window.removeEventListener("blur", handleLock);
       document.removeEventListener("visibilitychange", handleLock);
     };
   }, [setLocked]);
