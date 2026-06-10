@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { useTransactionStore } from "@/lib/store";
 import { SubmitEventHandler, useEffect, useState } from "react";
+import { VscEye as Eye, VscEyeClosed as EyeOff } from "react-icons/vsc";
 
 export default function Home() {
   const { locked, setLocked } = useTransactionStore();
@@ -13,6 +14,7 @@ export default function Home() {
   const [pass, setPass] = useState("");
   const [title, setTitle] = useState("Setup Password");
   const [firstTime, setFirstTime] = useState<boolean | null>(null);
+  const [showPass, setShowPass] = useState(false);
 
   useEffect(() => {
     if (!locked) redirect("/home");
@@ -88,12 +90,19 @@ export default function Home() {
             <form onSubmit={submit} className="flex text-xl gap-5 items-center">
               <input
 	        id="inputPass"
-                type="text"
+                type={showPass ? "text" : "password"}
                 placeholder="Enter Password"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="outline-none rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
               />
+
+          <div
+            onClick={() => setShowPass(prev => !prev)}
+            className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
+          >
+	  {showPass ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+          </div>
               <div
                 role="button"
                 onClick={handleSumbmit}
