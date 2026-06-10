@@ -88,7 +88,7 @@ export default function Home() {
 
   return (
     <div className="w-svw h-svh flex items-center justify-center">
-      <div className="border-2 w-full rounded-3xl p-5 /gap-5 flex-col border-gray-800/50 shadow-l shadow-black/60 flex items-center justify-center">
+      <div className="border-2 max-w-full rounded-3xl p-5 /gap-5 flex-col border-gray-800/50 shadow-l shadow-black/60 flex items-center justify-center">
         {firstTime === false ? (
           <div className="flex w-full gap-5 flex-col">
             <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
