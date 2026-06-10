@@ -104,8 +104,8 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
     if (localOtherFilters.trans !== "All") {
       if (localOtherFilters.trans === "Expense") {
         filtered = filtered.filter((d) =>
-          ACC_OWNER.toLowerCase().includes(
-            d.transaction.payerAcc.toLowerCase(),
+          !ACC_OWNER.toLowerCase().includes(
+            d.transaction.recieverAcc.toLowerCase(),
           ),
         );
       } else
