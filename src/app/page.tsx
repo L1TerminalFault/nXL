@@ -87,7 +87,8 @@ export default function Home() {
         {firstTime === false ? (
           <>
             <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
-            <form onSubmit={submit} className="flex w-full text-xl gap-5 items-center">
+            <form onSubmit={submit} className="flex flex-col w-full text-xl gap-5 items-center">
+	    <div className="flex gap-5">
               <input
 	        id="inputPass"
                 type={showPass ? "text" : "password"}
@@ -103,6 +104,9 @@ export default function Home() {
           >
 	  {showPass ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
           </div>
+	  </div>
+
+            <div className="flex w-full justify-end">
               <div
                 role="button"
                 onClick={handleSumbmit}
@@ -110,8 +114,11 @@ export default function Home() {
               >
                 Unlock
               </div>
+	      </div>
             </form>
+	    
             <div className="text-red-500 text-xs w-full px-3.5">{error}</div>
+
             <div className="flex w-full justify-end">
               <div
                 role="button"
