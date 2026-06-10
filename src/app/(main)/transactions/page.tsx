@@ -119,7 +119,7 @@ export default function Page() {
         category: "All",
         users: "All",
       });
-      setFilterState("All");
+      setFilterState(["All"]);
       setCustomTo("");
       setCustomFrom("");
       setLoading(false);
