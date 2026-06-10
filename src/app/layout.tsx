@@ -1,11 +1,7 @@
-"use client"
-
-import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { useTransactionStore } from "@/lib/store";
-import { useEffect } from "react";
+import ClientShell from "./ClientShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,38 +23,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const { locked, setLocked } = useTransactionStore();
-
-  useEffect(() => {
-    if (!locked) redirect("/home");
-    else redirect("/");
-
-    window.addEventListener("focus", () => {
-      if (document.hidden || !document.hasFocus()) {
-        setLocked(true);
-      }
-    });
-    window.addEventListener("blur", () => {
-      if (document.hidden || !document.hasFocus()) {
-        setLocked(true);
-      }
-    });
-    window.addEventListener("visibilitychange", () => {
-      if (document.hidden || !document.hasFocus()) {
-        setLocked(true);
-      }
-    });
-  }, [locked]);
-
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ClientShell>{children}</ClientShell>
       </body>
     </html>
   );
