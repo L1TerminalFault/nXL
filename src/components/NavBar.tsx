@@ -77,7 +77,7 @@ export default function NavBar() {
     <div className="flex z-10 pb-6 md:px-10 px-10 w-full fixed  bottom-0">
       <div
         id="follower"
-        className="p-4 hidden bg-white/10 absolute mt-2 transition-all z-10 rounded-full duration-400"
+        className="p-4 hidden bg-theme-accent/30 absolute mt-2 transition-all z-10 rounded-full duration-400"
       />
       <div className="flex //max-md: items-center //md:flex-col //md:gap-4 shadow-lg shadow-black/30 p-2 //max-md:p-1 rounded-full //md:h-full //max-md: backdrop-blur-xl w-full //max-md: bg-gray-100/5 //max-md: justify-between //md:pt-34">
         {routes.map((route) => (
@@ -86,7 +86,7 @@ export default function NavBar() {
             key={route.href}
             // href={route.href}
 	    onClick={() => router.push(route.href)}
-            className={`${route.admin && isAdmin(user?.id) ? "flex" : "hidden"} /flex max-md:flex-col items-center justify-center gap-1.5 md:gap-2 text-lg p-1.5 px-5 //px-4 rounded-full ${pathname.includes(route.href) ? "hover:bg-transparent bg-theme-accent/30 text-theme-text" : "hover:bg-theme-accent/40 text-gray-400/ text-theme-text/50 px-3"} transition-all items-center`}
+            className={`${route.admin && isAdmin(user?.id) ? "flex" : "hidden"} /flex max-md:flex-col items-center justify-center gap-1.5 md:gap-2 text-lg p-1.5 px-5 //px-4 rounded-full ${pathname.includes(route.href) ? "/hover:bg-transparent bg-theme-accent/30 text-theme-text" : "hover:bg-theme-accent/30 text-gray-400/ text-theme-text/50 px-3"} transition-all items-center`}
           >
             <route.icon className="text-xl" />
             <div className={`flex items-center max-md:text-[10px] justify-center`}>
