@@ -86,7 +86,7 @@ export default function NavBar() {
             key={route.href}
             // href={route.href}
 	    onClick={() => router.push(route.href)}
-            className={`${route.admin && isAdmin(user?.id) ? "flex" : "hidden"} /flex max-md:flex-col items-center justify-center gap-1.5 md:gap-2 text-lg p-1.5 px-5 //px-4 rounded-full ${pathname.includes(route.href) ? "/hover:bg-transparent bg-theme-accent/30 text-theme-text" : "hover:bg-theme-accent/30 text-gray-400/ text-theme-text/50 px-3"} transition-all items-center`}
+            className={`${route.admin ? isAdmin(user?.id) ? "flex" : "hidden" : ""} /flex max-md:flex-col items-center justify-center gap-1.5 md:gap-2 text-lg p-1.5 px-5 //px-4 rounded-full ${pathname.includes(route.href) ? "/hover:bg-transparent bg-theme-accent/30 text-theme-text" : "hover:bg-theme-accent/30 text-gray-400/ text-theme-text/50 px-3"} transition-all items-center`}
           >
             <route.icon className="text-xl" />
             <div className={`flex items-center max-md:text-[10px] justify-center`}>
