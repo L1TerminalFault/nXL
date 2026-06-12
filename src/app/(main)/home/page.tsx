@@ -15,7 +15,7 @@ import {
   Area,
   AreaChart,
 } from "recharts";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { ACC_OWNER, isAdmin } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 
@@ -36,10 +36,8 @@ export default function HomeDashboard() {
     try {
       const res = await (await fetch("/api/getAllUsers")).json();
       setAllUsers(res);
-      //console.log("the response " + res);
     } catch (err) {
       console.log("Error fetching users: " + err);
-    } finally {
     }
   };
 
@@ -108,7 +106,6 @@ export default function HomeDashboard() {
 
     balance = income - expense;
 
-    // Remainings
     const cbeRemainingRaw = dataIn.find((dat) => dat.transaction.bank === "CBE")?.transaction?.remaining || "0";
     const cbeRemaining = parseFloat(cbeRemainingRaw.replace(/[^0-9.-]+/g, "")) || 0;
 
@@ -118,7 +115,6 @@ export default function HomeDashboard() {
     return { income, expense, balance, totalTrans: validData.length, incomeCount, expenseCount, cbeRemaining, tbRemaining };
   }, [dataIn]);
 
-  // Aggregate Data Day-By-Day
   const aggregatedData = useMemo(() => {
     const map = new Map<string, { income: number; expense: number }>();
     const validData = dataIn.filter(
@@ -156,7 +152,7 @@ export default function HomeDashboard() {
   const dailyData = aggregatedData.slice(-7);
   const weeklyData = aggregatedData; 
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
@@ -164,7 +160,7 @@ export default function HomeDashboard() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
     show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4 } },
   };
@@ -182,7 +178,6 @@ export default function HomeDashboard() {
   return (
     <div className="md:p-10 p-4 pt-8 gap-8 h-full min-h-screen w-full flex flex-col relative overflow-hidden padding-bottom-safe text-white">
       
-      {/* Decorative Cinematic Background Highlights */}
       <div className="absolute top-[-20%] left-[-10%] w-[50rem] h-[50rem] bg-theme-card bg-indigo-900/10 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[45rem] h-[45rem] bg-blue-900/10 rounded-full blur-[150px] pointer-events-none" />
 
@@ -192,7 +187,7 @@ export default function HomeDashboard() {
            <motion.h1 
              initial={{ opacity: 0, x: -20 }}
              animate={{ opacity: 1, x: 0 }}
-             className="text-4xl md:text-5xl font-extrabold tracking-tight text-theme-text /bg-clip-text /text-transparent /bg-gradient-to-r /from-text-theme-text /to-gray-400 drop-shadow-sm"
+             className="text-4xl md:text-5xl font-extrabold tracking-tight text-theme-text drop-shadow-sm"
            >
              Hi {user?.firstName || "user"}
            </motion.h1>
@@ -207,13 +202,12 @@ export default function HomeDashboard() {
         </div>
 
         <div className="flex gap-4 items-center">
-          {/* Sweet Reminder Pill */}
           <Link href="/orders">
              <motion.div 
                initial={{ opacity: 0, scale: 0.8 }}
                animate={{ opacity: 1, scale: 1 }}
                transition={{ type: "spring" }}
-               className="relative flex items-center gap-3 bg-white/5 hover:bg-white/10 /border border-white/10 px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg transition-colors cursor-pointer"
+               className="relative flex items-center gap-3 bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg transition-colors cursor-pointer"
              >
                <div className="relative">
                   <Bell className="size-5 text-theme-text/70" />
@@ -226,7 +220,7 @@ export default function HomeDashboard() {
 
           <button
             onClick={fetchData}
-            className="p-3.5 rounded-full bg-white/5 backdrop-blur-md /border border-white/10 hover:bg-white/10 hover:shadow-lg transition-all text-white"
+            className="p-3.5 rounded-full bg-white/5 backdrop-blur-md hover:bg-white/10 hover:shadow-lg transition-all text-white"
           >
             <Refresh className="size-5" />
           </button>
@@ -239,60 +233,54 @@ export default function HomeDashboard() {
         animate="show"
         className="w-full h-full flex flex-col gap-8 z-10"
       >
-        {/* Cinematic Master Card for Masked Financials */}
-        <motion.div variants={itemVariants} className="w-full relative overflow-hidden bg-theme-card backdrop-blur-2xl /border border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl flex flex-col gap-6">
-           <div className="flex justify-between items-center /bg-white/5 px-4 rounded-2xl /border border-white/5">
+        {/* Financial Overview Card */}
+        <motion.div variants={itemVariants} className="w-full relative overflow-hidden bg-theme-card backdrop-blur-2xl rounded-[2rem] p-6 md:p-8 shadow-2xl flex flex-col gap-6">
+           <div className="flex justify-between items-center px-4 rounded-2xl">
               <div className="flex items-center gap-3">
-                 <div className="h-10 w-10 flex hidden items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
-                    <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                 </div>
                  <div>
                     <div className="font-bold text-theme-text">Financial Overview</div>
-                    <div className="text-xs text-theme-text/50 //uppercase tracking-wider">Tap to reveal balances</div>
+                    <div className="text-xs text-theme-text/50 tracking-wider">Tap to reveal balances</div>
                  </div>
               </div>
-              <button onClick={() => setShowValues(!showValues)} className="hidden p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors /border border-white/10">
-                 {showValues ? <EyeOff className="size-5 text-gray-400"/> : <Eye className="size-5 text-gray-400"/>}
-              </button>
            </div>
            
            <div onClick={() => setShowValues(!showValues)} className="flex flex-col gap-4 w-full cursor-pointer">
-	   <div className="w-full flex gap-6">
-              <div
-                onClick={(e) => {e.stopPropagation();setShowCBE(!showCBE)}}
-	        className="bg-white/5 /border w-full border-white/5 p-7 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
-                  <span className="text-xs text-theme-text/70 uppercase font-bold tracking-wider">CBE Balance</span>
-                  <span className="text-2xl md:text-3xl font-black text-theme-text/70">{maskValue(stats.cbeRemaining, showCBE)}</span>
-              </div>
-              <div
-                onClick={(e) => {e.stopPropagation();setShowTeleBirr(!showTeleBirr)}}
-	        className="bg-white/5 /border w-full border-white/5 p-7 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
-                  <span className="text-xs text-theme-text/70 uppercase font-bold tracking-wider">TeleBirr Balance</span>
-                  <span className="text-2xl md:text-3xl font-black text-theme-text/70">{maskValue(stats.tbRemaining, showTeleBirr)}</span>
-              </div>
-	      </div>
+	         <div className="w-full flex gap-6">
+                 <div
+                    onClick={(e) => {e.stopPropagation(); setShowCBE(!showCBE)}}
+	                className="bg-white/5 w-full border-white/5 p-7 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
+                     <span className="text-xs text-theme-text/70 uppercase font-bold tracking-wider">CBE Balance</span>
+                     <span className="text-2xl md:text-3xl font-black text-theme-text/70">{maskValue(stats.cbeRemaining, showCBE)}</span>
+                 </div>
+                 <div
+                    onClick={(e) => {e.stopPropagation(); setShowTeleBirr(!showTeleBirr)}}
+	                className="bg-white/5 w-full border-white/5 p-7 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
+                     <span className="text-xs text-theme-text/70 uppercase font-bold tracking-wider">TeleBirr Balance</span>
+                     <span className="text-2xl md:text-3xl font-black text-theme-text/70">{maskValue(stats.tbRemaining, showTeleBirr)}</span>
+                 </div>
+	         </div>
 
-	      <div className="flex w-full gap-3">
-              <div
-                onClick={(e) => {e.stopPropagation();setShowIncomes(!showIncomes)}}
-	      className="bg-white/5 /border w-full border-white/5 p-4 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
-                  <span className="text-xs text-blue-500 uppercase font-bold tracking-wider">Total Income</span>
-                  <span className="text-xl md:text-2xl font-black text-blue-400">{maskValue(stats.income, showIncomes)}</span>
-              </div>
-              <div
-                onClick={(e) => {e.stopPropagation();setShowExpenses(!showExpenses)}}
-	      className="bg-white/5 /border w-full border-white/5 p-4 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
-                  <span className="text-xs text-red-500 uppercase font-bold tracking-wider">Total Expense</span>
-                  <span className="text-xl md:text-2xl font-black text-red-400">{maskValue(stats.expense, showExpenses)}</span>
-              </div>
-	      </div>
+	         <div className="flex w-full gap-3">
+                 <div
+                    onClick={(e) => {e.stopPropagation(); setShowIncomes(!showIncomes)}}
+	                className="bg-white/5 w-full border-white/5 p-4 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
+                     <span className="text-xs text-blue-500 uppercase font-bold tracking-wider">Total Income</span>
+                     <span className="text-xl md:text-2xl font-black text-blue-400">{maskValue(stats.income, showIncomes)}</span>
+                 </div>
+                 <div
+                    onClick={(e) => {e.stopPropagation(); setShowExpenses(!showExpenses)}}
+	                className="bg-white/5 w-full border-white/5 p-4 rounded-2xl flex flex-col gap-2 hover:bg-white/10 transition-colors">
+                     <span className="text-xs text-red-500 uppercase font-bold tracking-wider">Total Expense</span>
+                     <span className="text-xl md:text-2xl font-black text-red-400">{maskValue(stats.expense, showExpenses)}</span>
+                 </div>
+	         </div>
            </div>
         </motion.div>
 
         {/* Breakdown Transactions */}
-        <div className="/grid /grid-cols-1 flex flex-wrap /md:grid-cols-3 gap-6 w-full">
-          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-xl /border border-white/5 rounded-3xl p-6 shadow-xl flex gap-4 items-center">
-             <div className="h-14 w-14 rounded-full bg-white/5 flex items-center justify-center text-gray-300 font-black text-xl /border border-white/10">
+        <div className="flex flex-wrap gap-6 w-full">
+          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-xl rounded-3xl p-6 shadow-xl flex gap-4 items-center">
+             <div className="h-14 w-14 rounded-full bg-white/5 flex items-center justify-center text-gray-300 font-black text-xl">
                {stats.totalTrans}
              </div>
              <div>
@@ -301,8 +289,8 @@ export default function HomeDashboard() {
              </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-xl /border border-white/5 rounded-3xl p-6 shadow-xl flex gap-4 items-center">
-             <div className="h-14 w-14 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-black text-xl /border border-blue-500/20">
+          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-xl rounded-3xl p-6 shadow-xl flex gap-4 items-center">
+             <div className="h-14 w-14 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-black text-xl">
                {stats.incomeCount}
              </div>
              <div>
@@ -311,8 +299,8 @@ export default function HomeDashboard() {
              </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-xl /border border-white/5 rounded-3xl p-6 shadow-xl flex gap-4 items-center">
-             <div className="h-14 w-14 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 font-black text-xl /border border-red-500/20">
+          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-xl rounded-3xl p-6 shadow-xl flex gap-4 items-center">
+             <div className="h-14 w-14 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 font-black text-xl">
                {stats.expenseCount}
              </div>
              <div>
@@ -326,7 +314,7 @@ export default function HomeDashboard() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 w-full flex-1 pb-10">
           
           {/* Daily Continuous Graph */}
-          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-2xl /border border-white/10 rounded-[2rem] p-6 shadow-2xl flex flex-col gap-6 min-h-[450px]">
+          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-2xl rounded-[2rem] p-6 shadow-2xl flex flex-col gap-6 min-h-[450px]">
              <div className="flex justify-between items-center px-2">
                <div>
                   <h2 className="text-xl font-bold tracking-tight text-theme-text">Daily Pulse</h2>
@@ -361,7 +349,7 @@ export default function HomeDashboard() {
                     <Tooltip 
                        contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', color: '#fff', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)', padding: '12px' }}
                        itemStyle={{ fontWeight: 'bold' }}
-                       formatter={(value: number) => [`ETB ${value.toLocaleString()}`, ""]}
+                       formatter={(value: any) => value !== undefined && value !== null ? [`ETB ${Number(value).toLocaleString()}`, ""] : ["", ""]}
                     />
                     <Line 
                        type="monotone" 
@@ -387,7 +375,7 @@ export default function HomeDashboard() {
           </motion.div>
 
           {/* Weekly/Monthly Trend Graph */}
-          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-2xl /border border-white/10 rounded-[2rem] p-6 shadow-2xl flex flex-col gap-6 min-h-[450px]">
+          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-2xl rounded-[2rem] p-6 shadow-2xl flex flex-col gap-6 min-h-[450px]">
              <div className="flex justify-between items-center px-2">
                <div>
                   <h2 className="text-xl font-bold tracking-tight text-theme-text">Macro Trends</h2>
@@ -412,7 +400,7 @@ export default function HomeDashboard() {
                        tickLine={false} 
                        axisLine={false}
                        dy={10}
-                       tickFormatter={(str) => ""} /* hide excessive dates for macro view */
+                       tickFormatter={() => ""}
                     />
                     <YAxis 
                        stroke="#aaaaaa" 
@@ -425,7 +413,7 @@ export default function HomeDashboard() {
                     <Tooltip 
                        contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', color: '#fff', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)', padding: '12px' }}
                        itemStyle={{ fontWeight: 'bold' }}
-                       formatter={(value: number) => [`ETB ${value.toLocaleString()}`, ""]}
+                       formatter={(value: any) => value !== undefined && value !== null ? [`ETB ${Number(value).toLocaleString()}`, ""] : ["", ""]}
                     />
                     <Area 
                        type="monotone" 
@@ -445,4 +433,3 @@ export default function HomeDashboard() {
     </div>
   );
 }
-
