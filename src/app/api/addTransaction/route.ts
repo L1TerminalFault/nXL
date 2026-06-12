@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     // Manual transaction
     if (parsedObj && typeof parsedObj === "object" && !parsedObj.transaction) {
       if (typeof parsedObj.amount === "string") {
-        parsedObj.amount = parsedObj.amount.replace(/[^0-9.-]+/g, "");
+        parsedObj?.amount = parsedObj.amount.replace(/[^0-9.-]+/g, "");
       }
       if (typeof parsedObj.remaining === "string") {
         parsedObj.remaining = parsedObj.remaining.replace(/[^0-9.-]+/g, "");

@@ -68,26 +68,26 @@ export default function OrdersPage() {
 
   const handleUpdateStatus = async (id: string, status: "pending" | "done") => {
     try {
-        setOrders(prev => prev.map(o => o._id === id ? { ...o, status } : o));
+        // setOrders(prev => prev.map(o => o._id === id ? { ...o, status } : o));
         await fetch(`/api/orders?id=${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status })
         });
+        fetchOrders();
     } catch (e) {
         console.error(e);
-        fetchOrders();
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this order?")) return;
+    // if (!confirm("Are you sure you want to delete this order?")) return;
     try {
-        setOrders(prev => prev.filter(o => o._id !== id));
+        // setOrders(prev => prev.filter(o => o._id !== id));
         await fetch(`/api/orders?id=${id}`, { method: "DELETE" });
+        fetchOrders();
     } catch (e) {
         console.error(e);
-        fetchOrders();
     }
   };
 

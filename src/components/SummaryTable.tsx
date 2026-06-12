@@ -28,7 +28,7 @@ export default function SummaryTable({ data }: Props) {
     allNum += row.count;
   });
 
-  const perDay = (amount) => Number(filterState.length === 2 || filterState.length === 3
+  const perDay = (amount: number) => Number(filterState.length === 2 || filterState.length === 3
                 ? (amount / 30).toFixed(2)
                 : filterState.length === 4 ||
                     (filterState.length === 5 &&

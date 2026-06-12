@@ -22,7 +22,7 @@ import { useUser } from "@clerk/nextjs";
 import Loader from "@/components/Loader";
 
 export default function HomeDashboard() {
-  const { data, dataIn, setData, setDataIn, fetchTransactions, setAllUsers, setOrders } = useTransactionStore();
+  const { data, dataIn, setData, setDataIn, setAllUsers, setOrders } = useTransactionStore();
   const { user, isLoaded } = useUser();
   const [loading, setLoading] = useState(!data);
   const [ordersCount, setOrdersCount] = useState(0);
