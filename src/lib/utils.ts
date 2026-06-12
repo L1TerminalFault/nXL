@@ -5,6 +5,35 @@ export const VERSION_STRING = "1.3.0";
 // TODO: Replace the acc_owner with the full name of the admin of this app
 export const ACC_OWNER = "Jemal Muhamed Zekaria";
 
+import { toEthiopian } from "ethiopian-calendar-new";
+
+const ethioMonths = [
+  "Meskerem", "Tikimt", "Hidar", "Tahsas", "Tirr", "Yekatit",
+  "Megabit", "Miazia", "Ginbot", "Sene", "Hamle", "Nehase", "Pagume"
+];
+
+const ethioDays = [
+  "Ehuud", "Segno", "Maksegno", "Erob", "Hamus", "Arb", "Kidame"
+];
+
+export const formatEthiopianDate = (dateString: string) => {
+  if (!dateString) return "";
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+
+    const eth = toEthiopian(d.getFullYear(), d.getMonth() + 1, d.getDate());
+    const dayOfWeek = d.getDay(); // 0 is Sunday (Ehuud)
+    
+    const dayName = ethioDays[dayOfWeek];
+    const monthName = ethioMonths[eth.month - 1]; // 1-13
+    
+    return `${dayName}, ${eth.day} ${monthName} ${eth.year}`;
+  } catch (e) {
+    return dateString;
+  }
+};
+
 export async function extract(url: string) {
   const buffer = await fetch(url).then((res) => res.arrayBuffer());
 

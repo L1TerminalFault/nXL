@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 
 import { getTransactions } from "@/db/methods";
-import { dbConnect } from "@/db/model";
+import { dbConnect, OrderObj } from "@/db/model";
 import { isAdmin } from "@/lib/utils";
 
 export async function GET(req: Request) {
@@ -16,17 +16,29 @@ export async function GET(req: Request) {
     if (!user || !user.length || !userId)
       return Response.json({ status: "error" });
 
-    if (isAdmin(userId))
-      // userId === "user_3Dm9SXSar1mSiY6gVd1FJUHJ88j")
+    const ordersPromise = OrderObj.find().sort({ date: -1 });
+
+    if (isAdmin(userId)) {
+      const [transactions, orders] = await Promise.all([
+        getTransactions(),
+        ordersPromise,
+      ]);
       return Response.json({
         status: "success",
-        data: await getTransactions(),
+        data: transactions,
+        orders,
       });
-    else
+    } else {
+      const [transactions, orders] = await Promise.all([
+        getTransactions(user),
+        ordersPromise,
+      ]);
       return Response.json({
         status: "success",
-        data: await getTransactions(user),
+        data: transactions,
+        orders,
       });
+    }
   } catch (error) {
     console.error(error);
     return Response.json(

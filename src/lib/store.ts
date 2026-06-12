@@ -34,14 +34,18 @@ export const useTransactionStore = create(
     setCustomFrom: (value: string) => void;
     customTo: string;
     setCustomTo: (value: string) => void;
+    locked: boolean;
     total: number;
     setTotal: (value: number) => void;
-    locked: boolean;
     setLocked: (value: boolean) => void;
     allUsers: User[];
     setAllUsers: (value: User[]) => void;
+    orders: any[];
+    setOrders: (value: any[]) => void;
   } => ({
     data: null,
+    orders: [],
+    setOrders: (value: any[]) => set(() => ({ orders: value })),
     setData: (value: TransactionParsedType[] | null) =>
       set(() => ({ data: value })),
     dataIn: [] as TransactionParsedType[],
@@ -53,47 +57,15 @@ export const useTransactionStore = create(
             (a, b) =>
               new Date(b.transaction.date).getTime() -
               new Date(a.transaction.date).getTime(),
-          )
-          .map((val) => ({
-            ...val,
-            transaction: {
-              ...val.transaction,
-              date:
-                !("parsed" in val.transaction) &&
-                val.transaction.message?.length
-                  ? ""
-                  : !val.transaction?.date?.length
-                    ? ""
-                    : `${
-                        toEthiopian(
-                          Number(val.transaction.date.split("-")[0]),
-                          Number(val.transaction.date.split("-")[1]),
-                          Number(
-                            val.transaction.date.split("-")[2].split("T")[0],
-                          ),
-                        ).year
-                      }-${
-                        toEthiopian(
-                          Number(val.transaction.date.split("-")[0]),
-                          Number(val.transaction.date.split("-")[1]),
-                          Number(
-                            val.transaction.date.split("-")[2].split("T")[0],
-                          ),
-                        ).month
-                      }-${
-                        toEthiopian(
-                          Number(val.transaction.date.split("-")[0]),
-                          Number(val.transaction.date.split("-")[1]),
-                          Number(
-                            val.transaction.date.split("-")[2].split("T")[0],
-                          ),
-                        ).day
-                      }`
-                        .split("-")
-                        .reverse()
-                        .join("-"),
-            },
-          })),
+          ).map(each => ({
+		  ...each,
+		  transaction: {
+			  ...each.transaction,
+			  date: each.transaction.date.toLocaleString(),
+			  amount: each.transaction.amount.replace(/[^0-9.-]+/g, "").replace(/\D$/, ""),
+			  remaining: each.transaction.remaining.replace(/[^0-9.-]+/g, "").replace(/\D$/, ""),
+		  }
+	  })),
       })),
 
     filterOthers: { trans: "All", bank: "All", category: "All", users: "All" },
@@ -101,14 +73,14 @@ export const useTransactionStore = create(
       set(() => ({ filterOthers: value })),
     filterState: ["All"],
     setFilterState: (value: string[]) => set(() => ({ filterState: value })),
-    customFrom: Date.now().toString(),
-    customTo: Date.now().toString(),
+    customFrom: "",
+    customTo: "",
     setCustomFrom: (value: string) => set(() => ({ customFrom: value })),
     setCustomTo: (value: string) => set(() => ({ customTo: value })),
+    locked: true,
     total: 0,
     setTotal: (value: number) => set(() => ({ total: value })),
-    locked: true,
-    setLocked: () => set((prev) => ({ locked: !prev.locked })),
+    setLocked: (value: boolean) => set(() => ({ locked: value })),
     allUsers: [] as User[],
     setAllUsers: (value: User[]) => set(() => ({ allUsers: value })),
   }),

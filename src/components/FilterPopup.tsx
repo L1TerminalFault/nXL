@@ -76,10 +76,10 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
     localState[level] === value;
 
   const btnClass = (selected: boolean) =>
-    `px-5 py-2 flex-grow sm:flex-grow-0 rounded-full text-sm transition-colors ${
+    `px-5 py-2 //flex-grow sm:flex-grow-0 rounded-full text-sm transition-colors ${
       selected
-        ? "bg-white text-black"
-        : "bg-white/5 text-gray-300 hover:bg-white/10"
+        ? "bg-theme-accent/50 text-theme-text"
+        : "bg-theme-card/40 text-theme-text/80 hover:bg-theme-card/80"
     }`;
 
   const applyFilter = () => {
@@ -108,7 +108,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
 
           // ✅ prefer new schema
           if (tx.direction) {
-            return tx.direction === "FROM";
+            return tx.direction === "TO";
           }
 
           // 🔙 fallback old logic
@@ -122,7 +122,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
 
           // ✅ prefer new schema
           if (tx.direction) {
-            return tx.direction === "TO";
+            return tx.direction === "FROM";
           }
 
           // 🔙 fallback old logic
@@ -164,6 +164,9 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
         const date = new Date(row.transaction.date);
         return date >= from && date <= to;
       });
+    } else {
+	    setCustomFrom("");
+	    setCustomTo("");
     }
 
     if (t0 === "Monthly") {
@@ -223,13 +226,13 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-white/10 rounded-4xl p-6 flex flex-col gap-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"
+        className="w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-theme-border rounded-4xl p-6 flex flex-col gap-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"
       >
         <div className="flex justify-between items-center">
-          <h2 className="text-lg text-gray-500 pl-3">Filter</h2>
+          <h2 className="text-lg text-theme-text/50 pl-3">Filter</h2>
           <button
             onClick={onClose}
-            className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+            className="p-3 bg-theme-card hover:bg-theme-card/80 rounded-full transition-colors text-theme-text/70 hover:text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +252,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="text-gray-500 pl-1 tracking-wider text-xs">
+          <div className="text-theme-text/50 pl-1 tracking-wider text-xs">
             By Bank
           </div>
           <div className="flex flex-wrap gap-3">
@@ -282,7 +285,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="text-gray-500 pl-1 tracking-wider text-xs">
+          <div className="text-theme-text/50 pl-1 tracking-wider text-xs">
             By Transaction
           </div>
           <div className="flex flex-wrap gap-3">
@@ -315,7 +318,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="text-gray-500 pl-1 tracking-wider text-xs">
+          <div className="text-theme-text/50 pl-1 tracking-wider text-xs">
             By Time
           </div>
           <div className="flex flex-col gap-3">
@@ -332,7 +335,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
             </div>
 
             {localState[0] === "Monthly" && (
-              <div className="flex flex-wrap gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex flex-wrap gap-3 pt-3 border-t border-theme-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
                 {["Relative", ...MONTHS].map((v) => (
                   <button
                     key={v}
@@ -346,7 +349,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
             )}
 
             {localState[0] === "Custom" && (
-              <div className="flex flex-col gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex flex-col gap-3 pt-3 border-t border-theme-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex flex-row gap-3">
                   <div className="flex flex-col">
                     <label className="text-[10px] px-3 pb-1 text-white/40">
@@ -356,7 +359,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
                       type="date"
                       value={customFrom}
                       onChange={(e) => setCustomFrom(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
+                      className="bg-theme-accent border border-theme-border rounded-full px-4 py-2 text-white outline-none"
                     />
                   </div>
 
@@ -368,7 +371,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
                       type="date"
                       value={customTo}
                       onChange={(e) => setCustomTo(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white outline-none"
+                      className="bg-theme-accent border border-theme-border rounded-full px-4 py-2 text-white outline-none"
                     />
                   </div>
                 </div>
@@ -377,7 +380,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
 
             {localState[0] === "Monthly" &&
               MONTHS.includes(localState[1] || "") && (
-                <div className="flex flex-wrap gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex flex-wrap gap-3 pt-3 border-t border-theme-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
                   {["All", "Weekly"].map((v) => (
                     <button
                       key={v}
@@ -393,7 +396,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
             {localState[0] === "Monthly" &&
               MONTHS.includes(localState[1] || "") &&
               localState[2] === "Weekly" && (
-                <div className="flex flex-wrap gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex flex-wrap gap-3 pt-3 border-t border-theme-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
                   {["Relative", ...WEEKS].map((v) => (
                     <button
                       key={v}
@@ -411,7 +414,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
               MONTHS.includes(localState[1] || "") &&
               localState[2] === "Weekly" &&
               WEEKS.includes(localState[3] || "") && (
-                <div className="flex flex-wrap gap-3 pt-3 border-t border-white/5 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex flex-wrap gap-3 pt-3 border-t border-theme-border/50 animate-in fade-in slide-in-from-top-2 duration-300">
                   {["All", ...DAYS].map((v) => (
                     <button
                       key={v}
@@ -427,7 +430,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="text-gray-500 pl-1 tracking-wider text-xs">
+          <div className="text-theme-text/50 pl-1 tracking-wider text-xs">
             By Category
           </div>
           <div className="flex flex-wrap gap-3">
@@ -456,7 +459,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
 
         {isAdmin(user?.id) ? (
           <div className="flex flex-col gap-3">
-            <div className="text-gray-500 pl-1 tracking-wider text-xs">
+            <div className="text-theme-text/50 pl-1 tracking-wider text-xs">
               By Users
             </div>
             <div className="flex flex-wrap gap-3">
@@ -507,7 +510,7 @@ export default function FilterPopup({ onClose }: FilterPopupProps) {
         <div className="mt-4 flex w-full gap-4 justify-end">
           <button
             onClick={applyFilter}
-            className="flex py-3 px-7 bg-white/10 text-white hover:bg-white/15 rounded-full transition-colors"
+            className="flex py-3 px-7 bg-theme-accent/50 text-white hover:bg-theme-card rounded-full transition-colors"
           >
             Apply
           </button>

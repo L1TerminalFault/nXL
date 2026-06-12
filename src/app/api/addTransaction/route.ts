@@ -25,8 +25,14 @@ export async function POST(req: Request) {
   if (isJson) {
     // Manual transaction
     if (parsedObj && typeof parsedObj === "object" && !parsedObj.transaction) {
+      if (typeof parsedObj.amount === "string") {
+        parsedObj.amount = parsedObj.amount.replace(/[^0-9.-]+/g, "");
+      }
+      if (typeof parsedObj.remaining === "string") {
+        parsedObj.remaining = parsedObj.remaining.replace(/[^0-9.-]+/g, "");
+      }
       await addTransaction(JSON.stringify(parsedObj));
-      console.log(parsedObj);
+      console.log("Adding manual transaction: ", parsedObj);
 
       return Response.json({
         status: "success",
@@ -40,7 +46,15 @@ export async function POST(req: Request) {
   }
 
   const parsed = await parseTransaction(transaction);
-  console.log(parsed);
+  if (parsed && typeof parsed === "object") {
+    if (typeof parsed.amount === "string") {
+      parsed.amount = parsed.amount.replace(/[^0-9.-]+/g, "").replace(/\D$/, "");
+    }
+    if (typeof parsed.remaining === "string") {
+      parsed.remaining = parsed.remaining.replace(/[^0-9.-]+/g, "").replace(/\D$/, "");
+    }
+  }
+  console.log("Parsed result: ", parsed);
   await addTransaction(JSON.stringify(parsed));
   return Response.json({
     status: "success",

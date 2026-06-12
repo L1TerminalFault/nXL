@@ -71,10 +71,10 @@ export default function Home() {
 
   return (
     <div className="w-svw h-svh flex items-center justify-center">
-      <div className="border-2 max-w-full rounded-3xl p-5 gap-5 flex-col border-gray-800/50 shadow-l shadow-black/60 flex items-center justify-center">
+      <div className="border-2 max-w-full rounded-3xl p-5 gap-5 flex-col backdrop-blur-2xl border-gray-500/70 shadow-l shadow-black/60 flex items-center justify-center">
         {firstTime === false ? (
           <div className="flex w-full gap-5 flex-col">
-            <div className="text-gray-500 w-full px-3.5 text-xs">Locked</div>
+            <div className="text-theme-text/70 w-full px-3.5 text-xs">Locked</div>
             <form
               onSubmit={submit}
               className="flex flex-col w-full gap-5 items-center"
@@ -86,12 +86,12 @@ export default function Home() {
                   placeholder="Enter Password"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  className="outline-none flex-1 rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
+                  className="outline-none flex-1 rounded-3xl p-5 border /border-transparent overflow-hidden appearance-none focus-within:border-gray-500/70 border-gray-500/55"
                 />
 
                 <div
                   onClick={() => setShowPass((prev) => !prev)}
-                  className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
+                  className={`p-3 rounded-full bg-theme-accent hover:bg-theme-card/80 size-full transition-colors cursor-pointer`}
                 >
                   {showPass ? (
                     <EyeOff className="size-5" />
@@ -107,7 +107,7 @@ export default function Home() {
                 <div
                   role="button"
                   onClick={handleSumbmit}
-                  className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                  className="px-5 py-2 rounded-full bg-theme-accent hover:bg-theme-card/80 transition-colors"
                 >
                   Unlock
                 </div>
@@ -118,7 +118,7 @@ export default function Home() {
               <div
                 role="button"
                 onClick={handleUpdate}
-                className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                className="px-5 py-2 rounded-full bg-theme-accent hover:bg-theme-card/80 transition-colors"
               >
                 Change
               </div>
@@ -126,7 +126,7 @@ export default function Home() {
           </div>
         ) : firstTime === true ? (
           <>
-            <div className="text-gray-500 w-full px-3.5 text-xs">{title}</div>
+            <div className="text-theme-text/50 w-full px-3.5 text-xs">{title}</div>
             <form
               onSubmit={submitSetup1}
               className="flex text-xl gap-5 items-center"
@@ -157,7 +157,7 @@ export default function Home() {
               <div
                 role="button"
                 onClick={handleSetup}
-                className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                className="px-5 py-2 rounded-full bg-theme-accent hover:bg-theme-card/80 transition-colors"
               >
                 Done
               </div>

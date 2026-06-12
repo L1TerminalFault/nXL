@@ -109,7 +109,7 @@ export default function AddTransactionPopup({
       recieverAcc,
       recieverAccNo: "",
       reason: formData.reason,
-      amount: "ETB " + formData.amount,
+      amount: formData.amount,
       date: dateIso,
       bank: formData.bank,
       remaining: formData.remaining,
@@ -141,13 +141,13 @@ export default function AddTransactionPopup({
       onClick={(e) => {
         if (!inline) e.stopPropagation();
       }}
-      className={`w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-white/10 ${inline ? "rounded-2xl p-4 md:p-6" : "rounded-4xl p-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"} flex flex-col gap-6`}
+      className={`w-full max-w-5xl bg-white/4 backdrop-blur-2xl border border-theme-border ${inline ? "rounded-2xl p-4 md:p-6" : "rounded-4xl p-6 max-h-[90vh] overflow-y-auto scrollbar-hidden"} flex flex-col gap-6`}
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-lg text-gray-500 pl-3">Add Transaction</h2>
+        <h2 className="text-lg text-theme-text/50 pl-3">Add Transaction</h2>
         <button
           onClick={onClose}
-          className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+          className="p-3 bg-theme-card hover:bg-theme-card/80 rounded-full transition-colors text-theme-text/70 hover:text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -168,20 +168,20 @@ export default function AddTransactionPopup({
 
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-4">
-          <label className="text-xs text-gray-500 pl-1">
+          <label className="text-xs text-theme-text/50 pl-1">
             Transaction Direction & Account{" "}
             <span className="text-red-500">*</span>
           </label>
-          <div className="flex bg-white/5 border-0 border-white/10 rounded-full overflow-hidden">
+          <div className="flex bg-theme-card border-0 border-theme-border rounded-full overflow-hidden">
             <button
               onClick={() => setDirection("FROM")}
-              className={`flex-1 py-2 text-sm transition-colors ${direction === "FROM" ? "bg-white/20 text-white" : "text-gray-400 hover:text-white"}`}
+              className={`flex-1 py-2 text-sm transition-colors ${direction === "FROM" ? "bg-theme-accent/50 text-white" : "text-theme-text/70 hover:text-white"}`}
             >
               FROM
             </button>
             <button
               onClick={() => setDirection("TO")}
-              className={`flex-1 py-2 text-sm transition-colors border-l border-white/10 ${direction === "TO" ? "bg-white/20 text-white" : "text-gray-400 hover:text-white"}`}
+              className={`flex-1 py-2 text-sm transition-colors border-l border-theme-border ${direction === "TO" ? "bg-theme-accent/50 text-white" : "text-theme-text/70 hover:text-white"}`}
             >
               TO
             </button>
@@ -190,7 +190,7 @@ export default function AddTransactionPopup({
             type="text"
             value={accountInput}
             onChange={(e) => setAccountInput(e.target.value)}
-            className="bg-white/5 border-0 border-white/10 rounded-full px-4 py-2 text-white outline-none focus:border-white/30 transition-colors w-full mt-2"
+            className="bg-theme-card border-0 border-theme-border rounded-full px-4 py-2 text-white outline-none focus:border-theme-border transition-colors w-full mt-2"
             placeholder={`Enter ${direction === "TO" ? "Receiver's" : "Payer's"} Account Name`}
           />
         </div>
@@ -200,7 +200,7 @@ export default function AddTransactionPopup({
             .filter((k) => k !== "category" && k !== "bank")
             .map((key) => (
               <div key={key} className="flex flex-col gap-1">
-                <label className="text-xs text-gray-500 pl-1 capitalize">
+                <label className="text-xs text-theme-text/50 pl-1 capitalize">
                   {key.replace(/([A-Z])/g, " $1") === "url"
                     ? "Reciept Link"
                     : key.replace(/([A-Z])/g, " $1") === "date"
@@ -211,11 +211,12 @@ export default function AddTransactionPopup({
                   )}
                 </label>
                 <input
-                  type={key === "date" ? "date" : "text"}
+                  type={key === "date" ? "date" : ["amount", "remaining"].includes(key) ? "number" : "text"}
+                  step={["amount", "remaining"].includes(key) ? "any" : undefined}
                   name={key}
                   value={formData[key as keyof typeof formData]}
                   onChange={handleChange}
-                  className="bg-white/5 border-0 border-white/10 rounded-full px-4 py-2 text-white outline-none focus:border-white/30 transition-colors"
+                  className="bg-theme-card border-0 border-theme-border rounded-full px-4 py-2 text-white outline-none focus:border-theme-border transition-colors"
                   placeholder={
                     key === "date"
                       ? "MM-DD-YYYY"
@@ -236,7 +237,7 @@ export default function AddTransactionPopup({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs text-gray-500 pl-1">
+          <label className="text-xs text-theme-text/50 pl-1">
             Bank <span className="text-red-500">*</span>
           </label>
           <div className="flex flex-wrap gap-2">
@@ -244,7 +245,7 @@ export default function AddTransactionPopup({
               <button
                 key={b}
                 onClick={() => setFormData({ ...formData, bank: b })}
-                className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.bank === b ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
+                className={`px-4 py-1.5 rounded-full hover:bg-theme-card/80 text-xs transition-colors border-0 ${formData.bank === b ? "bg-theme-accent/50 border-theme-border text-white" : "bg-theme-card border-theme-border text-theme-text/70 hover:border-theme-border hover:text-theme-text/80"}`}
               >
                 {b}
               </button>
@@ -253,13 +254,13 @@ export default function AddTransactionPopup({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs text-gray-500 pl-1">Category </label>
+          <label className="text-xs text-theme-text/50 pl-1">Category </label>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`px-4 py-1.5 rounded-full hover:bg-white/10 text-xs transition-colors border-0 ${formData.category === cat ? "bg-white/20 border-white/30 text-white" : "bg-white/5 border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"}`}
+                className={`px-4 py-1.5 rounded-full hover:bg-theme-card/80 text-xs transition-colors border-0 ${formData.category === cat ? "bg-theme-accent/50 border-theme-border text-white" : "bg-theme-card border-theme-border text-theme-text/70 hover:border-theme-border hover:text-theme-text/80"}`}
               >
                 {cat}
               </button>
@@ -272,7 +273,7 @@ export default function AddTransactionPopup({
         <button
           onClick={handleAdd}
           disabled={loading}
-          className="flex py-3 px-7 bg-white/10 text-white hover:bg-white/15 rounded-full transition-colors disabled:opacity-50"
+          className="flex py-3 px-7 bg-theme-accent/50 text-white hover:bg-theme-card rounded-full transition-colors disabled:opacity-50"
         >
           {loading ? "Adding..." : "Add"}
         </button>

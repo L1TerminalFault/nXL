@@ -78,11 +78,11 @@ export default function Filter() {
       id="summary-page"
       className="md:p-10 p-3 pt-6 gap-20 h-full min-h-screen items-center justify-center/ w-full flex flex-col"
     >
-      <div className="text-gray-500">Expenses Summary</div>
+      <div className="text-theme-text/50">Expenses Summary</div>
 
-      <div className="text-gray-500 text-lg flex flex-col gap-30 items-center justify-center h-full w-full">
+      <div className="text-theme-text/50 text-lg flex flex-col gap-30 items-center justify-center h-full w-full">
         {!dataUsed.length ? (
-          <div className="text-gray-500 w-full h-full flex items-center justify-center text-lg">
+          <div className="text-theme-text/50 w-full h-full flex items-center justify-center text-lg">
             No transactions found.
           </div>
         ) : (

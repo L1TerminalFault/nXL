@@ -37,6 +37,18 @@ const transactionSchema = new mongoose.Schema({
   users: [String],
 });
 
+const orderSchema = new mongoose.Schema({
+  customer: String,
+  items: String,
+  amount: Number,
+  status: { type: String, default: "pending" }, // pending or done
+  date: { type: Date, default: Date.now },
+});
+
 export const Transaction =
   mongoose.models.Transaction ||
   mongoose.model("Transaction", transactionSchema);
+
+export const OrderObj =
+  mongoose.models.OrderObj ||
+  mongoose.model("OrderObj", orderSchema);

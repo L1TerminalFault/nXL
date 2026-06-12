@@ -1,6 +1,8 @@
 "use client";
 
 import { SignInButton, UserButton, Show } from "@clerk/nextjs";
+import { IoMdSettings as Setting } from "react-icons/io";
+import Link from "next/link";
 
 import { VERSION_STRING } from "@/lib/utils";
 
@@ -11,12 +13,19 @@ export default function TitleBar() {
         <div className="flex items-center h-12 w-full justify-between">
           <div>
             ZMW{" "}
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-theme-text/50">
               by nXL v{VERSION_STRING}
             </span>
           </div>
 
-          <div>
+          <div className="flex gap-3">
+          <Link
+            href="/settings"
+            className={`p-3 rounded-full //bg-theme-accent hover:bg-theme-card size-full transition-colors cursor-pointer`}
+          >
+            <Setting className="size-5" />
+          </Link>
+
             <Show when="signed-in">
               <UserButton
                 showName
@@ -32,7 +41,7 @@ export default function TitleBar() {
 
             <Show when="signed-out">
               <SignInButton mode="modal">
-                <div className="flex text-base rounded-full p-1 m-2 px-4 bg-white/5 hover:bg-white/10 transition-colors">
+                <div className="flex text-base rounded-full p-1 m-2 px-4 bg-theme-accent hover:bg-theme-card/80 transition-colors">
                   <div>Sign In</div>
                 </div>
               </SignInButton>

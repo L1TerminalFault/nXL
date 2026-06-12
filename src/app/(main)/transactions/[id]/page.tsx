@@ -135,26 +135,21 @@ export default function TransactionPage() {
 
   return (
     <div className="md:p-10 p-5 md:pt-20 flex h-full w-full text-5xl">
-      <div className="bg-white/5 w-full md:p-20 p-5 h-full flex rounded-4xl ">
-        <div className="w-full h-full justify-between md:gap-40 gap-10 flex flex-col">
+      <div className="bg-theme-card backdrop-blur-2xl w-full md:p-20 p-8 h-full flex rounded-4xl ">
+        <div className="w-full h-full justify-between md:gap-40 gap-8 flex flex-col">
           <div className="w-full flex justify-between">
             <div className="flex flex-col gap-5">
-              <div className="text-gray-500 text-sm md:text-xl uppercase">
+              <div className="text-theme-text/50 text-xs md:text-xl uppercase">
                 {(accCredited ? "From " : "To ") +
                   otherAccount.holder +
                   "  **" +
                   otherAccount.number.split("*").slice(-1)[0]}
               </div>
-              <div className="font-bold flex gap-2 md:text-3xl text-2xl">
-                {accCredited ? (
-                  <div className="text-green-500">+ </div>
-                ) : (
-                  <div className="text-red-500">- </div>
-                )}
-                {trans.transaction.amount}
+              <div className={`${accCredited ? "text-blue-400" : "text-red-400"} font-bold flex gap-2 md:text-3xl text-2xl`}>
+                {"ETB " + Number(trans.transaction.amount).toLocaleString()}
               </div>
-              <div className="text-gray-400 md:text-xl text-sm">
-                {trans.transaction.date}
+              <div className="text-theme-text/70 md:text-xl text-xs">
+                {new Date(trans.transaction.date).toDateString()}
               </div>
             </div>
 
@@ -162,7 +157,7 @@ export default function TransactionPage() {
               {trans.transaction.url.length ? (
                 <Link
                   href={trans.transaction.url || ""}
-                  className="rounded-full p-3 px-5 md:text-xl text-nowrap text-sm bg-white/5 hover:bg-white/10 transition-colors"
+                  className="rounded-full p-3 px-5 md:text-xl text-nowrap text-sm bg-theme-accent/50 hover:bg-theme-card/80 transition-colors"
                   target="_blank"
                 >
                   View Receipt
@@ -170,7 +165,7 @@ export default function TransactionPage() {
               ) : isAdmin(user?.id) ? (
                 <input
                   type="text"
-                  placeholder="Paste Reciept Link"
+                  placeholder="Reciept Link"
                   value={url || ""}
                   onChange={(e) => setUrl(e.target.value)}
                   className="outline-none text-xs rounded-full p-3 px-5 border-gray-700/60 focus:border-gray-700 hover:border-gray-700 border"
@@ -181,12 +176,12 @@ export default function TransactionPage() {
 
           <div className="flex w-full flex-col gap-7">
             <div className="flex flex-col gap-2">
-              <div className="text-gray-500 uppercase/ text-sm">
-                {isAdminUser ? "Enter reason" : "Reason"}
+              <div className="text-theme-text/50 uppercase/ text-sm">
+                Reason
               </div>
               <input
                 type="text"
-                placeholder="Change reason"
+                placeholder="Reason"
                 onChange={(e) => setReason(e.target.value)}
                 value={reason}
                 disabled={!isAdminUser}
@@ -195,15 +190,15 @@ export default function TransactionPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <div className="text-gray-500 uppercase/ text-sm">
-                {isAdminUser ? "Choose a category" : "Category"}
+              <div className="text-theme-text/50 uppercase/ text-sm">
+                Category
               </div>
               <div className="flex flex-wrap md:gap-3 gap-2">
                 {categories.map((each) => (
                   <div
                     onClick={() => setCategory(each)}
                     key={each}
-                    className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors ${each === category ? "bg-white/10" : ""}`}
+                    className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-center text-center cursor-pointer hover:bg-theme-card/80 transition-colors ${each === category ? "bg-theme-accent/50" : ""}`}
                   >
                     {each}
                   </div>
@@ -214,9 +209,9 @@ export default function TransactionPage() {
             <div
               className={`flex flex-col gap-2 ${isAdminUser ? "" : "hidden"}`}
             >
-              <div className="text-gray-500 uppercase/ text-sm">
+              <div className="text-theme-text/50 uppercase/ text-sm">
                 Allow Users{" "}
-                <i className="text-xs text-gray-600">
+                <i className="text-xs hidden text-gray-600">
                   Highlighted users are allowed
                 </i>
               </div>
@@ -234,7 +229,7 @@ export default function TransactionPage() {
                             )
                           }
                           key={each.id}
-                          className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-start gap-3 w-max text-center cursor-pointer hover:bg-white/10 transition-colors ${allowedUsers.includes(each.id) ? "bg-white/10" : ""}`}
+                          className={`px-4 py-2 rounded-full border border-white/8 md:text-lg text-xs flex items-center justify-start gap-3 w-max text-center cursor-pointer hover:bg-theme-card/80 transition-colors ${allowedUsers.includes(each.id) ? "bg-theme-accent/50" : ""}`}
                         >
                           <Image
                             alt=""
@@ -249,13 +244,6 @@ export default function TransactionPage() {
                               {each.email}
                             </div>
                           </div>
-                          {allowedUsers.includes(each.id) ? (
-                            <i className="text-gray-400 text-[8px]">Allowed</i>
-                          ) : (
-                            <i className="text-gray-500 text-[8px]">
-                              Not allowed
-                            </i>
-                          )}
                         </div>
                       ))
                   : null}
@@ -266,7 +254,7 @@ export default function TransactionPage() {
               className={`flex gap-3 justify-end ${isAdminUser ? "" : "hidden"}`}
             >
               <div
-                className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-white/30 hover:bg-white/20 transition-colors"
+                className="flex-col rounded-full md:text-2xl text-lg px-6 py-3 bg-white/30 hover:bg-theme-card transition-colors"
                 onClick={update}
               >
                 {updateBtn}
@@ -281,9 +269,9 @@ export default function TransactionPage() {
           </div>
 
 	  
-      {trans.transaction.message?.length ? <div className="bg-white/5 gap-3 text-xs w-full md:p-20 p-5 flex flex-col rounded-4xl ">
+      {trans.transaction.message?.length ? <div className="bg-theme-accent/30 gap-3 text-xs w-full md:p-20 p-5 flex flex-col rounded-4xl ">
 
-              <div className="text-gray-500 text-sm md:text-xl">
+              <div className="text-theme-text/50 text-sm md:text-xl">
 	      Original Message
 	      </div>
 	      <div className="wrap-break-word">

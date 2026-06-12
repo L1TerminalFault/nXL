@@ -12,11 +12,13 @@ import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
 import TransactionPalette from "@/components/TransactionPalette";
 import { useTransactionStore } from "@/lib/store";
-import { ACC_OWNER, isAdmin } from "@/lib/utils";
+import { ACC_OWNER, isAdmin, formatEthiopianDate } from "@/lib/utils";
 import Link from "next/link";
 import FilterPopup from "@/components/FilterPopup";
 import AddTransactionPopup from "@/components/AddTransactionPopup";
+// import SummaryPopup from "@/components/SummaryPopup";
 import { font as customFontBase64 } from "@/lib/font";
+import { RiFileList2Line as Sum } from "react-icons/ri";
 // import { getMockTransactions } from "@/lib/testData";
 
 export default function Page() {
@@ -38,6 +40,7 @@ export default function Page() {
   const { user } = useUser();
   const [filterPopUp, setFilterPopUp] = useState(false);
   const [addPopup, setAddPopup] = useState(false);
+  const [summaryPopup, setSummaryPopup] = useState(false);
   const [listType, setListType] = useState<string>("ui");
   const [showRemaining, setShowRemaining] = useState([false, false]);
 
@@ -58,7 +61,11 @@ export default function Page() {
     const data_ = dataIn
       .filter((d) => "parsed" in d.transaction ? d.transaction.parsed : !d.transaction.message?.length)
       .forEach(({ transaction }) => {
-        const amount = parseFloat(transaction.amount.split(" ")[1]);
+        let amountStr = transaction.amount;
+        if (amountStr.includes(" ")) {
+          amountStr = amountStr.split(" ")[1];
+        }
+        const amount = parseFloat(amountStr.replace(/[^0-9.-]+/g, ""));
 
         const owner = ACC_OWNER.toLowerCase();
         const receiver = transaction.recieverAcc.trim().toLowerCase();
@@ -171,17 +178,24 @@ export default function Page() {
           onSuccess={() => setData(null)}
         />
       )}
-      <div className="z-1 px-3 backdrop-blur-2xl w-full justify-between flex gap-10 items-center">
+      { /* summaryPopup && <SummaryPopup onClose={() => setSummaryPopup(false)} /> 
+      <div
+        onClick={() => setSummaryPopup(true)}
+        className="fixed bottom-32 right-10 p-4 bg-blue-600 hover:bg-blue-500 rounded-full shadow-2xl cursor-pointer z-50 text-white transition-colors"
+      >
+        <Sum className="size-6" />
+      </div> */ }
+      <div className="z-1 px-3 w-full justify-between flex gap-10 items-center">
         <div className="flex gap-4">
           <div
             onClick={() => setListType("ui")}
-            className={`${listType === "ui" ? "bg-white/15" : ""} px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors`}
+            className={`${listType === "ui" ? "shadow-lg bg-theme-accent/50 font-bold /border border-theme-border scale-105" : "bg-theme-card opacity-70"} px-6 py-2 rounded-full hover:bg-theme-card/80 backdrop-blur-2xl text-lg transition-all cursor-pointer`}
           >
             UI
           </div>
           <div
             onClick={() => setListType("table")}
-            className={`${listType === "ui" ? "" : "bg-white/15"} px-6 py-2 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors`}
+            className={`${listType === "table" ? "shadow-lg bg-theme-accent/50 font-bold /border border-theme-border scale-105" : "bg-theme-card opacity-70"} px-6 py-2 rounded-full hover:bg-theme-card/80 text-lg backdrop-blur-2xl transition-all cursor-pointer`}
           >
             Table
           </div>
@@ -190,54 +204,24 @@ export default function Page() {
         <div className="flex gap-4">
           <div
             onClick={fetchData}
-            className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
+            className={`p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-card/80 size-full transition-colors cursor-pointer`}
           >
             <Refresh className="size-5" />
           </div>
           <div
             onClick={() => setFilterPopUp(true)}
-            className={`p-3 rounded-full bg-white/5 hover:bg-white/10 size-full transition-colors cursor-pointer`}
+            className={`p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-card/80 size-full transition-colors cursor-pointer`}
           >
             <Filter className="size-5" />
           </div>
           {isAdmin(user?.id) ? (
             <div
               onClick={() => setAddPopup(true)}
-              className={`px-6/ p-3 rounded-full bg-white/5 hover:bg-white/10 text-lg transition-colors cursor-pointer`}
+              className={`px-6/ p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-card/80 text-lg transition-colors cursor-pointer`}
             >
               <FaAdd className="size-5" />
             </div>
           ) : null}
-        </div>
-      </div>
-
-      <div className="flex flex-col w-full gap-3">
-        <div className="flex w-full justify-between px-4  items-center">
-          <div className="text-gray-500">CBE Balance</div>
-          <div
-            onClick={() => setShowRemaining((prev) => [!prev[0], prev[1]])}
-            className=""
-          >
-            {showRemaining[0]
-              ? "ETB " +
-                (dataIn.find((dat) => dat.transaction.bank === "CBE")
-                  ?.transaction?.remaining || "")
-              : "*****"}
-          </div>
-        </div>
-
-        <div className="flex w-full justify-between px-4  items-center">
-          <div className="text-gray-500">TeleBirr Balance</div>
-          <div
-            onClick={() => setShowRemaining((prev) => [prev[0], !prev[1]])}
-            className=""
-          >
-            {showRemaining[1]
-              ? "ETB " +
-                (dataIn.find((dat) => dat.transaction.bank === "TeleBirr")
-                  ?.transaction?.remaining || "")
-              : "*****"}
-          </div>
         </div>
       </div>
 
@@ -249,7 +233,7 @@ export default function Page() {
         ) : error.length ? (
           <div className="text-red-500 text-lg">{error}</div>
         ) : !dataIn ? null : !dataIn.length ? (
-          <div className="text-gray-500 w-full h-full flex items-center justify-center text-lg">
+          <div className="text-theme-text/50 w-full h-full flex items-center justify-center text-lg">
             No transactions found.
           </div>
         ) : listType === "ui" ? (
@@ -260,20 +244,28 @@ export default function Page() {
           </div>
         ) : (
           <div className="w-full overflow-x-auto">
-            <div className="w-full flex justify-end pr-4">
+            <div className="w-full flex justify-end pb-2 pr-4">
               <div
                 onClick={handleExport}
-                className="rounded-full bg-white/5 hover:bg-white/10 text-sm text-white px-5 py-3 transition-colors"
+                className="rounded-full backdrop-blur-2xl bg-theme-accent/40 backdrop-blur-2xl hover:backdrop-blur-2xl hover:bg-theme-card text-sm text-white px-5 py-3 transition-colors"
               >
                 Export
               </div>
             </div>
             <table
               id="exportable-table"
-              className="w-max min-w-full text-left border-collapse"
+              className="w-max min-w-full text-left border-collapse backdrop-blur-2xl"
             >
               <thead>
-                <tr className="text-gray-400 border-b border-white/10">
+                <tr className="text-theme-text/70 border-b-5 border-theme-border">
+                  <th className="p-3">From
+                  {" " + formatEthiopianDate(dataIn[dataIn.length - 1].transaction.date)}</th>
+                  <th className="p-3">To
+                  {" " + formatEthiopianDate(dataIn[0].transaction.date)}</th>
+                </tr>
+              </thead>
+              <thead>
+                <tr className="text-theme-text/70 border-b border-theme-border">
                   <th className="p-3">Date</th>
                   <th className="p-3">Transaction</th>
                   <th className="p-3">Reason</th>
@@ -297,14 +289,14 @@ export default function Page() {
                       row.recieverAcc.toLowerCase(),
                     ) ? (
                       <div className="flex text-center items-center">
-                        <span className="text-xs text-center text-gray-500">
+                        <span className="text-xs text-center text-theme-text/50">
                           FROM{" "}
                         </span>
                         <span className="capitalize">{row.payerAcc}</span>
                       </div>
                     ) : (
                       <>
-                        <span className="text-xs text-gray-500">TO </span>
+                        <span className="text-xs text-theme-text/50">TO </span>
                         <span className="capitalize">{row.recieverAcc}</span>
                       </>
                     );
@@ -312,7 +304,7 @@ export default function Page() {
                     return (
                       <tr
                         key={Math.random()}
-                        className="border-b border-white/5 hover:bg-white/5"
+                        className="border-b border-theme-border/50 hover:bg-theme-accent"
                       >
                         <td className="p-3">{row.date}</td>
                         <td className="p-3">{toOrFrom}</td>
@@ -325,7 +317,7 @@ export default function Page() {
                             <Link
                               target="_blank"
                               href={row.url}
-                              className="px-5 py-2 bg-white/5 rounded-full"
+                              className="px-5 py-2 bg-theme-accent rounded-full"
                             >
                               View Reciept
                             </Link>
@@ -341,7 +333,7 @@ export default function Page() {
                       ? d.transaction.parsed
                       : !d.transaction?.message?.length,
                   )
-                  .map((rowData) => {
+                  .map((rowData, idx) => {
                     const row = rowData.transaction;
 
                     // ✅ NEW: prefer direction field if available
@@ -356,27 +348,27 @@ export default function Page() {
                     const toOrFrom =
                       direction === "FROM" ? (
                         <div className="flex text-center items-center">
-                          <span className="text-xs text-center text-gray-500">
+                          <span className="text-xs text-center text-theme-text/50">
                             FROM{" "}
                           </span>
-                          <span className="capitalize">{row.payerAcc}</span>
+                          <span className="capitalize">{" " + row.payerAcc}</span>
                         </div>
                       ) : (
                         <>
-                          <span className="text-xs text-gray-500">TO </span>
+                          <span className="text-xs text-theme-text/50">TO </span>
                           <span className="capitalize">{row.recieverAcc}</span>
                         </>
                       );
 
                     return (
                       <tr
-                        key={`${row.date}-${row.amount}-${row.recieverAcc}`} // better than Math.random()
-                        className="border-b border-white/5 hover:bg-white/5"
+                        key={Math.random()} // better than Math.random()
+                        className={`${idx % 2 ? "" : "bg-theme-accent/5"} border-b border-theme-border/50 /hover:bg-theme-accent`}
                       >
-                        <td className="p-3">{row.date}</td>
+                        <td className="p-3">{formatEthiopianDate(row.date)}</td>
                         <td className="p-3">{toOrFrom}</td>
                         <td className="p-3">{row.reason}</td>
-                        <td className="p-3">{row.amount}</td>
+                        <td className="p-3">{"ETB " + (Number(row.amount) || 0).toLocaleString()}</td>
                         <td className="p-3">{row.category}</td>
                         <td className="p-3">{row.bank}</td>
                         <td className="w-35">
@@ -384,7 +376,7 @@ export default function Page() {
                             <Link
                               target="_blank"
                               href={row.url}
-                              className="px-5 py-2 bg-white/5 rounded-full"
+                              className="px-5 py-2 bg-theme-accent rounded-full"
                             >
                               View Receipt
                             </Link>
@@ -394,11 +386,11 @@ export default function Page() {
                     );
                   })}
 
-                <tr className="border-b border-white/5 hover:bg-white/5 font-bold">
-                  <td className="p-3">Total</td>
+                <tr className="border-b border-theme-border/50 hover:bg-theme-accent font-bold">
+                  <td className="p-3">Net</td>
                   <td className="p-3"></td>
                   <td className="p-3"></td>
-                  <td className="p-3">ETB {total.toFixed()}</td>
+                  <td className="p-3">ETB {total.toLocaleString()}</td>
                   <td className="p-3"></td>
                   <td className="p-3"></td>
                   <td className="w-35"></td>

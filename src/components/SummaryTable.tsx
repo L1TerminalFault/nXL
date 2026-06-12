@@ -6,6 +6,7 @@ import autoTable from "jspdf-autotable";
 
 import { useTransactionStore } from "@/lib/store";
 import { font as customFontBase64 } from "@/lib/font";
+import { formatEthiopianDate } from "@/lib/utils";
 
 type Props = {
   data: {
@@ -17,7 +18,7 @@ type Props = {
 };
 
 export default function SummaryTable({ data }: Props) {
-  const { filterState, customFrom, customTo } = useTransactionStore();
+  const { filterState, customFrom, customTo, dataIn } = useTransactionStore();
 
   let allTotal = 0;
   let allNum = 0;
@@ -26,6 +27,24 @@ export default function SummaryTable({ data }: Props) {
     allTotal += row.total;
     allNum += row.count;
   });
+
+  const perDay = (amount) => Number(filterState.length === 2 || filterState.length === 3
+                ? (amount / 30).toFixed(2)
+                : filterState.length === 4 ||
+                    (filterState.length === 5 &&
+                      filterState.at(filterState.length - 1) === "All")
+                  ? (amount / 7).toFixed(2)
+                  : filterState.length === 1 && filterState[0] === "All"
+                    ? (amount / 360).toFixed(2)
+                    : (
+                        amount /
+                        (Math.floor(
+                          (new Date(customTo || Date.now()).getTime() -
+                            new Date(customFrom || Date.now()).getTime()) /
+                            86400000,
+                        ) + 1 || 1)
+                      ).toFixed(2)).toLocaleString()
+  
 
   const handleExport = async () => {
     const pdf = new jsPDF();
@@ -83,65 +102,50 @@ export default function SummaryTable({ data }: Props) {
       <div className="w-full flex justify-end pr-4">
         <div
           onClick={handleExport}
-          className="rounded-full bg-white/5 hover:bg-white/10 text-sm text-white px-5 py-3 transition-colors"
+          className="rounded-full bg-theme-accent hover:bg-theme-card/80 text-sm text-white px-5 py-3 transition-colors"
         >
           Export
         </div>
       </div>
       <table
         id="export-summary-table"
-        className="w-full text-left border-collapse"
+        className="w-full text-left border-collapse backdrop-blur-2xl"
       >
+              <thead>
+                <tr className="text-theme-text/70 border-b-5 border-theme-border">
+                  <th className="p-3">From
+                  {" " + formatEthiopianDate(customFrom.length ? customFrom : dataIn[dataIn.length -1].transaction.date)}</th>
+                  <th className="p-3">To
+                  {" " + formatEthiopianDate(customTo.length ? customTo : dataIn[0].transaction.date)}</th>
+                </tr>
+              </thead>
         <thead>
-          <tr className="text-gray-400 border-b border-white/10">
-            <th className="p-3">From</th>
-            <th className="p-3">{new Date(customFrom).toDateString()}</th>
-            <th className="p-3">To</th>
-            <th className="p-3">{new Date(customTo).toDateString()}</th>
-          </tr>
-        </thead>
-        <thead>
-          <tr className="text-gray-400 border-b border-white/10">
+          <tr className="text-theme-text/70 border-b border-theme-border">
             <th className="p-3">Category</th>
-            <th className="p-3">Total (ETB)</th>
+            <th className="p-3">Total</th>
             <th className="p-3">Transactions</th>
             <th className="p-3">Daily</th>
           </tr>
         </thead>
 
         <tbody>
-          {data.map((row) => (
+          {data.map((row, idx) => (
             <tr
               key={row.name}
-              className="border-b border-white/5 hover:bg-white/5"
+              className={`${idx % 2 ? "" : "bg-theme-accent/5"} border-b border-theme-border/50 hover:bg-theme-accent`}
             >
               <td className="p-3">{row.name}</td>
-              <td className="p-3">{row.total.toFixed(2)}</td>
+              <td className="p-3">{"ETB " + Number(row.total.toFixed(2)).toLocaleString()}</td>
               <td className="p-3">{row.count}</td>
-              <td className="p-3">{row.average.toFixed(2)}</td>
+              <td className="p-3">{"ETB " + perDay(row.total)}</td>
             </tr>
           ))}
           <tr className="font-bold">
             <td className="p-3">Total</td>
-            <td className="p-3">{allTotal.toFixed(2)}</td>
+            <td className="p-3">{"ETB " + Number(allTotal.toFixed(2)).toLocaleString()}</td>
             <td className="p-3">{allNum}</td>
             <td className="p-3">
-              {filterState.length === 2 || filterState.length === 3
-                ? (allTotal / 30).toFixed(2)
-                : filterState.length === 4 ||
-                    (filterState.length === 5 &&
-                      filterState.at(filterState.length - 1) === "All")
-                  ? (allTotal / 7).toFixed(2)
-                  : filterState.length === 1 && filterState[0] === "All"
-                    ? (allTotal / 360).toFixed(2)
-                    : (
-                        allTotal /
-                        Math.floor(
-                          (new Date(customTo).getTime() -
-                            new Date(customFrom).getTime()) /
-                            86400000,
-                        )
-                      ).toFixed(2)}
+              {"ETB " + perDay(allTotal)}
             </td>
           </tr>
         </tbody>

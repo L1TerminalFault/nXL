@@ -12,7 +12,7 @@ export default function ReasonTable({ data }: Props) {
     <div className="w-full text-xs overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="text-gray-400 border-b border-white/10">
+          <tr className="text-theme-text/70 border-b border-theme-border">
             <th className="p-3">Reason</th>
             <th className="p-3">Total (ETB)</th>
             <th className="p-3">Transactions</th>
@@ -24,7 +24,7 @@ export default function ReasonTable({ data }: Props) {
           {data.map((row) => (
             <tr
               key={row.name}
-              className="border-b border-white/5 hover:bg-white/5"
+              className="border-b border-theme-border/50 hover:bg-theme-accent"
             >
               <td className="p-3">{row.name}</td>
               <td className="p-3">{row.total.toFixed(2)}</td>
