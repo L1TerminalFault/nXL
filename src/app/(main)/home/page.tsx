@@ -18,6 +18,7 @@ import {
 import { motion, Variants } from "framer-motion";
 import { ACC_OWNER, isAdmin } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 import Loader from "@/components/Loader";
 
@@ -31,6 +32,7 @@ export default function HomeDashboard() {
   const [showTeleBirr, setShowTeleBirr] = useState(false);
   const [showExpenses, setShowExpenses] = useState(false);
   const [showIncomes, setShowIncomes] = useState(false);
+  const router = useRouter();
 
   const fetchUsers = async () => {
     try {
@@ -67,6 +69,7 @@ export default function HomeDashboard() {
   };
 
   useEffect(() => {
+	  if (isAdmin(user?.id)) {
     if (isLoaded) {
        if (!data) {
 	       fetchData();
@@ -74,6 +77,7 @@ export default function HomeDashboard() {
        }
        else setLoading(false);
     }
+	  } else router.replace("/about");
   }, [data, user, isLoaded]);
 
   const stats = useMemo(() => {
