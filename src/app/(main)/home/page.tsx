@@ -69,7 +69,6 @@ export default function HomeDashboard() {
   };
 
   useEffect(() => {
-	  if (isAdmin(user?.id)) {
     if (isLoaded) {
        if (!data) {
 	       fetchData();
@@ -77,7 +76,6 @@ export default function HomeDashboard() {
        }
        else setLoading(false);
     }
-	  } else router.replace("/about");
   }, [data, user, isLoaded]);
 
   const stats = useMemo(() => {
