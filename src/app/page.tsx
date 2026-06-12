@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { useTransactionStore } from "@/lib/store";
 import { SubmitEventHandler, useEffect, useState } from "react";
 import { VscEye as Eye, VscEyeClosed as EyeOff } from "react-icons/vsc";
+// import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
   const { locked, setLocked } = useTransactionStore();
@@ -15,6 +16,7 @@ export default function Home() {
   const [title, setTitle] = useState("Setup Password");
   const [firstTime, setFirstTime] = useState<boolean | null>(null);
   const [showPass, setShowPass] = useState(false);
+  // const { user } = useUser();
 
   useEffect(() => {
     const passwd = localStorage.getItem("__n-xl_password__");

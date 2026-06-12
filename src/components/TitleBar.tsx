@@ -18,7 +18,7 @@ export default function TitleBar() {
             </span>
           </div>
 
-          <div className="flex items-center  gap-3">
+          <div className="flex text-nowrap items-center w-max gap-3">
           <Link
             href="/settings"
             className={`p-3 rounded-full //bg-theme-accent hover:bg-theme-card size-full transition-colors cursor-pointer`}

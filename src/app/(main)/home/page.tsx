@@ -70,11 +70,13 @@ export default function HomeDashboard() {
 
   useEffect(() => {
     if (isLoaded) {
-       if (!data) {
-	       fetchData();
-	       fetchUsers();
-       }
-       else setLoading(false);
+      if (!isAdmin(user?.id)) return router.replace("/about");
+
+      if (!data) {
+             fetchData();
+             fetchUsers();
+      }
+      else setLoading(false);
     }
   }, [data, user, isLoaded]);
 

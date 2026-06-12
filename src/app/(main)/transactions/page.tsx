@@ -166,7 +166,7 @@ export default function Page() {
 
   useEffect(() => {
     if (!data) (() => fetchData())();
-    else if (data.length) return (() => setLoading(false))();
+    else return (() => setLoading(false))();
   }, [fetchData, data, user]);
 
   return (

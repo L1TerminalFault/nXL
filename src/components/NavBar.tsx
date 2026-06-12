@@ -11,30 +11,44 @@ import { useEffect, useState } from "react";
 import {useUser} from "@clerk/nextjs";
 import {isAdmin} from "@/lib/utils";
 
-const routes = [
+const routesAdmin = [
   {
     name: "Home",
     href: "/home",
     icon: (props: SVGProps<SVGSVGElement>) => <Home {...props} />,
-    admin: false,
   },
   {
     name: "Transactions",
     href: "/transactions",
     icon: (props: SVGProps<SVGSVGElement>) => <List {...props} />,
-    admin: false,
   },
   {
     name: "Summary",
     href: "/summary",
     icon: (props: SVGProps<SVGSVGElement>) => <Sum {...props} />,
-    admin: false,
   },
   {
     name: "Orders",
     href: "/orders",
     icon: (props: SVGProps<SVGSVGElement>) => <Ord {...props} />,
-    admin: true,
+  },
+];
+
+const routesUser = [
+  {
+    name: "Home",
+    href: "/about",
+    icon: (props: SVGProps<SVGSVGElement>) => <Home {...props} />,
+  },
+  {
+    name: "Transactions",
+    href: "/transactions",
+    icon: (props: SVGProps<SVGSVGElement>) => <List {...props} />,
+  },
+  {
+    name: "Summary",
+    href: "/summary",
+    icon: (props: SVGProps<SVGSVGElement>) => <Sum {...props} />,
   },
 ];
 
@@ -43,6 +57,7 @@ export default function NavBar() {
   const router = useRouter();
   const [updatePos, setUpdatePos] = useState(false);
   const {user} = useUser();
+  const [routes, setRoutes] = useState(routesUser);
 
   useEffect(() => {
 	  const interval = setInterval(() => setUpdatePos(prev => !prev), 300);
@@ -51,6 +66,10 @@ export default function NavBar() {
 		  clearTimeout(timeout);
 	  }, 3000);
   }, []);
+
+  useEffect(() => {
+	  setRoutes(isAdmin(user?.id) ? routesAdmin : routesUser);
+  }, [user?.id]);
 
   useEffect(() => {
     const followee = document.getElementById("followee");
@@ -86,7 +105,7 @@ export default function NavBar() {
             key={route.href}
             // href={route.href}
 	    onClick={() => router.push(route.href)}
-            className={`${route.admin ? isAdmin(user?.id) ? "flex" : "hidden" : ""} /flex max-md:flex-col items-center justify-center gap-1.5 md:gap-2 text-lg p-1.5 px-5 //px-4 rounded-full ${pathname.includes(route.href) ? "/hover:bg-transparent bg-theme-accent/30 text-theme-text" : "hover:bg-theme-accent/30 text-gray-400/ text-theme-text/50 px-3"} transition-all items-center`}
+            className={`flex max-md:flex-col items-center justify-center gap-1.5 md:gap-2 text-lg p-1.5 px-5 //px-4 rounded-full ${pathname.includes(route.href) ? "/hover:bg-transparent bg-theme-accent/30 text-theme-text" : "hover:bg-theme-accent/30 text-gray-400/ text-theme-text/50 px-3"} transition-all items-center`}
           >
             <route.icon className="text-xl" />
             <div className={`flex items-center max-md:text-[10px] justify-center`}>
