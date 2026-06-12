@@ -7,7 +7,7 @@ import { RiFileList2Line as Sum } from "react-icons/ri";
 import {MdOutlineTask as Ord} from "react-icons/md";
 import { GoHomeFill as Home } from "react-icons/go";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {useUser} from "@clerk/nextjs";
 import {isAdmin} from "@/lib/utils";
 
@@ -41,7 +41,16 @@ const routes = [
 export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [updatePos, setUpdatePos] = useState(false);
   const {user} = useUser();
+
+  useEffect(() => {
+	  const interval = setInterval(() => setUpdatePos(prev => !prev), 300);
+	  const timeout = setTimeout(() => {
+		  clearInterval(interval);
+		  clearTimeout(timeout);
+	  }, 3000);
+  }, []);
 
   useEffect(() => {
     const followee = document.getElementById("followee");
@@ -62,7 +71,7 @@ export default function NavBar() {
         follower.style.height = `${followee?.clientHeight}px`;
       } else follower.style.display = "none";
     }
-  }, [pathname]);
+  }, [pathname, updatePos]);
 
   return (
     <div className="flex z-10 pb-6 md:px-10 px-10 w-full fixed  bottom-0">

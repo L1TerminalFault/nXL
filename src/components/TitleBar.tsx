@@ -18,7 +18,7 @@ export default function TitleBar() {
             </span>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex items-center  gap-3">
           <Link
             href="/settings"
             className={`p-3 rounded-full //bg-theme-accent hover:bg-theme-card size-full transition-colors cursor-pointer`}
@@ -41,7 +41,7 @@ export default function TitleBar() {
 
             <Show when="signed-out">
               <SignInButton mode="modal">
-                <div className="flex text-base rounded-full p-1 m-2 px-4 bg-theme-accent hover:bg-theme-card/80 transition-colors">
+                <div className="flex text-base text-nowrap rounded-full p-1 m-2 px-4 bg-theme-accent hover:bg-theme-card/80 transition-colors">
                   <div>Sign In</div>
                 </div>
               </SignInButton>
