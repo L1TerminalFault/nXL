@@ -21,7 +21,7 @@ export default function ClientShell({
         const tid = setTimeout(() => {
 		if (document.hidden && !useTransactionStore.getState().locked) setLocked(true);
 		clearTimeout(tid);
-	}, 30000);
+	}, 60000);
       }
     };
 
