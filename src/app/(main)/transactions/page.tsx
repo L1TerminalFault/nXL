@@ -136,32 +136,25 @@ export default function Page() {
   }, [setData, user, setDataIn]);
 
   const handleExport = () => {
-    const pdf = new jsPDF();
+    const pdf = new jsPDF({ orientation: "landscape" });
 
     pdf.addFileToVFS("CustomFont.ttf", customFontBase64);
-
-    // 3. Register it as a font name you can reference
     pdf.addFont("CustomFont.ttf", "CustomFont", "normal");
-
-    // 4. Set it as the default font for the document
     pdf.setFont("CustomFont");
 
-    // 5. Pass the font into autoTable styles
     autoTable(pdf, {
       html: "#exportable-table",
       styles: {
-        font: "CustomFont", // 👈 Ensures the table body uses the font
+        font: "CustomFont",
         fontStyle: "normal",
+        fontSize: 9,
       },
       headStyles: {
-        font: "CustomFont", // 👈 Ensures the table header uses the font
+        font: "CustomFont",
         fontStyle: "normal",
       },
+      tableWidth: "auto",
     });
-
-    // autoTable(pdf, {
-    //   html: "#exportable-table",
-    // });
 
     pdf.save(`table-${Intl.DateTimeFormat("en-GB").format(Date.now())}`);
   };
@@ -280,6 +273,10 @@ export default function Page() {
                   {" " + formatEthiopianDate(dataIn[dataIn.length - 1].transaction.date)}</th>
                   <th className="p-3">To
                   {" " + formatEthiopianDate(dataIn[0].transaction.date)}</th>
+		  <th>{" "}</th>
+		  <th>{" "}</th>
+		  <th>{" "}</th>
+		  <th>{" "}</th>
                 </tr>
               </thead>
               <thead>

@@ -36,6 +36,39 @@ export default function OrdersPage() {
       if (data.status === "success") {
         setOrders(data.orders);
       }
+	    // setOrders([
+	    //         {
+	    //     	    phoneNumber: "0911681165",
+	    //     	    message: "jjjjjjjjjjjjjjjklsdjf lskdhf j lkjdflk js fsdlfk dsjfkds jlkdfhdsokfjdsklfj dsjsd fkldsjflkdsjfdskljdslkfjsdklfjsdk",
+	    //     	    date: Date.now(),
+	    //     	    status: "pending",
+	    //         },
+	    //         {
+	    //     	    phoneNumber: "0911681165",
+	    //     	    message: "jjjjjjjjjjjjjjjklsdjf lskdhf j lkjdflk js fsdlfk dsjfkds jlkdfhdsokfjdsklfj dsjsd fkldsjflkdsjfdskljdslkfjsdklfjsdk",
+	    //     	    date: Date.now(),
+	    //     	    status: "pending",
+	    //     	    
+	    //         },
+	    //         {
+	    //     	    phoneNumber: "0911681165",
+	    //     	    message: "jjjjjjjjjjjjjjjklsdjf lskdhf j lkjdflk js fsdlfk dsjfkds jlkdfhdsokfjdsklfj dsjsd fkldsjflkdsjfdskljdslkfjsdklfjsdk",
+	    //     	    date: Date.now(),
+	    //     	    status: "pending",
+	    //         },
+	    //         {
+	    //     	    phoneNumber: "0911681165",
+	    //     	    message: "jjjjjjjjjjjjjjjklsdjf lskdhf j lkjdflk js fsdlfk dsjfkds jlkdfhdsokfjdsklfj dsjsd fkldsjflkdsjfdskljdslkfjsdklfjsdk",
+	    //     	    date: Date.now(),
+	    //     	    status: "pending",
+	    //         },
+	    //         {
+	    //     	    phoneNumber: "0911681165",
+	    //     	    message: "jjjjjjjjjjjjjjjklsdjf lskdhf j lkjdflk js fsdlfk dsjfkds jlkdfhdsokfjdsklfj dsjsd fkldsjflkdsjfdskljdslkfjsdklfjsdk",
+	    //     	    date: Date.now(),
+	    //     	    status: "done",
+	    //         },
+	    // ])
     } catch (e) {
       console.error(e);
     } finally {
@@ -160,12 +193,11 @@ export default function OrdersPage() {
                      <motion.div key={order._id} variants={itemVariants} className="w-full flex md:flex-row flex-col gap-4 justify-between bg-theme-card border border-theme-border rounded-3xl p-5 shadow-xl">
                          <div className="flex flex-col gap-2 flex-1">
                              <div className="flex gap-2 items-center">
-                                 <div className="font-bold md:text-lg">{order.customer}</div>
+                                 <div className="font-bold md:text-lg">{order.phoneNumber}</div>
                                  <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.status === "pending" ? "bg-amber-500/20 text-amber-500" : "bg-green-500/20 text-green-500"}`}>{order.status}</div>
                                  <div className="text-theme-text/50 text-xs ml-auto">{new Date(order.date).toLocaleDateString()}</div>
                              </div>
-                             <div className="text-theme-text/70 text-sm">Items: {order.items}</div>
-                             <div className="font-mono text-blue-400 font-bold mt-1">ETB {order.amount.toLocaleString()}</div>
+                             <div className="font-mono text-blue-400 font-bold mt-1">{order.message}</div>
                          </div>
                          <div className="flex gap-2 md:flex-col flex-row md:items-end items-center justify-end">
                              {isAdmin(user?.id) && order.status === "pending" && (

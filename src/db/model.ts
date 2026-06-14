@@ -38,9 +38,8 @@ const transactionSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-  customer: String,
-  items: String,
-  amount: Number,
+  phoneNumber: String,
+  message: String,
   status: { type: String, default: "pending" }, // pending or done
   date: { type: Date, default: Date.now },
 });

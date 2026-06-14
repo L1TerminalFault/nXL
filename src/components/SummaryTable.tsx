@@ -47,27 +47,24 @@ export default function SummaryTable({ data }: Props) {
   
 
   const handleExport = async () => {
-    const pdf = new jsPDF();
+    const pdf = new jsPDF({ orientation: "landscape" });
 
     pdf.addFileToVFS("CustomFont.ttf", customFontBase64);
-
-    // 3. Register it as a font name you can reference
     pdf.addFont("CustomFont.ttf", "CustomFont", "normal");
-
-    // 4. Set it as the default font for the document
     pdf.setFont("CustomFont");
 
-    // 5. Pass the font into autoTable styles
     autoTable(pdf, {
       html: "#export-summary-table",
       styles: {
-        font: "CustomFont", // 👈 Ensures the table body uses the font
+        font: "CustomFont",
         fontStyle: "normal",
+        fontSize: 9,
       },
       headStyles: {
-        font: "CustomFont", // 👈 Ensures the table header uses the font
+        font: "CustomFont",
         fontStyle: "normal",
       },
+      tableWidth: "auto",
     });
 
     // autoTable(pdf, {
@@ -111,14 +108,16 @@ export default function SummaryTable({ data }: Props) {
         id="export-summary-table"
         className="w-full text-left border-collapse backdrop-blur-2xl"
       >
-              <thead>
-                <tr className="text-theme-text/70 border-b-5 border-theme-border">
-                  <th className="p-3">From
-                  {" " + formatEthiopianDate(customFrom.length ? customFrom : dataIn[dataIn.length -1].transaction.date)}</th>
-                  <th className="p-3">To
-                  {" " + formatEthiopianDate(customTo.length ? customTo : dataIn[0].transaction.date)}</th>
-                </tr>
-              </thead>
+      <thead>
+	<tr className="text-theme-text/70 border-b-5 border-theme-border">
+	  <th className="p-3">From
+	  {" " + formatEthiopianDate(customFrom.length ? customFrom : dataIn[dataIn.length -1].transaction.date)}</th>
+	  <th className="p-3">To
+	  {" " + formatEthiopianDate(customTo.length ? customTo : dataIn[0].transaction.date)}</th>
+	  <th>{" "}</th>
+	  <th>{" "}</th>
+	</tr>
+      </thead>
         <thead>
           <tr className="text-theme-text/70 border-b border-theme-border">
             <th className="p-3">Category</th>

@@ -38,7 +38,7 @@ const routesAdmin = [
 const routesUser = [
   {
     name: "Home",
-    href: "/about",
+    href: "/home",
     icon: (props: SVGProps<SVGSVGElement>) => <Home {...props} />,
   },
   {

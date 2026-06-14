@@ -14,6 +14,10 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
+  BarChart,
+  Bar,
+  Cell,
+  ReferenceLine,
 } from "recharts";
 import { motion, Variants } from "framer-motion";
 import { ACC_OWNER, isAdmin } from "@/lib/utils";
@@ -32,6 +36,7 @@ export default function HomeDashboard() {
   const [showTeleBirr, setShowTeleBirr] = useState(false);
   const [showExpenses, setShowExpenses] = useState(false);
   const [showIncomes, setShowIncomes] = useState(false);
+  const [netViewMode, setNetViewMode] = useState<"daily" | "monthly">("daily");
   const router = useRouter();
 
   const fetchUsers = async () => {
@@ -49,7 +54,7 @@ export default function HomeDashboard() {
       const res = await fetch("/api/fetchTransactions?user=" + user?.id);
       const fetched = await res.json();
       
-      if (fetched.orders) {
+      if (fetched.orders && isAdmin(user?.id)) {
          setOrders(fetched.orders);
          setOrdersCount(fetched.orders.length);
       }
@@ -70,8 +75,6 @@ export default function HomeDashboard() {
 
   useEffect(() => {
     if (isLoaded) {
-      if (!isAdmin(user?.id)) return router.replace("/about");
-
       if (!data) {
              fetchData();
              fetchUsers();
@@ -149,9 +152,28 @@ export default function HomeDashboard() {
         date,
         income: values.income,
         expense: values.expense,
+        net: values.income - values.expense,
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [dataIn]);
+
+  const monthlyNetData = useMemo(() => {
+    const map = new Map<string, { income: number; expense: number }>();
+    aggregatedData.forEach(({ date, income, expense }) => {
+      const d = new Date(date);
+      const key = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" }).format(d);
+      const existing = map.get(key) || { income: 0, expense: 0 };
+      existing.income += income;
+      existing.expense += expense;
+      map.set(key, existing);
+    });
+    return Array.from(map.entries()).map(([month, values]) => ({
+      date: month,
+      income: values.income,
+      expense: values.expense,
+      net: values.income - values.expense,
+    }));
+  }, [aggregatedData]);
 
   const dailyData = aggregatedData.slice(-7);
   const weeklyData = aggregatedData; 
@@ -206,7 +228,7 @@ export default function HomeDashboard() {
         </div>
 
         <div className="flex gap-4 items-center">
-          <Link href="/orders">
+	{isAdmin(user?.id) && <Link href="/orders">
              <motion.div 
                initial={{ opacity: 0, scale: 0.8 }}
                animate={{ opacity: 1, scale: 1 }}
@@ -220,7 +242,7 @@ export default function HomeDashboard() {
                <span className="text-sm font-bold text-theme-text">{ordersCount}</span>
                <span className="text-xs text-theme-text uppercase tracking-widest">Orders</span>
              </motion.div>
-          </Link>
+          </Link>}
 
           <button
             onClick={fetchData}
@@ -428,6 +450,82 @@ export default function HomeDashboard() {
                        activeDot={{ r: 8, strokeWidth: 0, className: "drop-shadow-[0_0_15px_rgba(59,130,246,0.8)]" }}
                     />
                   </AreaChart>
+                </ResponsiveContainer>
+             </div>
+          </motion.div>
+
+          {/* Net Income Graph */}
+          <motion.div variants={itemVariants} className="bg-theme-card backdrop-blur-2xl rounded-[2rem] p-6 shadow-2xl flex flex-col gap-6 min-h-[450px] xl:col-span-2">
+             <div className="flex justify-between items-center px-2">
+               <div>
+                  <h2 className="text-xl font-bold tracking-tight text-theme-text">Net Income</h2>
+                  <p className="text-theme-text/50 text-xs mt-1 uppercase tracking-widest">Income minus Expenses</p>
+               </div>
+               <div className="flex gap-2">
+                 <button
+                   onClick={() => setNetViewMode("daily")}
+                   className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all ${
+                     netViewMode === "daily"
+                       ? "bg-white/15 text-theme-text shadow-lg"
+                       : "text-theme-text/40 hover:text-theme-text/70"
+                   }`}
+                 >
+                   Daily
+                 </button>
+                 <button
+                   onClick={() => setNetViewMode("monthly")}
+                   className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all ${
+                     netViewMode === "monthly"
+                       ? "bg-white/15 text-theme-text shadow-lg"
+                       : "text-theme-text/40 hover:text-theme-text/70"
+                   }`}
+                 >
+                   Monthly
+                 </button>
+               </div>
+             </div>
+             
+             <div className="flex-1 w-full relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={netViewMode === "monthly" ? monthlyNetData : aggregatedData} margin={{ top: 20, right: 10, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff" opacity={0.05} vertical={false} />
+                    <XAxis 
+                       dataKey="date" 
+                       stroke="#aaaaaa" 
+                       opacity={0.6} 
+                       tickLine={false} 
+                       axisLine={false}
+                       dy={10}
+                       tickFormatter={(str) => {
+                         if (netViewMode === "monthly") return str;
+                         const d = new Date(str);
+                         return isNaN(d.getTime()) ? str : new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(d);
+                       }}
+                    />
+                    <YAxis 
+                       stroke="#aaaaaa" 
+                       opacity={0.6} 
+                       tickLine={false} 
+                       axisLine={false} 
+                       dx={-10}
+                       tickFormatter={(val) => `${Math.abs(val) < 1000000 ? (val / 1000).toFixed(0) + "k" : (val / 1000000).toFixed(1) + "M"}`} 
+                    />
+                    <Tooltip 
+                       contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', color: '#fff', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)', padding: '12px' }}
+                       itemStyle={{ fontWeight: 'bold' }}
+                       formatter={(value: any) => value !== undefined && value !== null ? [`ETB ${Number(value).toLocaleString()}`, ""] : ["", ""]}
+                    />
+                    <ReferenceLine y={0} stroke="#ffffff" strokeOpacity={0.2} strokeDasharray="3 3" />
+                    <Line 
+                       type="monotone" 
+                       dataKey="net" 
+                       name="Net Income"
+                       stroke="#22c55e" 
+                       strokeWidth={4} 
+                       dot={{ r: 4, fill: '#22c55e', strokeWidth: 3, stroke: '#000' }} 
+                       activeDot={{ r: 8, strokeWidth: 0, fill: '#22c55e', className: "drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]" }} 
+                    />
+                  </LineChart>
                 </ResponsiveContainer>
              </div>
           </motion.div>
