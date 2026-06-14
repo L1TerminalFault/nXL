@@ -105,7 +105,7 @@ export default function TransactionPalette({
                   otherAccount.number.split("*").slice(-1)[0]}
             </div>
 
-            <div className={`${accCredited ? "text-blue-400" : "text-red-400"} font-bold flex gap-2 text-2xl`}>
+            <div className={`${accCredited ? "text-blue-400" : "text-red-400"} px-4 py-2 rounded-full bg-theme-card font-bold flex gap-2 text-2xl`}>
               {"ETB " + (Number(transaction.amount)).toLocaleString()}
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function TransactionPalette({
               {"" +
                 (transaction.category.length
                   ? transaction.category
-                  : "Uncategorized")}
+                  : "")}
             </div>
           </div>
           <div className="text-theme-text/60 text-[10px] md:text-sm">

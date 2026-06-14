@@ -18,7 +18,10 @@ export default function ClientShell({
   useEffect(() => {
     const handleLock = () => {
       if (document.hidden && !useTransactionStore.getState().locked) {
-        setLocked(true);
+        const tid = setTimeout(() => {
+		if (document.hidden && !useTransactionStore.getState().locked) setLocked(true);
+		clearTimeout(tid);
+	}, 30000);
       }
     };
 

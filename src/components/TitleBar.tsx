@@ -1,12 +1,14 @@
 "use client";
 
 import { SignInButton, UserButton, Show } from "@clerk/nextjs";
-import { IoMdSettings as Setting } from "react-icons/io";
+import { HiLockClosed as Lock } from "react-icons/hi";
 import Link from "next/link";
+import { useTransactionStore } from "@/lib/store";
 
 import { VERSION_STRING } from "@/lib/utils";
 
 export default function TitleBar() {
+	const { setLocked } = useTransactionStore();
   return (
     <div className="z-90">
       <div className="w-full z-20 shadow-lg shadow-black/30 flex items-center justify-between fixed top-0 p-2 px-5 text-xl //border-b-gray-700/30 //border //border-transparent backdrop-blur-lg transition-all bg-transparent">
@@ -19,12 +21,12 @@ export default function TitleBar() {
           </div>
 
           <div className="flex text-nowrap items-center w-max gap-3">
-          <Link
-            href="/settings"
+          <div
+            onClick={() => setLocked(true)}
             className={`p-3 rounded-full //bg-theme-accent hover:bg-theme-card size-full transition-colors cursor-pointer`}
           >
-            <Setting className="size-5" />
-          </Link>
+            <Lock className="size-5" />
+          </div>
 
             <Show when="signed-in">
               <UserButton

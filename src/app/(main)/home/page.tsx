@@ -171,7 +171,7 @@ export default function HomeDashboard() {
 
   if (loading) {
     return (
-      <div className="flex w-full h-screen items-center justify-center">
+      <div className="flex w-full pt-40 items-center justify-center">
         <Loader />
       </div>
     );
@@ -211,20 +211,20 @@ export default function HomeDashboard() {
                initial={{ opacity: 0, scale: 0.8 }}
                animate={{ opacity: 1, scale: 1 }}
                transition={{ type: "spring" }}
-               className="relative flex items-center gap-3 bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg transition-colors cursor-pointer"
+               className="relative flex items-center gap-3 bg-theme-accent/50 hover:bg-theme-accent px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg transition-colors cursor-pointer"
              >
                <div className="relative">
-                  <Bell className="size-5 text-theme-text/70" />
+                  <Bell className="size-5 text-theme-text" />
                   {ordersCount > 0 && <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span></span>}
                </div>
-               <span className="text-sm font-bold text-theme-text/70">{ordersCount}</span>
-               <span className="text-xs text-theme-text/50 uppercase tracking-widest">Orders</span>
+               <span className="text-sm font-bold text-theme-text">{ordersCount}</span>
+               <span className="text-xs text-theme-text uppercase tracking-widest">Orders</span>
              </motion.div>
           </Link>
 
           <button
             onClick={fetchData}
-            className="p-3.5 rounded-full bg-white/5 backdrop-blur-md hover:bg-white/10 hover:shadow-lg transition-all text-white"
+            className="p-3.5 rounded-full bg-theme-accent/50 hover:bg-theme-accent backdrop-blur-md hover:shadow-lg transition-all text-white"
           >
             <Refresh className="size-5" />
           </button>

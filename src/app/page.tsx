@@ -93,7 +93,7 @@ export default function Home() {
 
                 <div
                   onClick={() => setShowPass((prev) => !prev)}
-                  className={`p-3 rounded-full bg-theme-accent hover:bg-theme-card/80 size-full transition-colors cursor-pointer`}
+                  className={`p-3 rounded-full bg-theme-accent/50 hover:bg-theme-accent size-full transition-colors cursor-pointer`}
                 >
                   {showPass ? (
                     <EyeOff className="size-5" />
@@ -109,7 +109,7 @@ export default function Home() {
                 <div
                   role="button"
                   onClick={handleSumbmit}
-                  className="px-5 py-2 rounded-full bg-theme-accent hover:bg-theme-card/80 transition-colors"
+                  className="px-5 py-2 rounded-full bg-theme-accent/50 hover:bg-theme-accent transition-colors"
                 >
                   Unlock
                 </div>
@@ -120,7 +120,7 @@ export default function Home() {
               <div
                 role="button"
                 onClick={handleUpdate}
-                className="px-5 py-2 rounded-full bg-theme-accent hover:bg-theme-card/80 transition-colors"
+                className="px-5 py-2 rounded-full bg-theme-accent/50 hover:bg-theme-accent transition-colors"
               >
                 Change
               </div>
@@ -138,7 +138,7 @@ export default function Home() {
                 placeholder="New Password"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="outline-none rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
+                  className="outline-none flex-1 rounded-3xl p-5 border /border-transparent overflow-hidden appearance-none focus-within:border-gray-500/70 border-gray-500/55"
               />
             </form>
             <form
@@ -151,7 +151,7 @@ export default function Home() {
                 placeholder="Confirm Password"
                 value={input_}
                 onChange={(e) => setInput_(e.target.value)}
-                className="outline-none rounded-3xl p-5 border border-transparent  overflow-hidden appearance-none focus-within:border-gray-800/40"
+                  className="outline-none flex-1 rounded-3xl p-5 border /border-transparent overflow-hidden appearance-none focus-within:border-gray-500/70 border-gray-500/55"
               />
             </form>
             <div className="text-red-500 text-xs w-full px-3.5">{error}</div>
@@ -159,7 +159,7 @@ export default function Home() {
               <div
                 role="button"
                 onClick={handleSetup}
-                className="px-5 py-2 rounded-full bg-theme-accent hover:bg-theme-card/80 transition-colors"
+                className="px-5 py-2 rounded-full bg-theme-accent/50 hover:bg-theme-accent transition-colors"
               >
                 Done
               </div>

@@ -7,6 +7,8 @@ import { useUser } from "@clerk/nextjs";
 import { VscRefresh as Refresh } from "react-icons/vsc";
 import { IoAdd as FaAdd } from "react-icons/io5";
 import { BsFilter as Filter } from "react-icons/bs";
+import { FaTableList as Table } from "react-icons/fa6";
+import { TbLayoutList as UI } from "react-icons/tb";
 
 import Loader from "@/components/Loader";
 import type { TransactionType } from "@/db/methods";
@@ -16,7 +18,7 @@ import { ACC_OWNER, isAdmin, formatEthiopianDate } from "@/lib/utils";
 import Link from "next/link";
 import FilterPopup from "@/components/FilterPopup";
 import AddTransactionPopup from "@/components/AddTransactionPopup";
-// import SummaryPopup from "@/components/SummaryPopup";
+import SummaryPopup from "@/components/SummaryPopup";
 import { font as customFontBase64 } from "@/lib/font";
 import { RiFileList2Line as Sum } from "react-icons/ri";
 // import { getMockTransactions } from "@/lib/testData";
@@ -178,52 +180,68 @@ export default function Page() {
           onSuccess={() => setData(null)}
         />
       )}
-      { /* summaryPopup && <SummaryPopup onClose={() => setSummaryPopup(false)} /> 
-      <div
+      { summaryPopup && <SummaryPopup onClose={() => setSummaryPopup(false)} /> }
+	      { /* <div
         onClick={() => setSummaryPopup(true)}
         className="fixed bottom-32 right-10 p-4 bg-blue-600 hover:bg-blue-500 rounded-full shadow-2xl cursor-pointer z-50 text-white transition-colors"
       >
         <Sum className="size-6" />
       </div> */ }
-      <div className="z-1 px-3 w-full justify-between flex gap-10 items-center">
-        <div className="flex gap-4">
-          <div
-            onClick={() => setListType("ui")}
-            className={`${listType === "ui" ? "shadow-lg bg-theme-accent/50 font-bold /border border-theme-border scale-105" : "bg-theme-card opacity-70"} px-6 py-2 rounded-full hover:bg-theme-card/80 backdrop-blur-2xl text-lg transition-all cursor-pointer`}
-          >
-            UI
-          </div>
-          <div
-            onClick={() => setListType("table")}
-            className={`${listType === "table" ? "shadow-lg bg-theme-accent/50 font-bold /border border-theme-border scale-105" : "bg-theme-card opacity-70"} px-6 py-2 rounded-full hover:bg-theme-card/80 text-lg backdrop-blur-2xl transition-all cursor-pointer`}
-          >
-            Table
-          </div>
-        </div>
+
+     <div className="flex flex-col w-full gap-9">
+      <div className="z-10 px-3 w-full justify-between flex gap-10 items-center">
+        <div className="text-2xl font-bold">Transactions</div>
 
         <div className="flex gap-4">
           <div
-            onClick={fetchData}
-            className={`p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-card/80 size-full transition-colors cursor-pointer`}
-          >
-            <Refresh className="size-5" />
-          </div>
-          <div
             onClick={() => setFilterPopUp(true)}
-            className={`p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-card/80 size-full transition-colors cursor-pointer`}
+            className={`p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-accent size-full transition-colors cursor-pointer`}
           >
             <Filter className="size-5" />
+          </div>
+          <div
+            onClick={fetchData}
+            className={`p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-accent size-full transition-colors cursor-pointer`}
+          >
+            <Refresh className="size-5" />
           </div>
           {isAdmin(user?.id) ? (
             <div
               onClick={() => setAddPopup(true)}
-              className={`px-6/ p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-card/80 text-lg transition-colors cursor-pointer`}
+              className={`px-6/ p-3 rounded-full bg-theme-accent/50 backdrop-blur-2xl hover:bg-theme-accent text-lg transition-colors cursor-pointer`}
             >
               <FaAdd className="size-5" />
             </div>
           ) : null}
         </div>
       </div>
+
+      <div className="z-1 px-3 w-full justify-between flex gap-10 items-center">
+        <div className="flex gap-4">
+          <div
+            onClick={() => setListType("ui")}
+            className={`${listType === "ui" ? "shadow-lg bg-theme-accent/90 font-bold  scale-105" : "bg-theme-card"} p-3 rounded-full backdrop-blur-2xl hover:bg-theme-accent size-full transition-colors cursor-pointer`}
+          >
+            <UI className="size-5" />
+          </div>
+          <div
+            onClick={() => setListType("table")}
+            className={`${listType === "table" ? "shadow-lg bg-theme-accent/90 font-bold  scale-105" : "bg-theme-card"} p-3 rounded-full backdrop-blur-2xl hover:bg-theme-accent size-full transition-colors cursor-pointer`}
+          >
+            <Table className="size-5" />
+          </div>
+        </div>
+
+          <div
+        onClick={() => setSummaryPopup(true)}
+            className={`px-6/ p-3 rounded-full bg-theme-accent/50 hover:bg-theme-accent backdrop-blur-2xl text-lg transition-all cursor-pointer`}
+          >
+            <Sum className="size-5" />
+          </div>
+      </div>
+      </div>
+
+
 
       <div className="flex w-full flex-1 gap-6 h-full items-center flex-col">
         {loading ? (
