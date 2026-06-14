@@ -190,7 +190,7 @@ export default function OrdersPage() {
          ) : (
              <motion.div variants={containerVariants} initial="hidden" animate="show" className="flex flex-col gap-4 w-full">
                  {filteredOrders.map(order => (
-                     <motion.div key={order._id} variants={itemVariants} className="w-full flex md:flex-row flex-col gap-4 justify-between bg-theme-card border border-theme-border rounded-3xl p-5 shadow-xl">
+                     <motion.div key={order._id} variants={itemVariants} className="w-full flex md:flex-row flex-col gap-4 justify-between bg-theme-card backdrop-blur-2xl border border-theme-border rounded-3xl p-5 shadow-xl">
                          <div className="flex flex-col gap-2 flex-1">
                              <div className="flex gap-2 items-center">
                                  <div className="font-bold md:text-lg">{order.phoneNumber}</div>
