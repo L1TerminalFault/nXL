@@ -1,8 +1,6 @@
 import { create } from "zustand";
 
-import { toEthiopian } from "ethiopian-calendar-new";
 import { TransactionParsedType } from "@/db/methods";
-import strict from "node:assert/strict";
 
 export type FilterOthersType = {
   trans: string;
@@ -52,7 +50,7 @@ export const useTransactionStore = create(
 
     setDataIn: (value: TransactionParsedType[]) =>
       set(() => ({
-        dataIn: value
+        dataIn: value?
           .sort(
             (a, b) =>
               new Date(b.transaction.date).getTime() -
@@ -61,7 +59,7 @@ export const useTransactionStore = create(
 		  ...each,
 		  transaction: {
 			  ...each.transaction,
-			  date: each.transaction.date.toLocaleString(),
+			  date: each.transaction.date?.toLocaleString() || Date.now().toLocaleString(),
 			  amount: each.transaction.amount.replace(/[^0-9.-]+/g, "").replace(/\D$/, ""),
 			  remaining: each.transaction.remaining.replace(/[^0-9.-]+/g, "").replace(/\D$/, ""),
 		  }
