@@ -50,7 +50,7 @@ export const useTransactionStore = create(
 
     setDataIn: (value: TransactionParsedType[]) =>
       set(() => ({
-        dataIn: value?
+        dataIn: value
           .sort(
             (a, b) =>
               new Date(b.transaction.date).getTime() -
